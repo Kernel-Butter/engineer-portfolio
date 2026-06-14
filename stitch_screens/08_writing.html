@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SYS.ENGINEER // Writing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#8083ff",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "secondary-fixed": "#62fae3",
+                        "outline": "#908fa0",
+                        "primary": "#c0c1ff",
+                        "on-tertiary-fixed": "#002113",
+                        "surface-tint": "#c0c1ff",
+                        "surface-dim": "#131313",
+                        "on-primary": "#1000a9",
+                        "secondary": "#44e2cd",
+                        "on-tertiary": "#003824",
+                        "surface": "#131313",
+                        "primary-fixed": "#e1e0ff",
+                        "surface-variant": "#353534",
+                        "secondary-fixed-dim": "#3cddc7",
+                        "on-secondary-container": "#004d44",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-secondary": "#003731",
+                        "on-error-container": "#ffdad6",
+                        "outline-variant": "#464554",
+                        "error-container": "#93000a",
+                        "tertiary": "#4edea3",
+                        "surface-bright": "#3a3939",
+                        "secondary-container": "#03c6b2",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container": "#201f1f",
+                        "on-surface": "#e5e2e1",
+                        "on-secondary-fixed": "#00201c",
+                        "surface-container-highest": "#353534",
+                        "on-surface-variant": "#c7c4d7",
+                        "on-error": "#690005",
+                        "inverse-primary": "#494bd6",
+                        "tertiary-container": "#00885d",
+                        "on-background": "#e5e2e1",
+                        "surface-container-low": "#1c1b1b",
+                        "on-primary-fixed": "#07006c",
+                        "background": "#131313",
+                        "on-secondary-fixed-variant": "#005047",
+                        "inverse-on-surface": "#313030",
+                        "error": "#ffb4ab",
+                        "on-tertiary-container": "#000703",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "tertiary-fixed": "#6ffbbe",
+                        "on-primary-container": "#0d0096",
+                        "surface-container-high": "#2a2a2a",
+                        "on-primary-fixed-variant": "#2f2ebe"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "section-padding": "120px",
+                        "gutter": "24px",
+                        "margin-mobile": "20px",
+                        "container-max": "1280px",
+                        "bento-gap": "16px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "code-snippet": ["JetBrains Mono"],
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["JetBrains Mono"],
+                        "headline-lg": ["JetBrains Mono"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "code-snippet": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        .glass-panel {
+            background-color: rgba(23, 23, 23, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid transparent;
+            background-image: linear-gradient(rgba(23, 23, 23, 0.6), rgba(23, 23, 23, 0.6)), linear-gradient(to right, rgba(73, 75, 214, 0.15), rgba(68, 226, 205, 0.15));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-panel:hover {
+            border-image-source: linear-gradient(to right, rgba(192, 193, 255, 0.4), rgba(68, 226, 205, 0.4));
+            box-shadow: 0 10px 40px -10px rgba(192, 193, 255, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 20px rgba(192, 193, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col selection:bg-primary selection:text-on-primary">
+<!-- TopNavBar -->
+<header class="bg-surface-dim/60 font-headline-md text-headline-md docked full-width top-0 sticky backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(192,193,255,0.05)] z-50">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-20 w-full max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-bold tracking-tighter text-primary hover:text-secondary transition-colors duration-300">
+                SYS.ENGINEER
+            </div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">STK</a>
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">PRJ</a>
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">EXP</a>
+<!-- MET implies Metrics/Writing/Meta in this context -->
+<a class="text-primary border-b-2 border-primary pb-1 font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300 opacity-80 scale-95" href="#">MET</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined hover:text-secondary transition-colors duration-300 cursor-pointer" style="font-variation-settings: 'FILL' 0;">terminal</span>
+<span class="material-symbols-outlined hover:text-secondary transition-colors duration-300 cursor-pointer" style="font-variation-settings: 'FILL' 0;">code</span>
+</div>
+<button class="bg-primary text-on-primary font-label-sm text-label-sm px-4 py-2 rounded shadow-[0_0_15px_rgba(192,193,255,0.4)] hover:bg-secondary hover:text-on-secondary transition-all duration-300 uppercase tracking-widest font-bold">
+                    HIRE_ME
+                </button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center w-full px-margin-mobile md:px-margin-desktop py-section-padding max-w-container-max mx-auto gap-section-padding">
+<section class="w-full flex flex-col gap-12">
+<!-- Section Header -->
+<div class="flex flex-col gap-4">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary glow-text">
+                    LOG.FILES //
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                    Observations, architectural decisions, and deep dives into modern rendering pipelines and system design.
+                </p>
+</div>
+<!-- Bento Grid - Writing -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+<!-- Article Card 1 (Spans 8 cols) -->
+<article class="glass-panel rounded-xl p-8 flex flex-col justify-between min-h-[320px] md:col-span-8 cursor-pointer group">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between w-full">
+<div class="flex gap-2 flex-wrap">
+<span class="bg-surface-container-highest px-3 py-1 rounded-DEFAULT font-label-sm text-label-sm text-secondary flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                                    WEBGL
+                                </span>
+<span class="bg-surface-container-highest px-3 py-1 rounded-DEFAULT font-label-sm text-label-sm text-on-surface-variant">
+                                    PERFORMANCE
+                                </span>
+</div>
+<span class="font-code-snippet text-code-snippet text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                8 MIN READ
+                            </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors mt-4">
+                            Optimizing Custom Shaders for Multi-Device Environments
+                        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                            A deep dive into managing precision qualifiers, varying limits, and texture bound constraints when deploying bespoke WebGL shaders across heterogeneous client hardware. We explore a robust fallback matrix strategy.
+                        </p>
+</div>
+<div class="mt-8 flex items-center text-tertiary font-code-snippet text-code-snippet opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
+                        READ_FILE <span class="material-symbols-outlined ml-1 text-[18px]">arrow_forward</span>
+</div>
+</article>
+<!-- Article Card 2 (Spans 4 cols) -->
+<article class="glass-panel rounded-xl p-8 flex flex-col justify-between min-h-[320px] md:col-span-4 cursor-pointer group relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
+<div class="relative z-10 flex flex-col gap-4 h-full">
+<div class="flex items-center justify-between w-full">
+<div class="flex gap-2 flex-wrap">
+<span class="bg-surface-container-highest px-3 py-1 rounded-DEFAULT font-label-sm text-label-sm text-on-surface-variant">
+                                    TYPESCRIPT
+                                </span>
+</div>
+</div>
+<h2 class="font-headline-md text-[20px] leading-tight text-on-surface group-hover:text-primary transition-colors mt-4">
+                            Type-Safe Event Buses in Distributed Architectures
+                        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-4 mt-auto">
+                            Implementing strict compile-time checks for asynchronous messaging patterns.
+                        </p>
+<div class="mt-4 flex items-center justify-between w-full">
+<span class="font-code-snippet text-code-snippet text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                5 MIN READ
+                            </span>
+</div>
+</div>
+</article>
+<!-- Article Card 3 (Spans 4 cols) -->
+<article class="glass-panel rounded-xl p-8 flex flex-col justify-between min-h-[320px] md:col-span-4 cursor-pointer group">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between w-full">
+<div class="flex gap-2 flex-wrap">
+<span class="bg-surface-container-highest px-3 py-1 rounded-DEFAULT font-label-sm text-label-sm text-on-surface-variant">
+                                    REACT
+                                </span>
+</div>
+</div>
+<h2 class="font-headline-md text-[20px] leading-tight text-on-surface group-hover:text-primary transition-colors mt-4">
+                            Deconstructing Concurrent Mode
+                        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                            Understanding hydration boundaries and suspense mechanics for complex UI states.
+                        </p>
+</div>
+<div class="mt-4 flex items-center justify-between w-full">
+<span class="font-code-snippet text-code-snippet text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                12 MIN READ
+                            </span>
+</div>
+</article>
+<!-- Article Card 4 (Spans 8 cols) -->
+<article class="glass-panel rounded-xl p-8 flex flex-col justify-between min-h-[320px] md:col-span-8 cursor-pointer group">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between w-full">
+<div class="flex gap-2 flex-wrap">
+<span class="bg-surface-container-highest px-3 py-1 rounded-DEFAULT font-label-sm text-label-sm text-on-surface-variant">
+                                    SYSTEM_DESIGN
+                                </span>
+<span class="bg-surface-container-highest px-3 py-1 rounded-DEFAULT font-label-sm text-label-sm text-on-surface-variant">
+                                    RUST
+                                </span>
+</div>
+<span class="font-code-snippet text-code-snippet text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                15 MIN READ
+                            </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors mt-4">
+                            Building a Resilient Micro-Gateway with Rust
+                        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                            A post-mortem on replacing a Node.js API gateway with a Rust-based solution, focusing on memory safety, concurrency models, and the resulting reduction in latency percentiles during peak load times.
+                        </p>
+</div>
+<div class="mt-8 flex items-center text-tertiary font-code-snippet text-code-snippet opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
+                        READ_FILE <span class="material-symbols-outlined ml-1 text-[18px]">arrow_forward</span>
+</div>
+</article>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest font-code-snippet text-code-snippet full-width py-section-padding border-t border-outline-variant/20 w-full mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto gap-gutter">
+<div class="font-headline-md text-headline-md text-primary text-center md:text-left mb-4 md:mb-0">
+                SYS.ENGINEER
+            </div>
+<div class="flex flex-wrap justify-center gap-6 mb-4 md:mb-0">
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-all duration-500 ease-in-out" href="#">GITHUB</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-all duration-500 ease-in-out" href="#">LINKEDIN</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-all duration-500 ease-in-out" href="#">STACKOVERFLOW</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-all duration-500 ease-in-out" href="#">CV_DL</a>
+</div>
+<div class="text-tertiary text-center md:text-right opacity-80">
+                ©2024 TERMINAL_VELOCITY.ENGINEER // STATUS: AVAILABLE_FOR_WORK
+            </div>
+</div>
+</footer>
+</body></html>

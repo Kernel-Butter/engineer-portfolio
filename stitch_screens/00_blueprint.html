@@ -1,0 +1,210 @@
+
+<style>
+  .bp-root { font-family: var(--font-sans); padding: 1.5rem 0; }
+  .bp-header { margin-bottom: 2rem; }
+  .bp-header h2 { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 4px; }
+  .bp-header p { font-size: 13px; color: var(--color-text-secondary); margin: 0; }
+  .section-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); background: var(--color-background-primary); margin-bottom: 12px; overflow: hidden; }
+  .section-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; user-select: none; }
+  .section-num { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); min-width: 20px; }
+  .section-name { font-size: 15px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+  .badge-purple { background: #EEEDFE; color: #3C3489; }
+  .badge-teal { background: #E1F5EE; color: #085041; }
+  .badge-coral { background: #FAECE7; color: #712B13; }
+  .badge-blue { background: #E6F1FB; color: #0C447C; }
+  .badge-amber { background: #FAEEDA; color: #633806; }
+  .chevron { font-size: 16px; color: var(--color-text-secondary); transition: transform 0.2s; }
+  .chevron.open { transform: rotate(180deg); }
+  .section-body { padding: 0 16px 16px 48px; display: none; border-top: 0.5px solid var(--color-border-tertiary); margin-top: 0; padding-top: 14px; }
+  .section-body.open { display: block; }
+  .meta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .meta-box { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; }
+  .meta-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .meta-val { font-size: 13px; color: var(--color-text-primary); line-height: 1.5; }
+  .fx-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .fx-chip { font-size: 11px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 3px 9px; color: var(--color-text-secondary); }
+  .client-signal { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; margin-top: 6px; }
+  .divider-label { font-size: 11px; color: var(--color-text-secondary); letter-spacing: 0.06em; margin: 20px 0 10px; text-transform: uppercase; }
+</style>
+
+<div class="bp-root">
+  <div class="bp-header">
+    <h2>Portfolio site — full section blueprint</h2>
+    <p>12 sections · expand each for purpose, client signal, message, and visual effects</p>
+  </div>
+
+  <div id="sections"></div>
+</div>
+
+<script>
+const data = [
+  {
+    num: "01",
+    name: "Preloader / Entry Experience",
+    tags: [["3D/WebGL",true,"purple"],["First impression",false,"teal"],["Brand hook",false,"coral"]],
+    purpose: "A cinematic entry sequence that runs before the main page appears. Could be a shader-based logo dissolve, particle burst, or morphing geometry. Sets the aesthetic standard instantly.",
+    message: "This developer operates at a different level. This is not a template.",
+    clientSignal: "Clients & recruiters judge within 3 seconds. A polished preloader signals attention to detail, performance awareness, and design taste — before a single word is read.",
+    effects: ["GLSL Shader","Particle system","GSAP timeline","Lottie / SVG morph","Progress counter"]
+  },
+  {
+    num: "02",
+    name: "Hero — Identity Statement",
+    tags: [["3D Scene",true,"purple"],["Brand anchor",false,"teal"],["AI-era framing",false,"amber"]],
+    purpose: "Full-viewport hero with your name, a sharp one-line positioning statement, and either a 3D model (character, abstract geometry, tech object) or a reactive shader background. Scroll hint arrow at bottom.",
+    message: "I am a frontend engineer who sells engineered experience — not just websites.",
+    clientSignal: "Replaces the generic 'I build things for the web'. The positioning line directly addresses what IT clients care about: speed, scale, AI-readiness, and visual polish.",
+    effects: ["Three.js / R3F scene","Fragment shader background","Mouse parallax","GSAP text reveal","Scroll-triggered morph"]
+  },
+  {
+    num: "03",
+    name: "Value Proposition / What I Build",
+    tags: [["Business case",false,"blue"],["Selling section",false,"coral"],["No tech jargon",false,"teal"]],
+    purpose: "Three to four service pillars in animated cards or a bento grid — not a resume section, a sales section. Example pillars: Pixel-perfect UI systems · Performance-first SPAs · AI-augmented workflows · Design-to-code delivery.",
+    message: "Here is exactly what problem I solve for you and how fast I solve it.",
+    clientSignal: "IT clients (startups, agencies, SaaS, e-commerce) arrive with a budget and a problem. They do not care about your framework — they care what outcome they get. This section maps your skill to their outcome.",
+    effects: ["Bento grid layout","CSS clip-path reveals","Hover 3D tilt (CSS perspective)","Count-up numbers (metrics)","Scroll stagger (GSAP)"]
+  },
+  {
+    num: "04",
+    name: "Work / Projects — Case Studies",
+    tags: [["Portfolio core",false,"purple"],["Proof of work",false,"teal"],["Closes deals",false,"coral"]],
+    purpose: "NOT a gallery of screenshots. Each project is a mini case study: problem → approach → result → live link. Presented as full-bleed horizontal scroll cards or a parallax grid with project morphing on hover.",
+    message: "I have shipped real things for real clients. Here is what changed after I built it.",
+    clientSignal: "Per research, 71% of hiring managers say portfolio quality directly influences decisions. They want business outcomes — conversion rate lifted, load time cut, product shipped — not just pretty UI.",
+    effects: ["Horizontal scroll with GSAP Draggable","Project preview morph (clip-path)","Image distortion on hover (shader)","Video autoplay on hover","Framer Motion page transitions"]
+  },
+  {
+    num: "05",
+    name: "Tech Stack — Skills Constellation",
+    tags: [["3D interactive",true,"purple"],["Recruiter filter",false,"blue"],["Not a list",false,"teal"]],
+    purpose: "Not a flat list of icons. Technologies rendered as orbiting 3D spheres, a tag cloud with physics, or a force-directed graph that the user can drag. Grouped by category: Core, Frameworks, Tooling, AI/Infra.",
+    message: "I am fluent in the exact tools your team uses right now.",
+    clientSignal: "In 2026, job posts specifically filter for React, TypeScript, Next.js, and AI tooling. Showing your stack in an interactive 3D space also proves your capability with Three.js / WebGL without saying it.",
+    effects: ["Three.js sphere tags","Physics (cannon-es / rapier-js)","Drag interaction","Category filter","Tooltip on hover"]
+  },
+  {
+    num: "06",
+    name: "AI-Augmented Workflow Section",
+    tags: [["Future signal",false,"amber"],["Differentiator",false,"coral"],["2025–2035 demand",false,"purple"]],
+    purpose: "A dedicated section showing how you ship faster using AI — Copilot, Cursor, v0, Claude Code, design-to-code pipelines, automated testing scaffolding. Could be a live terminal-style animation or a before/after timeline.",
+    message: "I deliver in days what used to take weeks. AI is part of my stack, not a threat to it.",
+    clientSignal: "The #1 pressure on IT clients right now is speed. Showing that you leverage AI tooling is not a vulnerability — it is your biggest sales argument. Clients paying for frontend want output velocity.",
+    effects: ["Typewriter terminal animation","Before/after timeline","Animated workflow diagram","Code diff animation","Counter: estimated hours saved"]
+  },
+  {
+    num: "07",
+    name: "Experience / Career Timeline",
+    tags: [["Trust builder",false,"teal"],["Narrative arc",false,"blue"],["Credibility",false,"gray"]],
+    purpose: "A scroll-driven vertical or horizontal timeline of your career, not a plain list. Each node animates in on scroll. Include companies, roles, key achievements. For Vienna / IoT background — include academic milestones too.",
+    message: "I have a track record. Here is the journey that made me this capable.",
+    clientSignal: "Real-world experience at a company (The White Boutique / Dubai / e-commerce) signals: delivered under commercial pressure, worked with a team, handled real production systems.",
+    effects: ["GSAP ScrollTrigger timeline","SVG path draw animation","Sticky side label","3D card flip on focus","Milestone counter"]
+  },
+  {
+    num: "08",
+    name: "Performance & Engineering Standards",
+    tags: [["Technical trust",false,"blue"],["SEO / CWV",false,"green"],["Enterprise signal",false,"teal"]],
+    purpose: "A live Lighthouse-style score display or animated metric dashboard showing your code quality standards: Core Web Vitals targets, accessibility compliance (WCAG 2.1+), TypeScript coverage, bundle size discipline, CI/CD pipeline awareness.",
+    message: "I do not just make it look good. I make it fast, accessible, and maintainable at scale.",
+    clientSignal: "CWV are a Google ranking factor. Accessibility is now legally mandatory in the EU (EAA, June 2025). Enterprise and SaaS clients require these. Showing standards explicitly closes the gap between junior and senior perception.",
+    effects: ["Animated gauge / radial progress","Live score counter","Grid of metric cards","Code snippet reveal","Lighthouse score mock"]
+  },
+  {
+    num: "09",
+    name: "Testimonials / Social Proof",
+    tags: [["Conversion",false,"coral"],["Trust close",false,"teal"],["Word of mouth",false,"amber"]],
+    purpose: "Client / colleague quotes presented as styled cards with avatar, name, role, company. Could have a slow infinite horizontal marquee or a 3D carousel. Real LinkedIn recommendation snippets work perfectly.",
+    message: "Other professionals have trusted me and were satisfied. You can too.",
+    clientSignal: "Reduces client risk. A freelancer with zero testimonials creates hesitation. Even 2–3 short, specific quotes about delivery speed, code quality, or communication shift the decision.",
+    effects: ["Infinite CSS marquee","3D card carousel (Three.js)","Avatar ring animation","Fade reveal on scroll","Magnetic hover on cards"]
+  },
+  {
+    num: "10",
+    name: "Writing / Thought Leadership",
+    tags: [["Authority",false,"purple"],["SEO magnet",false,"green"],["Long-term brand",false,"blue"]],
+    purpose: "A section linking to your articles, dev blog posts, or technical breakdowns — even 3 to 5 posts. Presented as editorial cards with reading time, tech tags, and a subtle hover effect. Could link to Dev.to, Hashnode, or a personal blog.",
+    message: "I understand this field deeply enough to teach it.",
+    clientSignal: "Thought leadership differentiates senior from mid-level. Recruiter research consistently shows that written content demonstrates judgment, communication, and expertise in a way a project list alone cannot.",
+    effects: ["Article card hover lift","Tag filter","Reading progress bar","Parallax article cover","Date morph animation"]
+  },
+  {
+    num: "11",
+    name: "Open Source / GitHub Pulse",
+    tags: [["Code credibility",false,"teal"],["Community",false,"green"],["Transparency",false,"gray"]],
+    purpose: "Live GitHub contribution graph rendered in a custom WebGL or canvas-based visualization — not the default green squares. Shows activity heatmap, starred repos, recent commits. Optional: 3D bar chart of commit history.",
+    message: "My work is transparent. I build in public. I contribute back.",
+    clientSignal: "Technical hiring managers and CTOs will check GitHub regardless. Making it a designed feature of the portfolio turns a background check into a selling point.",
+    effects: ["Custom canvas contribution graph","3D bar chart (Three.js)","Live GitHub API fetch","Animated bar grow","Commit count-up"]
+  },
+  {
+    num: "12",
+    name: "Contact — CTA Close",
+    tags: [["Conversion close",false,"coral"],["Friction-free",false,"teal"],["Final impression",false,"amber"]],
+    purpose: "The most important closing section. Not just a form — a clear call to action: 'Let's build something.' Contact form with EmailJS, direct email link, calendar booking (Cal.com), and social links. Could have a 3D earth/globe or animated noise shader background.",
+    message: "Hiring me is easy. Here is exactly how to start.",
+    clientSignal: "Every friction point in the contact flow loses clients. Calendar embed removes 3+ email round-trips. Clear CTAs ('Book a 30-min call' vs 'Contact me') convert at measurably higher rates.",
+    effects: ["3D globe (Three.js)","Noise shader BG","Magnetic button","Form field float labels","Submission confetti burst"]
+  }
+];
+
+function badge(text, isHighlight, color) {
+  return `<span class="badge badge-${color}">${isHighlight ? '✦ ' : ''}${text}</span>`;
+}
+
+function renderCard(item, i) {
+  const card = document.createElement('div');
+  card.className = 'section-card';
+
+  const head = document.createElement('div');
+  head.className = 'section-head';
+  head.setAttribute('role','button');
+  head.setAttribute('tabindex','0');
+
+  const badgeHTML = item.tags.map(t => badge(t[0], t[1], t[2])).join('');
+
+  head.innerHTML = `
+    <span class="section-num">${item.num}</span>
+    <span class="section-name">${item.name}</span>
+    <div class="badge-row">${badgeHTML}</div>
+    <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+  `;
+
+  const body = document.createElement('div');
+  body.className = 'section-body';
+  body.innerHTML = `
+    <div class="meta-row">
+      <div class="meta-box">
+        <div class="meta-label">Purpose</div>
+        <div class="meta-val">${item.purpose}</div>
+      </div>
+      <div class="meta-box">
+        <div class="meta-label">Message to visitor</div>
+        <div class="meta-val" style="font-style:italic;color:var(--color-text-primary)">"${item.message}"</div>
+      </div>
+    </div>
+    <div class="meta-box" style="margin-bottom:10px">
+      <div class="meta-label">Why IT clients need this</div>
+      <div class="meta-val">${item.clientSignal}</div>
+    </div>
+    <div class="divider-label">Visual effects to use</div>
+    <div class="fx-row">${item.effects.map(e => `<span class="fx-chip">${e}</span>`).join('')}</div>
+  `;
+
+  head.addEventListener('click', () => {
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    head.querySelector('.chevron').classList.toggle('open', !isOpen);
+  });
+  head.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') head.click(); });
+
+  card.appendChild(head);
+  card.appendChild(body);
+  return card;
+}
+
+const container = document.getElementById('sections');
+data.forEach((item, i) => container.appendChild(renderCard(item, i)));
+</script>

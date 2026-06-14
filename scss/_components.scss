@@ -1,0 +1,85 @@
+// ─── Shared UI components used across multiple sections ──────
+
+// Glassmorphism bento card
+.bento-card {
+  background: rgba(23, 23, 23, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(192, 193, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Gradient border on hover via mask trick
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, rgba(68,226,205,0.1), rgba(192,193,255,0.1)) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 32px 64px -16px rgba(192, 193, 255, 0.15);
+    &::before { opacity: 1; }
+  }
+}
+
+// Glass panel (ai-workflow, writing, standards)
+.glass-panel {
+  background: rgba(23, 23, 23, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(192, 193, 255, 0.1);
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(73,75,214,0.15), rgba(68,226,205,0.15));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  &:hover {
+    border-color: rgba(192, 193, 255, 0.3);
+    box-shadow: 0 0 32px rgba(192, 193, 255, 0.15);
+  }
+}
+
+// Glass card (career timeline)
+.glass-card {
+  background: rgba(23, 23, 23, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 20px rgba(98, 250, 227, 0.02);
+  transition: all 0.4s ease;
+
+  &:hover {
+    border-color: rgba(98, 250, 227, 0.2);
+    box-shadow: 0 0 32px rgba(192,193,255,0.05), inset 0 0 20px rgba(98,250,227,0.05);
+    transform: translateY(-2px);
+  }
+}
+
+// Tech chip (tech stack section)
+.tech-chip {
+  background-color: #171717;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: all 0.2s ease;
+  &:hover { border-color: #44e2cd; color: #44e2cd; }
+}

@@ -1,0 +1,8 @@
+// ─── Section 01 — Hero ───────────────────────────────────────
+@keyframes scroll-hint {
+  0%   { transform: translateY(0);    opacity: 0.5; }
+  50%  { transform: translateY(10px); opacity: 1;   }
+  100% { transform: translateY(0);    opacity: 0.5; }
+}
+
+.animate-scroll { animation: scroll-hint 2s infinite ease-in-out; }

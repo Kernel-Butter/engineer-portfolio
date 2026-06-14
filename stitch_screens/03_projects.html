@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Featured Projects - Section 04</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#131313",
+                      "primary": "#c0c1ff",
+                      "on-tertiary": "#003824",
+                      "surface-variant": "#353534",
+                      "inverse-on-surface": "#313030",
+                      "secondary": "#44e2cd",
+                      "on-primary": "#1000a9",
+                      "on-secondary-container": "#004d44",
+                      "secondary-fixed-dim": "#3cddc7",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "surface-container": "#201f1f",
+                      "inverse-primary": "#494bd6",
+                      "secondary-container": "#03c6b2",
+                      "on-background": "#e5e2e1",
+                      "on-tertiary-container": "#000703",
+                      "inverse-surface": "#e5e2e1",
+                      "on-error": "#690005",
+                      "surface-container-highest": "#353534",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "on-secondary-fixed-variant": "#005047",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "on-secondary-fixed": "#00201c",
+                      "surface-container-low": "#1c1b1b",
+                      "background": "#131313",
+                      "error-container": "#93000a",
+                      "tertiary": "#4edea3",
+                      "surface": "#131313",
+                      "tertiary-fixed": "#6ffbbe",
+                      "surface-tint": "#c0c1ff",
+                      "error": "#ffb4ab",
+                      "primary-container": "#8083ff",
+                      "outline": "#908fa0",
+                      "on-primary-fixed-variant": "#2f2ebe",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-primary-fixed": "#07006c",
+                      "on-surface": "#e5e2e1",
+                      "on-surface-variant": "#c7c4d7",
+                      "tertiary-container": "#00885d",
+                      "primary-fixed": "#e1e0ff",
+                      "on-secondary": "#003731",
+                      "surface-container-high": "#2a2a2a",
+                      "outline-variant": "#464554",
+                      "on-primary-container": "#0d0096",
+                      "on-tertiary-fixed": "#002113",
+                      "secondary-fixed": "#62fae3",
+                      "on-error-container": "#ffdad6",
+                      "surface-bright": "#3a3939"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "section-padding": "120px",
+                      "bento-gap": "24px",
+                      "margin-desktop": "64px",
+                      "margin-mobile": "20px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["JetBrains Mono"],
+                      "code-snippet": ["JetBrains Mono"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["JetBrains Mono"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["JetBrains Mono"],
+                      "headline-md": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                      "code-snippet": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                      "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                      "headline-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                      "label-sm": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                      "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0a0a0a;
+            color: #e5e2e1;
+        }
+        
+        .bento-card {
+            background: rgba(23, 23, 23, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(192, 193, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid transparent;
+            background: linear-gradient(135deg, rgba(73, 75, 214, 0.15), rgba(68, 226, 205, 0.15)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        .bento-card:hover {
+            border-color: rgba(192, 193, 255, 0.3);
+            box-shadow: 0 0 32px rgba(192, 193, 255, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .chip {
+            background-color: #171717;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .nav-active {
+            border-bottom: 2px solid theme('colors.primary');
+            padding-bottom: 4px;
+        }
+
+        .cyber-grid {
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen cyber-grid">
+<!-- TopNavBar -->
+<nav class="bg-surface-dim/60 font-headline-md text-headline-md docked full-width top-0 sticky backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(192,193,255,0.05)] z-50">
+<div class="flex justify-between items-center px-margin-desktop h-20 w-full max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-bold tracking-tighter text-primary">
+                SYS.ENGINEER
+            </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">STK</a>
+<a class="text-primary nav-active font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">PRJ</a>
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">EXP</a>
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">MET</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-inverse-primary text-on-primary font-label-sm text-label-sm px-6 py-2 rounded uppercase tracking-widest hover:shadow-[0_0_15px_rgba(73,75,214,0.5)] transition-all">
+                    HIRE_ME
+                </button>
+<div class="hidden md:flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined hover:text-primary cursor-pointer transition-colors">terminal</span>
+<span class="material-symbols-outlined hover:text-primary cursor-pointer transition-colors">code</span>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-padding">
+<header class="mb-16">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">
+<span class="text-secondary">//</span> Featured Projects
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                A selection of high-performance architectural solutions and technical case studies. Focusing on rendering optimization, edge infrastructure, and complex data parsing.
+            </p>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+<!-- Project 1: Quantum Dashboard (Span 8) -->
+<article class="bento-card rounded-xl md:col-span-8 flex flex-col p-8 group">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Quantum Dashboard</h2>
+<div class="flex gap-2">
+<span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface rounded flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> Live
+                            </span>
+<span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">WebGL</span>
+<span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">Data Viz</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-3xl">query_stats</span>
+</div>
+<div class="relative w-full h-64 bg-[#050505] rounded-lg mb-6 overflow-hidden border border-white/5">
+<!-- Placeholder for generic tech abstraction -->
+<img alt="Abstract data visualization" class="w-full h-full object-cover opacity-50 mix-blend-screen" data-alt="A highly complex and abstract digital data visualization dashboard in a dark technical environment. Glowing Electric Indigo and Neon Teal nodes connected by fine laser-like lines mapped on a 3D isometric grid. The lighting is moody, high-contrast, and cinematic, emphasizing technical precision and massive data throughput. The overall aesthetic is cyber-industrialism and modern minimal UI design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUF9yIaJZckkfzGef6FaEltZ0HAVMNpLA3Q_N6fIqcv5N3mnav03ZJdlM6vHs8PqR-0fsGruQQCr0UIXtJmLNdg9CtgUDvMc2GrL3B5oqYLXbZFWb47TVldoM993s0MRSVjj5czFp39BeEnhw84Z4s8vZ7dK8g0gglAoVkPmr8Qqx_FZrHtvLmmx8m5bc8bJwQ5panNX4v-1_MNXg0jTeYz6PPxA6cb7K4XXE6Fe6RTaLlykX0x0cM2WQbQ473W0KFN4-OYqw4orFo"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-auto">
+<div>
+<h3 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-2">Problem</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Severe rendering lag during real-time ingestion of complex node graphs.</p>
+</div>
+<div>
+<h3 class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mb-2">Approach</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Implemented custom WebGL shaders to offload matrix calculations to GPU.</p>
+</div>
+<div>
+<h3 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2">Result</h3>
+<p class="font-headline-md text-headline-md text-on-surface font-bold">60fps <span class="font-body-md text-body-md text-on-surface-variant font-normal">@ 100k nodes</span></p>
+</div>
+</div>
+</article>
+<!-- Project 2: Aurelius Commerce (Span 4) -->
+<article class="bento-card rounded-xl md:col-span-4 flex flex-col p-8 group">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Aurelius Commerce</h2>
+<div class="flex gap-2 flex-wrap">
+<span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">Next.js</span>
+<span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">Edge</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-3xl">shopping_cart</span>
+</div>
+<div class="flex-grow flex flex-col justify-center gap-6 py-4">
+<div>
+<h3 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-2">Problem</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Poor SEO performance and slow TTFB on a high-end headless storefront.</p>
+</div>
+<div>
+<h3 class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mb-2">Approach</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Re-architected routing using Next.js App Router and globally distributed Edge caching.</p>
+</div>
+</div>
+<div class="mt-auto pt-6 border-t border-outline-variant/20">
+<h3 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2">Lighthouse Score</h3>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold text-secondary">98/100</span>
+</div>
+</div>
+</article>
+<!-- Project 3: Synthetix AI (Span 12) -->
+<article class="bento-card rounded-xl md:col-span-12 flex flex-col md:flex-row p-8 group gap-8">
+<div class="w-full md:w-1/3 flex flex-col">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Synthetix AI</h2>
+<div class="flex gap-2">
+<span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">AST</span>
+<span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">Parsers</span>
+</div>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">A design-to-code pipeline engine automating UI handoff.</p>
+<div class="mt-auto flex flex-col gap-4">
+<div>
+<h3 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-1">Problem</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Friction in manual UI implementation.</p>
+</div>
+<div>
+<h3 class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mb-1">Approach</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Built custom AST parsers to translate Figma JSON to semantic React components.</p>
+</div>
+</div>
+</div>
+<div class="w-full md:w-2/3 relative rounded-lg overflow-hidden border border-white/5 bg-[#050505] min-h-[300px] flex items-center justify-center p-8">
+<!-- Abstract representation of code/parsing -->
+<div class="font-code-snippet text-code-snippet text-on-surface-variant/50 w-full overflow-hidden whitespace-pre">
+<span class="text-secondary">const</span> <span class="text-primary">parser</span> = new <span class="text-tertiary">ASTNodeParser</span>({
+  target: <span class="text-secondary">'react-tailwind'</span>,
+  strictMode: <span class="text-tertiary">true</span>
+});
+
+<span class="text-secondary">function</span> <span class="text-primary">transformNode</span>(node) {
+  <span class="text-secondary">if</span> (node.type === <span class="text-secondary">'FRAME'</span>) {
+    <span class="text-secondary">return</span> {
+      element: <span class="text-secondary">'div'</span>,
+      className: <span class="text-primary">generateTailwind</span>(node.style)
+    };
+  }
+}
+// Result: 40% faster shipping.
+                    </div>
+<div class="absolute bottom-6 right-6 bg-surface-dim/90 backdrop-blur px-6 py-4 rounded border border-primary/20">
+<h3 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-1">Impact</h3>
+<p class="font-headline-md text-headline-md text-on-surface">40% Faster Shipping</p>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest font-code-snippet text-code-snippet full-width py-section-padding border-t border-outline-variant/20 mt-24">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop w-full max-w-container-max mx-auto gap-gutter">
+<div class="text-on-surface-variant">
+                ©2024 TERMINAL_VELOCITY.ENGINEER // STATUS: AVAILABLE_FOR_WORK
+            </div>
+<div class="flex gap-6">
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-all duration-500 ease-in-out" href="#">GITHUB</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-all duration-500 ease-in-out" href="#">LINKEDIN</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-all duration-500 ease-in-out" href="#">STACKOVERFLOW</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-all duration-500 ease-in-out" href="#">CV_DL</a>
+</div>
+</div>
+</footer>
+</body></html>

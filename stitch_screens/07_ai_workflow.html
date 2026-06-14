@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI-Augmented Workflow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-container": "#8083ff",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "secondary-fixed": "#62fae3",
+                      "outline": "#908fa0",
+                      "primary": "#c0c1ff",
+                      "on-tertiary-fixed": "#002113",
+                      "surface-tint": "#c0c1ff",
+                      "surface-dim": "#131313",
+                      "on-primary": "#1000a9",
+                      "secondary": "#44e2cd",
+                      "on-tertiary": "#003824",
+                      "surface": "#131313",
+                      "primary-fixed": "#e1e0ff",
+                      "surface-variant": "#353534",
+                      "secondary-fixed-dim": "#3cddc7",
+                      "on-secondary-container": "#004d44",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "on-secondary": "#003731",
+                      "on-error-container": "#ffdad6",
+                      "outline-variant": "#464554",
+                      "error-container": "#93000a",
+                      "tertiary": "#4edea3",
+                      "surface-bright": "#3a3939",
+                      "secondary-container": "#03c6b2",
+                      "inverse-surface": "#e5e2e1",
+                      "surface-container-lowest": "#0e0e0e",
+                      "surface-container": "#201f1f",
+                      "on-surface": "#e5e2e1",
+                      "on-secondary-fixed": "#00201c",
+                      "surface-container-highest": "#353534",
+                      "on-surface-variant": "#c7c4d7",
+                      "on-error": "#690005",
+                      "inverse-primary": "#494bd6",
+                      "tertiary-container": "#00885d",
+                      "on-background": "#e5e2e1",
+                      "surface-container-low": "#1c1b1b",
+                      "on-primary-fixed": "#07006c",
+                      "background": "#131313",
+                      "on-secondary-fixed-variant": "#005047",
+                      "inverse-on-surface": "#313030",
+                      "error": "#ffb4ab",
+                      "on-tertiary-container": "#000703",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "tertiary-fixed": "#6ffbbe",
+                      "on-primary-container": "#0d0096",
+                      "surface-container-high": "#2a2a2a",
+                      "on-primary-fixed-variant": "#2f2ebe"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "section-padding": "120px",
+                      "gutter": "24px",
+                      "margin-mobile": "20px",
+                      "container-max": "1280px",
+                      "bento-gap": "16px",
+                      "margin-desktop": "64px"
+              },
+              "fontFamily": {
+                      "code-snippet": ["JetBrains Mono"],
+                      "label-sm": ["JetBrains Mono"],
+                      "headline-lg-mobile": ["JetBrains Mono"],
+                      "body-md": ["Inter"],
+                      "headline-md": ["JetBrains Mono"],
+                      "headline-lg": ["JetBrains Mono"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "code-snippet": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                      "label-sm": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                      "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                      "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                      "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                      "headline-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0a0a0a;
+            color: #e5e2e1;
+        }
+        
+        .glass-panel {
+            background: rgba(23, 23, 23, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(192, 193, 255, 0.1);
+            position: relative;
+        }
+        
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(73, 75, 214, 0.15), rgba(68, 226, 205, 0.15));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(192, 193, 255, 0.3);
+            box-shadow: 0 0 32px rgba(192, 193, 255, 0.15);
+        }
+
+        .typing-effect {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #4edea3;
+            animation: typing 3s steps(40, end), blink-caret .75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #4edea3; }
+        }
+
+        .diff-add { color: #4edea3; }
+        .diff-remove { color: #ffb4ab; text-decoration: line-through; opacity: 0.5; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopNavBar -->
+<nav class="bg-surface-dim/60 font-headline-md text-headline-md docked full-width top-0 sticky backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(192,193,255,0.05)] z-50 transition-all duration-300">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-20 w-full max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-bold tracking-tighter text-primary">SYS.ENGINEER</div>
+<div class="hidden md:flex gap-8">
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">STK</a>
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">PRJ</a>
+<a class="text-primary border-b-2 border-primary pb-1 hover:text-secondary transition-colors duration-300" href="#">EXP</a>
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">MET</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden md:flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded font-code-snippet text-code-snippet hover:shadow-[0_0_15px_rgba(192,193,255,0.5)] transition-shadow duration-300">
+                    HIRE_ME
+                </button>
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-300">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-300">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center py-section-padding px-margin-mobile md:px-margin-desktop relative overflow-hidden">
+<!-- Background Decor -->
+<div class="absolute inset-0 z-0 pointer-events-none opacity-20" style="background-image: radial-gradient(circle at 50% 50%, rgba(192, 193, 255, 0.1) 0%, transparent 50%);"></div>
+<div class="w-full max-w-container-max z-10 flex flex-col gap-16">
+<!-- Section Header -->
+<div class="text-center">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary mb-4">AI-Augmented Workflow</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Velocity redefined. Leveraging LLMs to bridge the gap between architecture and execution, achieving sub-linear delivery times.</p>
+</div>
+<!-- Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+<!-- Terminal Feature (8 cols) -->
+<div class="glass-panel rounded-xl col-span-1 md:col-span-8 p-6 flex flex-col gap-4 overflow-hidden relative">
+<div class="flex items-center justify-between border-b border-outline-variant/30 pb-2 mb-2">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-[#ff5f56]"></span>
+<span class="w-3 h-3 rounded-full bg-[#ffbd2e]"></span>
+<span class="w-3 h-3 rounded-full bg-[#27c93f]"></span>
+</div>
+<span class="font-code-snippet text-code-snippet text-on-surface-variant">terminal@sys-engineer:~</span>
+</div>
+<div class="font-code-snippet text-code-snippet flex flex-col gap-2">
+<div class="flex gap-2 text-tertiary">
+<span>$</span>
+<span class="typing-effect">execute task build_ui_component --ai-assist</span>
+</div>
+<div class="text-on-surface-variant mt-2">
+                            &gt; Analyzing context...<br/>
+                            &gt; Generating structural shell...<br/>
+                            &gt; Applying design tokens...
+                        </div>
+<div class="mt-4 p-4 bg-surface-dim rounded border border-outline-variant/20 overflow-x-auto">
+<pre><code class="diff-remove">- &lt;div class="container"&gt;Old Layout&lt;/div&gt;</code></pre>
+<pre><code class="diff-add">+ &lt;div class="glass-panel flex gap-4 w-full"&gt;AI Optimized Structure&lt;/div&gt;</code></pre>
+<pre><code class="diff-add">+ &lt;style_injected&gt;Tailwind Compiled&lt;/style_injected&gt;</code></pre>
+</div>
+<div class="text-secondary mt-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+                            Task completed in 1.2s.
+                        </div>
+</div>
+</div>
+<!-- Metrics Feature (4 cols) -->
+<div class="glass-panel rounded-xl col-span-1 md:col-span-4 p-6 flex flex-col justify-center items-center text-center gap-6">
+<div class="font-headline-md text-headline-md text-secondary border border-secondary/20 rounded-full px-6 py-3 bg-secondary/5">
+                        10x Velocity
+                    </div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Delivery Accelerated</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Automated boilerplate generation, style mapping, and logic scaffolding allow focus on deep architectural problems.</p>
+</div>
+<div class="w-full h-1 bg-surface-dim rounded-full overflow-hidden mt-4">
+<div class="h-full bg-tertiary w-[90%] rounded-full shadow-[0_0_10px_#4edea3]"></div>
+</div>
+<span class="font-code-snippet text-label-sm text-tertiary">90% Boilerplate Reduction</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest font-code-snippet text-code-snippet full-width py-section-padding border-t border-outline-variant/20 z-10 transition-all duration-500 ease-in-out">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto gap-gutter">
+<div class="text-on-surface-variant">
+                ©2024 TERMINAL_VELOCITY.ENGINEER // STATUS: AVAILABLE_FOR_WORK
+            </div>
+<div class="flex gap-6">
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors duration-300" href="#">GITHUB</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors duration-300" href="#">LINKEDIN</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors duration-300" href="#">STACKOVERFLOW</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors duration-300" href="#">CV_DL</a>
+</div>
+</div>
+</footer>
+</body></html>

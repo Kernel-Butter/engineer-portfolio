@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Open Source / GitHub Pulse</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-surface-variant": "#c7c4d7",
+                        "primary-fixed": "#e1e0ff",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "on-surface": "#e5e2e1",
+                        "on-tertiary": "#003824",
+                        "on-primary": "#1000a9",
+                        "primary-container": "#8083ff",
+                        "background": "#131313",
+                        "surface-container-highest": "#353534",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container-high": "#2a2a2a",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "surface-container": "#201f1f",
+                        "error": "#ffb4ab",
+                        "inverse-primary": "#494bd6",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-secondary": "#003731",
+                        "on-background": "#e5e2e1",
+                        "on-secondary-fixed": "#00201c",
+                        "surface-tint": "#c0c1ff",
+                        "surface-dim": "#131313",
+                        "secondary-fixed-dim": "#3cddc7",
+                        "secondary-fixed": "#62fae3",
+                        "on-secondary-fixed-variant": "#005047",
+                        "inverse-on-surface": "#313030",
+                        "surface": "#131313",
+                        "secondary": "#44e2cd",
+                        "primary": "#c0c1ff",
+                        "on-primary-container": "#0d0096",
+                        "tertiary-container": "#00885d",
+                        "outline-variant": "#464554",
+                        "surface-variant": "#353534",
+                        "tertiary": "#4edea3",
+                        "secondary-container": "#03c6b2",
+                        "surface-bright": "#3a3939",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "tertiary-fixed": "#6ffbbe",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-tertiary-container": "#000703",
+                        "on-primary-fixed": "#07006c",
+                        "on-secondary-container": "#004d44",
+                        "outline": "#908fa0",
+                        "on-tertiary-fixed": "#002113",
+                        "error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "gutter": "24px",
+                        "section-padding": "120px",
+                        "container-max": "1280px",
+                        "bento-gap": "16px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["JetBrains Mono"],
+                        "code-snippet": ["JetBrains Mono"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["JetBrains Mono"],
+                        "headline-md": ["JetBrains Mono"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "code-snippet": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .grid-pattern {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        
+        .bento-card {
+            background: rgba(23, 23, 23, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(192, 193, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(to bottom right, rgba(99, 102, 241, 0.2), rgba(68, 226, 205, 0.05));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        
+        .bento-card:hover {
+            border-color: rgba(192, 193, 255, 0.3);
+            box-shadow: 0 0 32px rgba(192, 193, 255, 0.15);
+        }
+
+        .pulse-indicator {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+
+        .voxel {
+            transition: all 0.2s ease;
+        }
+        .voxel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(192, 193, 255, 0.4);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen grid-pattern">
+<!-- TopNavBar (Shared Component) -->
+<nav class="bg-surface-dim/60 font-headline-md text-headline-md docked full-width top-0 sticky backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(192,193,255,0.05)] flex justify-between items-center px-margin-desktop h-20 w-full max-w-container-max mx-auto z-50">
+<div class="font-headline-md text-headline-md font-bold tracking-tighter text-primary">
+            SYS.ENGINEER
+        </div>
+<div class="hidden md:flex gap-gutter">
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">STK</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">PRJ</a>
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">EXP</a>
+<a class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300" href="#">MET</a>
+</div>
+<div class="flex gap-4 items-center">
+<button class="bg-primary text-on-primary px-4 py-2 rounded font-code-snippet text-code-snippet hover:shadow-[0_0_15px_rgba(192,193,255,0.5)] transition-all">HIRE_ME</button>
+<div class="flex gap-2 text-primary">
+<span class="material-symbols-outlined hover:text-secondary cursor-pointer transition-colors" data-icon="terminal">terminal</span>
+<span class="material-symbols-outlined hover:text-secondary cursor-pointer transition-colors" data-icon="code">code</span>
+</div>
+</div>
+</nav>
+<main class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-padding flex flex-col gap-bento-gap">
+<!-- Section Header -->
+<header class="mb-8">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-2 h-2 rounded-full bg-primary pulse-indicator"></div>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Status: Actively Contributing</span>
+</div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background">Open Source Pulse</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-4 max-w-2xl">
+                Continuous integration into the global engineering grid. Tracking commits, merges, and system architecture optimizations.
+            </p>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+<!-- Heatmap Visualization Card -->
+<div class="bento-card rounded-xl p-8 md:col-span-8 flex flex-col justify-between min-h-[400px]">
+<div class="flex justify-between items-start mb-6">
+<h2 class="font-headline-md text-headline-md text-primary">Contribution Grid</h2>
+<span class="material-symbols-outlined text-outline-variant" data-icon="grid_on">grid_on</span>
+</div>
+<!-- Pseudo-3D Voxel Grid -->
+<div class="flex-grow flex items-center justify-center relative">
+<!-- Background aesthetic elements -->
+<div class="absolute inset-0 border border-outline-variant/10 rounded pointer-events-none"></div>
+<div class="absolute top-0 right-0 p-2 font-code-snippet text-code-snippet text-outline-variant/50 text-[10px]">T-MINUS 365</div>
+<div class="grid grid-cols-[repeat(52,1fr)] gap-[2px] w-full max-w-[800px] opacity-80" id="heatmap-container">
+<!-- Voxel cells will be injected via JS -->
+</div>
+</div>
+<div class="flex justify-between items-center mt-6 font-code-snippet text-code-snippet text-on-surface-variant text-xs">
+<span>JAN 01</span>
+<div class="flex items-center gap-2">
+<span>Less</span>
+<div class="flex gap-1">
+<div class="w-3 h-3 rounded-[2px] bg-surface-container"></div>
+<div class="w-3 h-3 rounded-[2px] bg-primary/20"></div>
+<div class="w-3 h-3 rounded-[2px] bg-primary/40"></div>
+<div class="w-3 h-3 rounded-[2px] bg-primary/70"></div>
+<div class="w-3 h-3 rounded-[2px] bg-primary"></div>
+</div>
+<span>More</span>
+</div>
+<span>DEC 31</span>
+</div>
+</div>
+<!-- Metrics Card -->
+<div class="bento-card rounded-xl p-8 md:col-span-4 flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md text-secondary">System Metrics</h2>
+<div class="flex flex-col gap-4">
+<div class="border-b border-outline-variant/20 pb-4">
+<span class="font-label-sm text-label-sm text-on-surface-variant block mb-1">TOTAL_COMMITS</span>
+<div class="font-headline-lg-mobile text-headline-lg-mobile text-on-background">2,481</div>
+</div>
+<div class="border-b border-outline-variant/20 pb-4">
+<span class="font-label-sm text-label-sm text-on-surface-variant block mb-1">PR_MERGED</span>
+<div class="font-headline-lg-mobile text-headline-lg-mobile text-on-background">142</div>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant block mb-1">STARS_EARNED</span>
+<div class="font-headline-lg-mobile text-headline-lg-mobile text-primary">8.5k</div>
+</div>
+</div>
+</div>
+<!-- Featured Repositories -->
+<div class="bento-card rounded-xl p-8 md:col-span-12">
+<div class="flex justify-between items-center mb-6 border-b border-outline-variant/20 pb-4">
+<h2 class="font-headline-md text-headline-md text-on-background">Featured Nodes</h2>
+<button class="font-code-snippet text-code-snippet text-secondary hover:text-primary transition-colors flex items-center gap-2">
+                        VIEW_ALL <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Repo 1 -->
+<div class="group border border-outline-variant/20 rounded-lg p-6 bg-surface-container-lowest hover:border-primary/50 transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-code-snippet text-code-snippet font-bold text-on-background group-hover:text-primary transition-colors">core-engine-rs</h3>
+<span class="material-symbols-outlined text-outline-variant" data-icon="terminal">terminal</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mb-6 h-12 overflow-hidden">
+                            High-performance memory management and execution core written in safe Rust.
+                        </p>
+<div class="flex justify-between items-center">
+<div class="flex gap-2">
+<span class="px-2 py-1 rounded bg-[#171717] font-code-snippet text-[10px] text-tertiary flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-tertiary"></div>Rust</span>
+</div>
+<div class="flex gap-3 font-code-snippet text-code-snippet text-xs text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]" data-icon="star">star</span> 1.2k</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]" data-icon="fork_right">fork_right</span> 84</span>
+</div>
+</div>
+</div>
+<!-- Repo 2 -->
+<div class="group border border-outline-variant/20 rounded-lg p-6 bg-surface-container-lowest hover:border-secondary/50 transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-code-snippet text-code-snippet font-bold text-on-background group-hover:text-secondary transition-colors">webgl-shader-lab</h3>
+<span class="material-symbols-outlined text-outline-variant" data-icon="terminal">terminal</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mb-6 h-12 overflow-hidden">
+                            Collection of optimized GLSL shaders for data visualization and UI components.
+                        </p>
+<div class="flex justify-between items-center">
+<div class="flex gap-2">
+<span class="px-2 py-1 rounded bg-[#171717] font-code-snippet text-[10px] text-secondary flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>WebGL</span>
+</div>
+<div class="flex gap-3 font-code-snippet text-code-snippet text-xs text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]" data-icon="star">star</span> 3.4k</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]" data-icon="fork_right">fork_right</span> 210</span>
+</div>
+</div>
+</div>
+<!-- Repo 3 -->
+<div class="group border border-outline-variant/20 rounded-lg p-6 bg-surface-container-lowest hover:border-primary/50 transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-code-snippet text-code-snippet font-bold text-on-background group-hover:text-primary transition-colors">ts-neural-net</h3>
+<span class="material-symbols-outlined text-outline-variant" data-icon="terminal">terminal</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mb-6 h-12 overflow-hidden">
+                            Lightweight neural network implementation strictly typed for modern web environments.
+                        </p>
+<div class="flex justify-between items-center">
+<div class="flex gap-2">
+<span class="px-2 py-1 rounded bg-[#171717] font-code-snippet text-[10px] text-primary flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-primary"></div>TypeScript</span>
+</div>
+<div class="flex gap-3 font-code-snippet text-code-snippet text-xs text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]" data-icon="star">star</span> 890</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]" data-icon="fork_right">fork_right</span> 42</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-surface-container-lowest text-tertiary font-code-snippet text-code-snippet full-width py-section-padding border-t border-outline-variant/20 transition-all duration-500 ease-in-out flex flex-col md:flex-row justify-between items-center px-margin-desktop w-full max-w-container-max mx-auto gap-gutter">
+<div class="font-headline-md text-headline-md text-primary">
+            TERMINAL_VELOCITY.ENGINEER
+        </div>
+<div class="text-on-surface-variant">
+            ©2024 TERMINAL_VELOCITY.ENGINEER // STATUS: AVAILABLE_FOR_WORK
+        </div>
+<div class="flex gap-4">
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors" href="#">GITHUB</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors" href="#">LINKEDIN</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors" href="#">STACKOVERFLOW</a>
+<a class="text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors" href="#">CV_DL</a>
+</div>
+</footer>
+<script>
+        // Generate pseudo-random heatmap data to look like a realistic contribution graph
+        document.addEventListener("DOMContentLoaded", () => {
+            const container = document.getElementById('heatmap-container');
+            const weeks = 52;
+            const days = 7;
+            
+            // Colors from theme
+            const colors = [
+                'bg-surface-container', // 0
+                'bg-primary/20',        // 1
+                'bg-primary/40',        // 2
+                'bg-primary/70',        // 3
+                'bg-primary'            // 4
+            ];
+
+            for (let w = 0; w < weeks; w++) {
+                const col = document.createElement('div');
+                col.className = 'flex flex-col gap-[2px]';
+                
+                for (let d = 0; d < days; d++) {
+                    const cell = document.createElement('div');
+                    
+                    // Logic to create a "pulsing/clustered" look rather than purely random
+                    let intensity = 0;
+                    const r = Math.random();
+                    
+                    // Create some high activity clusters
+                    if (w > 10 && w < 15 || w > 30 && w < 40) {
+                        intensity = r > 0.3 ? Math.floor(Math.random() * 3) + 2 : Math.floor(Math.random() * 2);
+                    } else {
+                        intensity = r > 0.7 ? Math.floor(Math.random() * 4) + 1 : 0;
+                    }
+
+                    cell.className = `w-full aspect-square rounded-[2px] voxel ${colors[intensity]}`;
+                    
+                    // Add slight glow to highest intensity
+                    if (intensity === 4) {
+                        cell.style.boxShadow = '0 0 8px rgba(192, 193, 255, 0.4)';
+                    }
+
+                    col.appendChild(cell);
+                }
+                container.appendChild(col);
+            }
+        });
+    </script>
+</body></html>
