@@ -1,0 +1,102 @@
+<section id="ai-workflow" class="py-section-padding px-margin-mobile md:px-margin-desktop relative overflow-hidden">
+
+  <!-- Background radial glow -->
+  <div class="absolute inset-0 z-0 pointer-events-none opacity-20"
+       style="background-image:radial-gradient(circle at 50% 50%, rgba(192,193,255,0.1) 0%, transparent 50%)"></div>
+
+  <div class="w-full max-w-container-max mx-auto z-10 relative flex flex-col gap-16">
+
+    <!-- Header -->
+    <div class="ai-header text-center">
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+        <span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest">// LLM_INTEGRATION</span>
+      </div>
+      <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">
+        AI-Augmented Workflow
+      </h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+        Velocity redefined. Leveraging LLMs to bridge the gap between architecture and execution, achieving sub-linear delivery times.
+      </p>
+    </div>
+
+    <!-- Bento grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+
+      <!-- Terminal — 8 cols -->
+      <div class="ai-card glass-panel rounded-xl col-span-1 md:col-span-8 p-6 flex flex-col gap-4 overflow-hidden">
+
+        <!-- Window chrome -->
+        <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3 mb-1">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-[#ff5f56]"></span>
+            <span class="w-3 h-3 rounded-full bg-[#ffbd2e]"></span>
+            <span class="w-3 h-3 rounded-full bg-[#27c93f]"></span>
+          </div>
+          <span class="font-code-snippet text-code-snippet text-on-surface-variant">terminal@sys-engineer:~</span>
+        </div>
+
+        <!-- Terminal body -->
+        <div class="font-code-snippet text-code-snippet flex flex-col gap-2">
+          <div class="flex gap-2 text-tertiary">
+            <span>$</span>
+            <span class="ai-typing">execute task build_ui_component --ai-assist</span>
+          </div>
+
+          <div class="text-on-surface-variant mt-2 ai-output opacity-0">
+            &gt; Analyzing context...<br />
+            &gt; Generating structural shell...<br />
+            &gt; Applying design tokens...
+          </div>
+
+          <div class="ai-diff mt-4 p-4 bg-surface-dim rounded border border-outline-variant/20 overflow-x-auto opacity-0">
+            <pre><code class="diff-remove">- &lt;div class="container"&gt;Old Layout&lt;/div&gt;</code></pre>
+            <pre><code class="diff-add">+ &lt;div class="glass-panel flex gap-4 w-full"&gt;AI Optimized Structure&lt;/div&gt;</code></pre>
+            <pre><code class="diff-add">+ &lt;style_injected&gt;Tailwind Compiled&lt;/style_injected&gt;</code></pre>
+          </div>
+
+          <div class="ai-success text-secondary mt-2 flex items-center gap-2 opacity-0">
+            <span class="material-symbols-outlined text-sm">check_circle</span>
+            Task completed in 1.2s.
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics — 4 cols -->
+      <div class="ai-card glass-panel rounded-xl col-span-1 md:col-span-4 p-6 flex flex-col justify-center items-center text-center gap-6">
+        <div class="font-headline-md text-headline-md text-secondary border border-secondary/20 rounded-full px-6 py-3 bg-secondary/5">
+          10x Velocity
+        </div>
+        <div>
+          <h3 class="font-headline-md text-headline-md text-primary mb-2">Delivery Accelerated</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            Automated boilerplate generation, style mapping, and logic scaffolding allow focus on deep architectural problems.
+          </p>
+        </div>
+        <div class="w-full">
+          <div class="w-full h-1 bg-surface-dim rounded-full overflow-hidden">
+            <div class="ai-bar h-full bg-tertiary rounded-full shadow-[0_0_10px_#4edea3]" style="width:0%"></div>
+          </div>
+          <span class="font-code-snippet text-label-sm text-tertiary mt-2 block">90% Boilerplate Reduction</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { fadeUp, staggerFadeUp, animateBar, onEnterOnce } from '../scripts/animations.js';
+
+  fadeUp('#ai-workflow .ai-header', '#ai-workflow');
+  staggerFadeUp('#ai-workflow .ai-card', '#ai-workflow .grid', { stagger: 0.15 });
+
+  onEnterOnce('#ai-workflow .glass-panel', () => {
+    const tl = gsap.timeline({ delay: 0.4 });
+    tl.to('#ai-workflow .ai-output',  { opacity: 1, duration: 0.4, delay: 1.2 })
+      .to('#ai-workflow .ai-diff',    { opacity: 1, duration: 0.4 }, '+=0.4')
+      .to('#ai-workflow .ai-success', { opacity: 1, duration: 0.3 }, '+=0.3');
+    animateBar('#ai-workflow .ai-bar', 90, { duration: 1.4, delay: 1.6 });
+  }, { start: 'top 75%' });
+</script>

@@ -1,0 +1,144 @@
+---
+const roles = [
+  {
+    period: '2021 — PRESENT',
+    location: 'San Francisco, CA',
+    title: 'Senior Systems Engineer',
+    company: 'NEXUS_CORE_TECHNOLOGIES',
+    icon: 'dns',
+    reverse: false,
+    bullets: [
+      'Architected distributed microservices handling 50k+ requests/sec with sub-50ms latency.',
+      'Led migration from legacy monolith to Kubernetes-orchestrated containers, reducing deploy times by 70%.',
+      'Implemented custom telemetry aggregation pipelines using Go and Rust.',
+    ],
+    chips: [
+      { label: 'Go',         accent: true  },
+      { label: 'Kubernetes', accent: false },
+      { label: 'Rust',       accent: false },
+    ],
+  },
+  {
+    period: '2018 — 2021',
+    location: 'Seattle, WA',
+    title: 'Backend Developer',
+    company: 'AETHER_DATA_SYSTEMS',
+    icon: 'database',
+    reverse: true,
+    bullets: [
+      'Engineered robust ETL pipelines processing terabytes of log data daily.',
+      'Optimized database queries resulting in a 40% reduction in execution time.',
+      'Developed RESTful APIs for internal analytics dashboards.',
+    ],
+    chips: [
+      { label: 'Python',     accent: false },
+      { label: 'PostgreSQL', accent: false },
+      { label: 'AWS',        accent: false },
+    ],
+  },
+  {
+    period: '2016 — 2018',
+    location: 'Austin, TX',
+    title: 'Software Engineer',
+    company: 'VOID_LOGIC_LLC',
+    icon: 'memory',
+    reverse: false,
+    bullets: [
+      'Maintained and expanded legacy C++ codebases for industrial automation software.',
+      'Built automated testing frameworks that increased test coverage by 50%.',
+    ],
+    chips: [
+      { label: 'C++',   accent: false },
+      { label: 'Linux', accent: false },
+      { label: 'Bash',  accent: false },
+    ],
+  },
+];
+---
+
+<section id="experience" class="py-section-padding px-margin-mobile md:px-margin-desktop">
+  <div class="w-full max-w-container-max mx-auto">
+
+    <!-- Header -->
+    <div class="exp-header mb-24 text-center md:text-left">
+      <div class="flex items-center gap-3 mb-4 justify-center md:justify-start">
+        <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+        <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">// CHRONOLOGICAL_RECORD</span>
+      </div>
+      <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">
+        <span class="text-secondary opacity-50 font-code-snippet text-code-snippet mr-2">07 //</span>EXPERIENCE
+      </h2>
+      <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+        A chronological record of engineering roles, system architecture contributions, and technical leadership across high-scale environments.
+      </p>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline-container relative w-full pb-12">
+
+      <!-- SVG vertical line -->
+      <svg class="timeline-line-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 4 1000">
+        <line x1="2" x2="2" y1="0" y2="1000" stroke="#353534" stroke-width="2" />
+        <line id="career-line" x1="2" x2="2" y1="0" y2="1000" stroke="#c0c1ff" stroke-width="2"
+              stroke-dasharray="1000" stroke-dashoffset="1000" />
+      </svg>
+
+      {roles.map((role, i) => (
+        <div class={`exp-entry relative w-full flex flex-col items-center mb-16 last:mb-0 ${role.reverse ? 'md:flex-row-reverse' : 'md:flex-row'} justify-between group`}>
+
+          <!-- Timeline node -->
+          <div class="timeline-node"></div>
+
+          <!-- Date / location -->
+          <div class={`w-full md:w-[45%] pl-12 md:pl-0 mb-4 md:mb-0 ${role.reverse ? 'md:pl-8 text-left' : 'md:pr-8 md:text-right'}`}>
+            <div class="font-code-snippet text-code-snippet text-secondary mb-1">{role.period}</div>
+            <div class="font-label-sm text-label-sm text-outline uppercase tracking-widest">{role.location}</div>
+          </div>
+
+          <!-- Card -->
+          <div class={`w-full md:w-[45%] pl-12 ${role.reverse ? 'md:pl-0 md:pr-8' : 'md:pl-8'}`}>
+            <div class="glass-card rounded-lg p-6">
+
+              <div class={`flex items-start justify-between mb-4 ${role.reverse ? 'md:flex-row-reverse' : ''}`}>
+                <div class={role.reverse ? 'md:text-right' : ''}>
+                  <h3 class="font-headline-md text-headline-md text-primary mb-1">{role.title}</h3>
+                  <div class="font-code-snippet text-code-snippet text-on-surface-variant">{role.company}</div>
+                </div>
+                <span class="material-symbols-outlined text-secondary opacity-50">{role.icon}</span>
+              </div>
+
+              <ul class={`space-y-3 font-body-md text-body-md text-on-surface ${role.reverse ? 'md:text-right' : ''}`}>
+                {role.bullets.map(b => (
+                  <li class={`flex items-start ${role.reverse ? 'md:flex-row-reverse' : ''}`}>
+                    <span class={`text-secondary font-code-snippet mt-1 shrink-0 ${role.reverse ? 'md:ml-2 mr-2 md:mr-0' : 'mr-2'}`}>&gt;</span>
+                    {b}
+                  </li>
+                ))}
+              </ul>
+
+              <div class={`mt-6 flex flex-wrap gap-2 ${role.reverse ? 'md:justify-end' : ''}`}>
+                {role.chips.map(c => (
+                  <span class={`px-3 py-1 rounded font-label-sm text-label-sm bg-[#171717] ${c.accent ? 'text-tertiary border border-tertiary/30' : 'text-on-surface-variant border border-white/10'}`}>
+                    {c.label}
+                  </span>
+                ))}
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { fadeUp, drawSvgLine, slideFromSides } from '../scripts/animations.js';
+
+  fadeUp('#experience .exp-header', '#experience');
+  drawSvgLine('career-line', '.timeline-container');
+  slideFromSides(gsap.utils.toArray('#experience .exp-entry'));
+</script>

@@ -1,0 +1,17 @@
+#tech-stack {
+  .stk-header {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .stk-panel {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  #stk-canvas canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}

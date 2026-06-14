@@ -1,0 +1,24 @@
+#projects {
+  .proj-header {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .proj-card {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  .chip {
+    background-color: #171717;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  // Subtle grid on the data-viz placeholder
+  .proj-viz {
+    background-image:
+      linear-gradient(rgba(192,193,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(192,193,255,0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}

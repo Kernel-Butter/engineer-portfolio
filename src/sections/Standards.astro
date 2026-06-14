@@ -1,0 +1,165 @@
+---
+const vitals = [
+  { label: 'LCP', full: 'Largest Contentful Paint', value: '0.8', unit: 's',  pct: '25' },
+  { label: 'FID', full: 'First Input Delay',         value: '12',  unit: 'ms', pct: '8'  },
+  { label: 'CLS', full: 'Cumulative Layout Shift',   value: '0.00',unit: '',   pct: '0'  },
+];
+
+const a11yRows = [
+  { key: 'Standard',       val: 'WCAG 2.1 AA+' },
+  { key: 'Contrast Ratio', val: '> 7:1'        },
+  { key: 'Aria Tags',      val: 'Validated'    },
+];
+---
+
+<section id="standards" class="py-section-padding px-margin-mobile md:px-margin-desktop">
+  <div class="w-full max-w-container-max mx-auto flex flex-col gap-12">
+
+    <!-- Header -->
+    <div class="std-header flex flex-col gap-4">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-sm border border-outline-variant/30 self-start">
+        <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+        <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">SYSTEM STATUS: OPTIMAL</span>
+      </div>
+      <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">
+        Performance &amp; Engineering Standards
+      </h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+        Real-time telemetry of underlying infrastructure. Strict adherence to modern web standards, zero-tolerance policy for technical debt.
+      </p>
+    </div>
+
+    <!-- Bento Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+
+      <!-- Lighthouse Score (col-span-8) -->
+      <div class="std-card bento-card md:col-span-8 p-8 flex flex-col md:flex-row items-center justify-between gap-8 group">
+        <div class="space-y-4 w-full md:w-1/2">
+          <div class="flex items-center gap-3 text-secondary">
+            <span class="material-symbols-outlined text-[32px]">speed</span>
+            <h3 class="font-headline-md text-headline-md">Lighthouse</h3>
+          </div>
+          <p class="font-code-snippet text-code-snippet text-on-surface-variant">
+            Perfect scores across Performance, Accessibility, Best Practices, and SEO.
+            Rendered securely via CI/CD pipelines.
+          </p>
+          <div class="flex flex-wrap gap-2 pt-4">
+            {['PERF: 100', 'A11Y: 100', 'SEO: 100'].map(chip => (
+              <span class="px-2 py-1 bg-surface-container rounded text-tertiary font-label-sm text-label-sm">{chip}</span>
+            ))}
+          </div>
+        </div>
+
+        <!-- Gauge -->
+        <div class="relative w-48 h-48 flex items-center justify-center shrink-0">
+          <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+            <circle
+              id="lh-arc"
+              cx="50" cy="50" r="45"
+              fill="none"
+              stroke="#44e2cd"
+              stroke-width="8"
+              stroke-dasharray="282.7"
+              stroke-dashoffset="282.7"
+              style="filter:drop-shadow(0 0 8px rgba(68,226,205,0.5))"
+            />
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center flex-col">
+            <span id="lh-counter" class="font-headline-lg text-headline-lg text-white">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Type Coverage (col-span-4) -->
+      <div class="std-card bento-card md:col-span-4 p-6 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-primary mb-4">
+          <span class="material-symbols-outlined">data_object</span>
+          <span class="font-label-sm text-label-sm tracking-widest">STRICT MODE</span>
+        </div>
+        <div>
+          <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Type Coverage</h3>
+          <div class="flex items-end gap-2 mb-4">
+            <span class="font-headline-lg text-headline-lg text-primary">100</span>
+            <span class="font-code-snippet text-code-snippet text-on-surface-variant mb-2">%</span>
+          </div>
+          <div class="w-full h-1 bg-surface-container rounded-full overflow-hidden">
+            <div id="type-bar" class="h-full bg-primary w-0 rounded-full"
+                 style="box-shadow:0 0 10px rgba(192,193,255,0.5)"></div>
+          </div>
+          <p class="font-code-snippet text-code-snippet text-on-surface-variant mt-4 text-xs">
+            TypeScript absolute coverage. No implicit any.
+          </p>
+        </div>
+      </div>
+
+      <!-- Accessibility (col-span-5) -->
+      <div class="std-card bento-card md:col-span-5 p-6 relative overflow-hidden">
+        <div class="absolute -right-4 -top-4 opacity-5 text-9xl font-headline-lg text-headline-lg pointer-events-none select-none">A11Y</div>
+        <div class="flex items-center gap-3 text-secondary mb-6 relative z-10">
+          <span class="material-symbols-outlined">accessibility_new</span>
+          <h3 class="font-headline-md text-headline-md">Accessibility</h3>
+        </div>
+        <div class="space-y-4 relative z-10">
+          {a11yRows.map(row => (
+            <div class="flex justify-between items-center border-b border-white/5 pb-2">
+              <span class="font-code-snippet text-code-snippet text-on-surface-variant">{row.key}</span>
+              <span class="font-code-snippet text-code-snippet text-secondary">{row.val}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Core Web Vitals (col-span-7) -->
+      <div class="std-card bento-card md:col-span-7 p-6 flex flex-col justify-between">
+        <div class="flex items-center gap-3 text-primary mb-6">
+          <span class="material-symbols-outlined">network_check</span>
+          <h3 class="font-headline-md text-headline-md">Core Web Vitals</h3>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {vitals.map((v, i) => (
+            <div class="bg-surface-container-low border border-white/5 rounded-lg p-4">
+              <div class="font-label-sm text-label-sm text-on-surface-variant mb-1">
+                {v.label} ({v.full})
+              </div>
+              <div class="flex items-end gap-1">
+                <span class="font-headline-md text-headline-md text-tertiary">{v.value}</span>
+                {v.unit && <span class="font-code-snippet text-code-snippet text-on-surface-variant mb-1">{v.unit}</span>}
+              </div>
+              <div class="w-full h-0.5 bg-white/10 mt-2 rounded overflow-hidden">
+                <div
+                  class="cwv-bar h-full bg-tertiary rounded"
+                  data-pct={v.pct}
+                  style="width:0%"
+                ></div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="mt-6 flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+          <span class="font-code-snippet text-code-snippet text-on-surface-variant text-xs">
+            All metrics passing Core Web Vitals assessment
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  import { fadeUp, staggerFadeUp, animateGauge, countUp, animateBar } from '../scripts/animations.js';
+
+  fadeUp('#standards .std-header', '#standards');
+  staggerFadeUp('#standards .std-card', '#standards .grid', {
+    onEnter() {
+      animateGauge('lh-arc');
+      countUp('lh-counter', 100);
+      animateBar('#type-bar', 100, { delay: 0.3 });
+      document.querySelectorAll('#standards .cwv-bar').forEach((bar, i) => {
+        animateBar(bar, Number(bar.dataset.pct), { duration: 1, delay: 0.2 + i * 0.1 });
+      });
+    },
+  });
+</script>

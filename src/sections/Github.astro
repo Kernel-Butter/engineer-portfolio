@@ -1,0 +1,175 @@
+---
+// Generate heatmap server-side — no runtime JS needed
+const WEEKS = 52;
+const DAYS  = 7;
+
+const intensityClass = ['bg-surface-container', 'bg-primary/20', 'bg-primary/40', 'bg-primary/70', 'bg-primary'];
+
+const heatmap = Array.from({ length: WEEKS }, (_, w) =>
+  Array.from({ length: DAYS }, () => {
+    const r = Math.random();
+    if ((w > 10 && w < 15) || (w > 30 && w < 40)) {
+      return r > 0.3 ? Math.floor(Math.random() * 3) + 2 : Math.floor(Math.random() * 2);
+    }
+    return r > 0.7 ? Math.floor(Math.random() * 4) + 1 : 0;
+  })
+);
+
+const metrics = [
+  { label: 'TOTAL_COMMITS', value: '2,481', accent: false },
+  { label: 'PR_MERGED',     value: '142',   accent: false },
+  { label: 'STARS_EARNED',  value: '8.5k',  accent: true  },
+];
+
+const repos = [
+  {
+    name: 'core-engine-rs',
+    desc: 'High-performance memory management and execution core written in safe Rust.',
+    lang: 'Rust', langColor: 'text-tertiary', dotColor: 'bg-tertiary',
+    hoverBorder: 'hover:border-primary/50', hoverText: 'group-hover:text-primary',
+    stars: '1.2k', forks: '84',
+  },
+  {
+    name: 'webgl-shader-lab',
+    desc: 'Collection of optimized GLSL shaders for data visualization and UI components.',
+    lang: 'WebGL', langColor: 'text-secondary', dotColor: 'bg-secondary',
+    hoverBorder: 'hover:border-secondary/50', hoverText: 'group-hover:text-secondary',
+    stars: '3.4k', forks: '210',
+  },
+  {
+    name: 'ts-neural-net',
+    desc: 'Lightweight neural network implementation strictly typed for modern web environments.',
+    lang: 'TypeScript', langColor: 'text-primary', dotColor: 'bg-primary',
+    hoverBorder: 'hover:border-primary/50', hoverText: 'group-hover:text-primary',
+    stars: '890', forks: '42',
+  },
+];
+---
+
+<section id="github" class="py-section-padding px-margin-mobile md:px-margin-desktop">
+  <div class="w-full max-w-container-max mx-auto flex flex-col gap-bento-gap">
+
+    <!-- Header -->
+    <header class="gh-header mb-8">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+        <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Status: Actively Contributing</span>
+      </div>
+      <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">
+        Open Source Pulse
+      </h2>
+      <p class="font-body-md text-body-md text-on-surface-variant mt-4 max-w-2xl">
+        Continuous integration into the global engineering grid. Tracking commits, merges, and system architecture optimizations.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+
+      <!-- Heatmap — 8 cols -->
+      <div class="gh-card bento-card rounded-xl p-8 md:col-span-8 flex flex-col justify-between min-h-[300px]">
+        <div class="flex justify-between items-start mb-6">
+          <h3 class="font-headline-md text-headline-md text-primary">Contribution Grid</h3>
+          <span class="material-symbols-outlined text-outline-variant">grid_on</span>
+        </div>
+
+        <div class="flex-grow flex items-center justify-center relative overflow-hidden">
+          <div class="absolute top-0 right-0 font-code-snippet text-[10px] text-outline-variant/50">T-MINUS 365</div>
+          <div class="grid gap-[2px] w-full" style="grid-template-columns: repeat(52, 1fr)">
+            {heatmap.map((week, wi) => (
+              <div class="flex flex-col gap-[2px]">
+                {week.map((intensity, di) => (
+                  <div
+                    class={`aspect-square rounded-[2px] voxel ${intensityClass[intensity]}`}
+                    style={intensity === 4 ? 'box-shadow:0 0 8px rgba(192,193,255,0.4)' : ''}
+                    data-week={wi}
+                    data-day={di}
+                  ></div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center mt-6 font-code-snippet text-code-snippet text-on-surface-variant text-xs">
+          <span>JAN 01</span>
+          <div class="flex items-center gap-2">
+            <span>Less</span>
+            <div class="flex gap-1">
+              <div class="w-3 h-3 rounded-[2px] bg-surface-container"></div>
+              <div class="w-3 h-3 rounded-[2px] bg-primary/20"></div>
+              <div class="w-3 h-3 rounded-[2px] bg-primary/40"></div>
+              <div class="w-3 h-3 rounded-[2px] bg-primary/70"></div>
+              <div class="w-3 h-3 rounded-[2px] bg-primary"></div>
+            </div>
+            <span>More</span>
+          </div>
+          <span>DEC 31</span>
+        </div>
+      </div>
+
+      <!-- Metrics — 4 cols -->
+      <div class="gh-card bento-card rounded-xl p-8 md:col-span-4 flex flex-col gap-6">
+        <h3 class="font-headline-md text-headline-md text-secondary">System Metrics</h3>
+        <div class="flex flex-col gap-4">
+          {metrics.map((m, i) => (
+            <div class={i < metrics.length - 1 ? 'border-b border-outline-variant/20 pb-4' : ''}>
+              <span class="font-label-sm text-label-sm text-on-surface-variant block mb-1">{m.label}</span>
+              <div class={`font-headline-lg-mobile text-headline-lg-mobile gh-metric ${m.accent ? 'text-primary' : 'text-on-surface'}`}>
+                {m.value}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Featured repos — 12 cols -->
+      <div class="gh-card bento-card rounded-xl p-8 md:col-span-12">
+        <div class="flex justify-between items-center mb-6 border-b border-outline-variant/20 pb-4">
+          <h3 class="font-headline-md text-headline-md text-on-surface">Featured Nodes</h3>
+          <a href="#" class="font-code-snippet text-code-snippet text-secondary hover:text-primary transition-colors flex items-center gap-2">
+            VIEW_ALL <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {repos.map(repo => (
+            <div class={`gh-repo group border border-outline-variant/20 rounded-lg p-6 bg-surface-container-lowest ${repo.hoverBorder} transition-all duration-300`}>
+              <div class="flex justify-between items-start mb-4">
+                <h4 class={`font-code-snippet text-code-snippet font-bold text-on-surface ${repo.hoverText} transition-colors`}>
+                  {repo.name}
+                </h4>
+                <span class="material-symbols-outlined text-outline-variant">terminal</span>
+              </div>
+              <p class="font-body-md text-body-md text-on-surface-variant text-sm mb-6 h-12 overflow-hidden">
+                {repo.desc}
+              </p>
+              <div class="flex justify-between items-center">
+                <span class={`px-2 py-1 rounded bg-[#171717] font-code-snippet text-[10px] ${repo.langColor} flex items-center gap-1`}>
+                  <div class={`w-1.5 h-1.5 rounded-full ${repo.dotColor}`}></div>
+                  {repo.lang}
+                </span>
+                <div class="flex gap-3 font-code-snippet text-code-snippet text-xs text-on-surface-variant">
+                  <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">star</span> {repo.stars}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">fork_right</span> {repo.forks}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  import { fadeUp, staggerFadeUp, cascadeVoxels, onEnterOnce } from '../scripts/animations.js';
+
+  fadeUp('#github .gh-header', '#github');
+  staggerFadeUp('#github .gh-card', '#github .grid');
+  onEnterOnce('#github .gh-card', () => cascadeVoxels('#github .voxel'), { start: 'top 75%' });
+  staggerFadeUp('#github .gh-repo', '#github .gh-repo', { stagger: 0.1, start: 'top 85%' });
+</script>

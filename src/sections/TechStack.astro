@@ -1,0 +1,171 @@
+---
+const categories = [
+  {
+    icon: 'memory',
+    label: 'Core',
+    chips: ['JavaScript / TS', 'Python', 'Rust', 'Go'],
+  },
+  {
+    icon: 'developer_board',
+    label: 'Frameworks',
+    chips: ['React / Next.js', 'Three.js', 'Astro', 'Tailwind'],
+  },
+  {
+    icon: 'cloud',
+    label: 'AI & Infra',
+    chips: ['Docker / K8s', 'AWS / GCP', 'TensorFlow', 'PyTorch'],
+  },
+];
+---
+
+<section id="tech-stack" class="py-section-padding px-margin-mobile md:px-margin-desktop">
+  <div class="w-full max-w-container-max mx-auto">
+
+    <header class="stk-header mb-16">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+        <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">// SYSTEM_CAPABILITIES</span>
+      </div>
+      <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">
+        SYSTEM.CAPABILITIES
+      </h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+        A constellation of core competencies, frameworks, and infrastructure tooling. Interactive visualization active.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap w-full md:h-[600px]">
+
+      <!-- Three.js canvas — 8 cols -->
+      <div class="stk-panel bento-card col-span-1 md:col-span-8 rounded-xl h-[400px] md:h-full relative flex items-center justify-center group cursor-crosshair overflow-hidden">
+        <div id="stk-canvas" class="absolute inset-0 opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div class="absolute bottom-4 left-4 z-10 pointer-events-none">
+          <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+            Interactive Matrix
+          </span>
+        </div>
+      </div>
+
+      <!-- Category chips — 4 cols -->
+      <div class="col-span-1 md:col-span-4 flex flex-col gap-bento-gap md:h-full">
+        {categories.map(cat => (
+          <div class="stk-panel bento-card p-6 rounded-xl flex-1 flex flex-col justify-center">
+            <h3 class="font-headline-md text-headline-md text-primary mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-secondary">{cat.icon}</span>
+              {cat.label}
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {cat.chips.map(chip => (
+                <span class="tech-chip px-3 py-1 rounded font-code-snippet text-code-snippet text-on-surface-variant">
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  import * as THREE from 'three';
+  import { fadeUp, staggerFadeUp, onEnterOnce } from '../scripts/animations.js';
+
+  fadeUp('#tech-stack .stk-header', '#tech-stack');
+  staggerFadeUp('#tech-stack .stk-panel', '#tech-stack .grid', { stagger: 0.1, start: 'top 75%' });
+  onEnterOnce('#tech-stack', initConstellation);
+
+  function initConstellation() {
+    const container = document.getElementById('stk-canvas');
+    if (!container) return;
+
+    const scene    = new THREE.Scene();
+    const camera   = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 30;
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const colorPrimary   = new THREE.Color('#c0c1ff');
+    const colorSecondary = new THREE.Color('#44e2cd');
+    const geo    = new THREE.IcosahedronGeometry(0.8, 1);
+    const matA   = new THREE.MeshBasicMaterial({ color: colorSecondary, wireframe: true, transparent: true, opacity: 0.8 });
+    const matB   = new THREE.MeshBasicMaterial({ color: colorPrimary,   wireframe: true, transparent: true, opacity: 0.3 });
+
+    const nodes = Array.from({ length: 40 }, (_, i) => {
+      const mesh    = new THREE.Mesh(geo, i % 3 === 0 ? matA : matB);
+      const radius  = 10 + Math.random() * 15;
+      const theta   = Math.random() * Math.PI * 2;
+      const phi     = Math.acos(2 * Math.random() - 1);
+      mesh.position.set(
+        radius * Math.sin(phi) * Math.cos(theta),
+        radius * Math.sin(phi) * Math.sin(theta),
+        radius * Math.cos(phi),
+      );
+      mesh.userData = {
+        rx: (Math.random() - 0.5) * 0.02,
+        ry: (Math.random() - 0.5) * 0.02,
+      };
+      group.add(mesh);
+      return mesh;
+    });
+
+    const MAX_LINES  = 40 * 40 * 3;
+    const lineGeo    = new THREE.BufferGeometry();
+    const linePos    = new Float32Array(MAX_LINES);
+    lineGeo.setAttribute('position', new THREE.BufferAttribute(linePos, 3));
+    const lineMesh   = new THREE.LineSegments(
+      lineGeo,
+      new THREE.LineBasicMaterial({ color: 0x44e2cd, transparent: true, opacity: 0.15 }),
+    );
+    group.add(lineMesh);
+
+    let mouseX = 0, mouseY = 0;
+    const halfW = container.clientWidth / 2;
+    const halfH = container.clientHeight / 2;
+
+    container.addEventListener('mousemove', e => {
+      const r = container.getBoundingClientRect();
+      mouseX = (e.clientX - r.left) - halfW;
+      mouseY = (e.clientY - r.top)  - halfH;
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    (function animate() {
+      requestAnimationFrame(animate);
+
+      group.rotation.y += 0.002 + (mouseX * 0.001 - group.rotation.y) * 0.05;
+      group.rotation.x += (mouseY * 0.001 - group.rotation.x) * 0.05;
+
+      nodes.forEach(n => { n.rotation.x += n.userData.rx; n.rotation.y += n.userData.ry; });
+
+      const pos = lineMesh.geometry.attributes.position.array;
+      let idx = 0;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          if (nodes[i].position.distanceTo(nodes[j].position) < 8) {
+            pos[idx++] = nodes[i].position.x; pos[idx++] = nodes[i].position.y; pos[idx++] = nodes[i].position.z;
+            pos[idx++] = nodes[j].position.x; pos[idx++] = nodes[j].position.y; pos[idx++] = nodes[j].position.z;
+          }
+        }
+      }
+      for (let i = idx; i < pos.length; i++) pos[i] = 0;
+      lineMesh.geometry.attributes.position.needsUpdate = true;
+
+      renderer.render(scene, camera);
+    })();
+  }
+</script>

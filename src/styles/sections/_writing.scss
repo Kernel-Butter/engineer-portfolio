@@ -1,0 +1,15 @@
+#writing {
+  .wr-header {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .wr-card {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  .glow-text {
+    text-shadow: 0 0 20px rgba(192, 193, 255, 0.3);
+  }
+}

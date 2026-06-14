@@ -1,0 +1,164 @@
+---
+const testimonials = [
+  {
+    id: 1,
+    span: 8,
+    name: 'Marcus R.',
+    initials: 'MR',
+    role: 'VP ENGINEERING @ NEURAL_SYNC',
+    quote: 'The architectural decisions made during the core refactor didn\'t just solve our scaling issues; they laid a foundation we\'ll be building on for the next five years. Precision engineering meets uncompromising execution.',
+    tags: [
+      { label: 'SYSTEM_ARCH', color: 'text-primary border-outline-variant/30' },
+      { label: 'RUST',        color: 'text-primary border-outline-variant/30' },
+    ],
+    avatarGrad: 'from-primary/40 to-secondary/20',
+    ringColor:  'border-primary/30',
+    large: true,
+  },
+  {
+    id: 2,
+    span: 4,
+    name: 'Elena K.',
+    initials: 'EK',
+    role: 'FOUNDER @ DATAVOID',
+    quote: 'Delivered a complex WebGL visualization engine weeks ahead of schedule. The code was practically poetry.',
+    tags: [{ label: 'FRONTEND', color: 'text-secondary border-secondary/20', dot: 'bg-secondary' }],
+    avatarGrad: 'from-secondary/40 to-tertiary/20',
+    ringColor:  'border-secondary/30',
+    large: false,
+  },
+  {
+    id: 3,
+    span: 4,
+    name: 'David C.',
+    initials: 'DC',
+    role: 'CTO @ QUANTUM_LEAP',
+    quote: 'An absolute machine. Turned our chaotic microservices into a streamlined, high-performance cluster.',
+    tags: [{ label: 'DEVOPS', color: 'text-tertiary border-tertiary/20', dot: 'bg-tertiary' }],
+    avatarGrad: 'from-tertiary/40 to-primary/20',
+    ringColor:  'border-tertiary/30',
+    large: false,
+  },
+  {
+    id: 4,
+    span: 8,
+    name: 'Sarah J.',
+    initials: 'SJ',
+    role: 'LEAD SEC_OPS @ SHIELD_NET',
+    quote: 'When it comes to securing critical infrastructure, there is zero margin for error. The auditing and subsequent patching implemented were flawless. It\'s rare to find someone who understands deep systems-level security and can communicate it clearly to stakeholders.',
+    tags: [],
+    avatarGrad: 'from-primary/30 to-secondary/40',
+    ringColor:  'border-primary/50',
+    large: true,
+  },
+];
+---
+
+<section id="testimonials" class="py-section-padding px-margin-mobile md:px-margin-desktop">
+  <div class="w-full max-w-container-max mx-auto flex flex-col gap-16">
+
+    <!-- Header -->
+    <header class="tm-header flex flex-col gap-4">
+      <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">
+        <span class="text-secondary opacity-50 font-code-snippet">//</span> SOCIAL_PROOF
+      </h2>
+      <p class="font-code-snippet text-code-snippet text-secondary max-w-2xl leading-relaxed">
+        &gt; Executing query: SELECT * FROM endorsements WHERE impact &gt; 9000;<br />
+        &gt; {testimonials.length} rows returned. Rendering data modules...
+      </p>
+    </header>
+
+    <!-- Bento grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+
+      {testimonials.map(t => (
+        <div
+          class={`tm-card bento-card rounded-xl p-8 relative overflow-hidden group cursor-pointer md:col-span-${t.span}`}
+          data-tilt
+        >
+
+          <!-- Decorative quote icon (large cards only) -->
+          {t.large && (
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none">
+              <span class="material-symbols-outlined text-secondary text-5xl" style="font-variation-settings:'FILL' 1">format_quote</span>
+            </div>
+          )}
+
+          <!-- Terminal watermark (card 4) -->
+          {t.id === 4 && (
+            <div class="absolute bottom-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none">
+              <span class="material-symbols-outlined text-9xl text-primary" style="font-variation-settings:'FILL' 1">terminal</span>
+            </div>
+          )}
+
+          <div class={`relative z-10 flex flex-col h-full ${t.large && t.id === 4 ? 'md:flex-row gap-8 items-center' : ''}`}>
+
+            <!-- Avatar + name -->
+            <div class={`flex items-center gap-4 ${t.large && t.id !== 4 ? 'mb-8' : t.id !== 4 ? 'mb-6' : 'shrink-0'}`}>
+              <div class={`rounded-full border-2 ${t.ringColor} bg-gradient-to-br ${t.avatarGrad} flex items-center justify-center font-headline-md text-headline-md text-on-surface font-bold ${t.large ? 'w-16 h-16' : 'w-12 h-12'}`}>
+                {t.initials}
+              </div>
+              <div>
+                <h3 class="font-headline-md text-headline-md text-on-surface">{t.name}</h3>
+                <p class="font-label-sm text-label-sm text-secondary mt-1">{t.role}</p>
+              </div>
+            </div>
+
+            <!-- Quote -->
+            <div class="flex flex-col flex-grow justify-between">
+              <p class={`text-on-surface-variant ${t.large ? 'font-body-lg text-body-lg' : 'font-body-md text-body-md italic'}`}>
+                "{t.quote}"
+              </p>
+
+              <!-- Tags -->
+              {t.tags.length > 0 && (
+                <div class="mt-6 flex flex-wrap gap-2">
+                  {t.tags.map(tag => (
+                    <span class={`px-3 py-1 bg-[#171717] font-code-snippet text-label-sm border rounded inline-flex items-center gap-2 ${tag.color}`}>
+                      {tag.dot && <span class={`w-1.5 h-1.5 rounded-full ${tag.dot}`}></span>}
+                      {tag.label}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      ))}
+
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { fadeUp, staggerFadeUp } from '../scripts/animations.js';
+
+  fadeUp('#testimonials .tm-header', '#testimonials');
+  staggerFadeUp('#testimonials .tm-card', '#testimonials .grid', { stagger: 0.13 });
+
+  // 3D magnetic tilt on each card
+  document.querySelectorAll<HTMLElement>('[data-tilt]').forEach(card => {
+    const setX = gsap.quickSetter(card, 'rotateY', 'deg');
+    const setY = gsap.quickSetter(card, 'rotateX', 'deg');
+    const setZ = gsap.quickSetter(card, 'translateY', 'px');
+
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const px = ((e.clientX - r.left) / r.width  - 0.5) * 2;
+      const py = ((e.clientY - r.top)  / r.height - 0.5) * 2;
+      gsap.set(card, { transformPerspective: 1000 });
+      setX(px * 3);
+      setY(-py * 3);
+      setZ(-4);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, {
+        rotateY: 0, rotateX: 0, translateY: 0,
+        duration: 0.6, ease: 'power2.out',
+      });
+    });
+  });
+</script>

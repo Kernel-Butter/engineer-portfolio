@@ -1,0 +1,13 @@
+#testimonials {
+  .tm-header {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .tm-card {
+    opacity: 0;
+    transform: translateY(24px);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+}

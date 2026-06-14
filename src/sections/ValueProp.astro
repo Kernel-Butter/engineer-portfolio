@@ -91,21 +91,11 @@
 </section>
 
 <script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { fadeUp, staggerFadeUp } from '../scripts/animations.js';
 
-  gsap.to('#value-prop .vp-header', {
-    opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
-    scrollTrigger: { trigger: '#value-prop', start: 'top 80%' },
-  });
-
-  gsap.to('#value-prop .vp-card', {
-    opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.12,
-    scrollTrigger: { trigger: '#value-prop .grid', start: 'top 75%' },
-  });
-
-  gsap.to('#value-prop .vp-status', {
-    opacity: 1, y: 0, duration: 0.5, ease: 'power2.out',
-    scrollTrigger: { trigger: '#value-prop .vp-status', start: 'top 90%' },
+  fadeUp('#value-prop .vp-header', '#value-prop');
+  staggerFadeUp('#value-prop .vp-card', '#value-prop .grid', { start: 'top 75%' });
+  fadeUp('#value-prop .vp-status', '#value-prop .vp-status', {
+    duration: 0.5, ease: 'power2.out', start: 'top 90%',
   });
 </script>

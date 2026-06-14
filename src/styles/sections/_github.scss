@@ -1,0 +1,26 @@
+#github {
+  .gh-header {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .gh-card {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  .gh-repo {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .voxel {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(192, 193, 255, 0.4);
+      z-index: 10;
+    }
+  }
+}
