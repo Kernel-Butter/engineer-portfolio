@@ -1,0 +1,174 @@
+---
+const stats = [
+  { value: '10x',   label: 'Velocity Gain',       color: 'text-secondary' },
+  { value: '90%',   label: 'Boilerplate Reduced',  color: 'text-primary'  },
+  { value: '<50ms', label: 'Avg Deploy Latency',   color: 'text-tertiary' },
+];
+---
+
+<section id="ai-pipeline" class="py-section-padding px-margin-mobile md:px-margin-desktop relative overflow-hidden">
+
+  <div class="absolute inset-0 z-0 pointer-events-none"
+       style="background-image:radial-gradient(ellipse at 50% 60%, rgba(78,222,163,0.04) 0%, transparent 65%)"></div>
+
+  <div class="w-full max-w-container-max mx-auto z-10 relative flex flex-col gap-12">
+
+    <div class="pipe-header">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+        <span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest">// DEPLOYMENT_PIPELINE</span>
+      </div>
+      <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">
+        From Code to Cloud
+      </h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+        A live map of the full delivery pipeline — every layer from source to production, drawn as it executes.
+      </p>
+    </div>
+
+    <!-- Pipeline card -->
+    <div class="pipe-card bento-card rounded-xl p-6 md:p-8 flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+          <span class="font-code-snippet text-[11px] text-on-surface-variant uppercase tracking-widest">PIPELINE_EXEC // LIVE</span>
+        </div>
+        <div class="hidden sm:flex items-center gap-5 font-code-snippet text-[10px] text-on-surface-variant/50">
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-[2px] bg-primary/60 inline-block"></span>Source</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-[2px] bg-secondary/60 inline-block"></span>Build</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-[2px] bg-tertiary/60 inline-block"></span>Deploy</span>
+        </div>
+      </div>
+      <div id="pipe-svg-wrap" class="w-full" style="min-height:230px"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-bento-gap">
+      {stats.map(s => (
+        <div class="pipe-stat bento-card rounded-xl p-6 text-center">
+          <div class={`font-headline-lg text-headline-lg ${s.color} mb-2`}>{s.value}</div>
+          <div class="font-code-snippet text-code-snippet text-on-surface-variant">{s.label}</div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { fadeUp, staggerFadeUp, onEnterOnce } from '../scripts/animations.js';
+
+  // Initial hidden states (no SCSS scope needed — handled inline)
+  gsap.set('#ai-pipeline .pipe-header', { opacity: 0, y: 16 });
+  gsap.set('#ai-pipeline .pipe-card',   { opacity: 0, y: 24 });
+  gsap.set('#ai-pipeline .pipe-stat',   { opacity: 0, y: 20 });
+
+  fadeUp('#ai-pipeline .pipe-header', '#ai-pipeline', { start: 'top 82%' });
+  fadeUp('#ai-pipeline .pipe-card',   '#ai-pipeline .pipe-card', { start: 'top 80%' });
+  staggerFadeUp('#ai-pipeline .pipe-stat', '#ai-pipeline .pipe-stat', { stagger: 0.12, start: 'top 88%' });
+
+  // ─── Pipeline graph ────────────────────────────────────────────────────────
+
+  const NW = 90, NH = 28, RX = 5, VW = 880, VH = 250;
+  const ns = 'http://www.w3.org/2000/svg';
+
+  const NODES = [
+    { id: 'html',   label: 'HTML5',       layer: 0, x: 55,  y: 48,  color: '#c0c1ff' },
+    { id: 'css',    label: 'CSS / SCSS',  layer: 0, x: 55,  y: 125, color: '#c0c1ff' },
+    { id: 'ts',     label: 'TypeScript',  layer: 0, x: 55,  y: 202, color: '#c0c1ff' },
+    { id: 'astro',  label: 'Astro',       layer: 1, x: 200, y: 125, color: '#44e2cd' },
+    { id: 'vite',   label: 'Vite',        layer: 2, x: 345, y: 82,  color: '#44e2cd' },
+    { id: 'lint',   label: 'Lint + Types',layer: 2, x: 345, y: 175, color: '#44e2cd' },
+    { id: 'ci',     label: 'GH Actions',  layer: 3, x: 495, y: 125, color: '#4edea3' },
+    { id: 'docker', label: 'Docker',      layer: 4, x: 640, y: 125, color: '#4edea3' },
+    { id: 's3',     label: 'S3 + CDN',   layer: 5, x: 790, y: 72,  color: '#4edea3' },
+    { id: 'lambda', label: 'Lambda',      layer: 5, x: 790, y: 183, color: '#4edea3' },
+  ];
+
+  const EDGES = [
+    { from: 'html',   to: 'astro'  },
+    { from: 'css',    to: 'astro'  },
+    { from: 'ts',     to: 'astro'  },
+    { from: 'astro',  to: 'vite'   },
+    { from: 'astro',  to: 'lint'   },
+    { from: 'vite',   to: 'ci'     },
+    { from: 'lint',   to: 'ci'     },
+    { from: 'ci',     to: 'docker' },
+    { from: 'docker', to: 's3'     },
+    { from: 'docker', to: 'lambda' },
+  ];
+
+  const nodeMap = Object.fromEntries(NODES.map(n => [n.id, n]));
+
+  function svgEl(tag, attrs = {}, parent) {
+    const e = document.createElementNS(ns, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  const filterFor = c =>
+    c === '#c0c1ff' ? 'url(#pgp)' : c === '#44e2cd' ? 'url(#pgs)' : 'url(#pgt)';
+
+  const wrap = document.getElementById('pipe-svg-wrap');
+  const svg  = svgEl('svg', { viewBox: `0 0 ${VW} ${VH}`, width: '100%', height: '100%', style: 'overflow:visible;display:block' }, wrap);
+
+  const defs = svgEl('defs', {}, svg);
+  [['pgp','#c0c1ff',4],['pgs','#44e2cd',4],['pgt','#4edea3',4]].forEach(([id,,blur]) => {
+    const f  = svgEl('filter', { id, x:'-60%', y:'-60%', width:'220%', height:'220%' }, defs);
+    svgEl('feGaussianBlur', { in:'SourceGraphic', stdDeviation: blur, result:'blur' }, f);
+    const fm = svgEl('feMerge', {}, f);
+    svgEl('feMergeNode', { in:'blur' }, fm);
+    svgEl('feMergeNode', { in:'SourceGraphic' }, fm);
+  });
+
+  const edgeG = svgEl('g', {}, svg);
+  EDGES.forEach(({ from, to }) => {
+    const s = nodeMap[from], t = nodeMap[to];
+    const sx = s.x + NW/2, sy = s.y, tx = t.x - NW/2, ty = t.y, cx = (sx+tx)/2;
+    svgEl('path', {
+      class: `p-edge p-edge-${s.layer}`,
+      d: `M ${sx} ${sy} C ${cx} ${sy}, ${cx} ${ty}, ${tx} ${ty}`,
+      fill: 'none', stroke: s.color, 'stroke-width': '1.5', 'stroke-opacity': '0.55',
+      filter: filterFor(s.color),
+    }, edgeG);
+  });
+
+  const nodeG = svgEl('g', {}, svg);
+  NODES.forEach(node => {
+    const g = svgEl('g', { class: `p-node p-node-l${node.layer}` }, nodeG);
+    svgEl('rect', {
+      x: node.x - NW/2, y: node.y - NH/2, width: NW, height: NH, rx: RX,
+      fill: 'rgba(12,12,14,0.92)', stroke: node.color, 'stroke-width': '1',
+      filter: filterFor(node.color),
+    }, g);
+    const t = svgEl('text', {
+      x: node.x, y: node.y + 4, 'text-anchor': 'middle',
+      fill: node.color, 'font-size': '10.5',
+      'font-family': '"Courier New", Courier, monospace', 'font-weight': '600',
+      style: 'user-select:none',
+    }, g);
+    t.textContent = node.label;
+  });
+
+  svg.querySelectorAll('path.p-edge').forEach(p => {
+    const len = p.getTotalLength();
+    gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
+  });
+  gsap.set(svg.querySelectorAll('.p-node'), { opacity: 0, y: -12 });
+
+  const maxLayer = Math.max(...NODES.map(n => n.layer));
+
+  onEnterOnce('#ai-pipeline .pipe-card', () => {
+    const tl = gsap.timeline({ delay: 0.3, defaults: { ease: 'power2.out' } });
+    for (let layer = 0; layer <= maxLayer; layer++) {
+      const lNodes = svg.querySelectorAll(`.p-node-l${layer}`);
+      const lEdges = svg.querySelectorAll(`.p-edge-${layer}`);
+      tl.to(lNodes, { opacity: 1, y: 0, duration: 0.4, stagger: 0.1 });
+      if (lEdges.length) {
+        tl.to(lEdges, { strokeDashoffset: 0, duration: 0.55, stagger: 0.09, ease: 'power1.inOut' }, '+=0.12');
+      }
+    }
+  }, { start: 'top 72%' });
+</script>

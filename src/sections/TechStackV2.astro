@@ -1,0 +1,537 @@
+---
+const categories = [
+  { icon: 'memory',          label: 'Core / Lang',  chips: ['HTML5','CSS3','JavaScript','TypeScript','JSX / TSX','WebAssembly'] },
+  { icon: 'developer_board', label: 'Frameworks',   chips: ['React','Next.js','Astro','Vue','Svelte','Nuxt'] },
+  { icon: 'brush',           label: 'Styling / FX', chips: ['Tailwind','SCSS','GSAP','Framer Motion','Three.js','WebGL'] },
+  { icon: 'cloud',           label: 'Build / Ship', chips: ['Vite','ESBuild','Docker','AWS','Vercel','GitHub Actions'] },
+];
+---
+
+<section id="tech-stack-v2" class="py-section-padding px-margin-mobile md:px-margin-desktop">
+  <div class="w-full max-w-container-max mx-auto">
+
+    <header class="stkv2-header mb-16">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+        <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">// SYSTEM_CAPABILITIES</span>
+      </div>
+      <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">
+        SYSTEM.CAPABILITIES
+      </h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+        Every tool in the stack — suspended and alive. Move through to disturb the field.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap w-full md:h-[640px]">
+
+      <!-- Three.js canvas — 8 cols -->
+      <div class="stkv2-panel bento-card col-span-1 md:col-span-8 rounded-xl h-[420px] md:h-full relative flex items-center justify-center group overflow-hidden" style="cursor:crosshair">
+        <div id="stk-canvas-v2" class="absolute inset-0"></div>
+
+        <!-- Expand to fullscreen button -->
+        <button id="stk-v2-modal-open"
+          class="absolute top-3 left-3 z-10 w-8 h-8 rounded-lg bg-surface-container/80 border border-outline-variant/30 flex items-center justify-center text-on-surface-variant/60 hover:text-primary hover:border-primary/40 transition-colors backdrop-blur-sm"
+          title="Expand play area">
+          <span class="material-symbols-outlined text-[16px]">open_in_full</span>
+        </button>
+
+        <!-- Legend -->
+        <div class="absolute top-3 right-3 z-10 pointer-events-none flex flex-col gap-1.5">
+          {[['#c0c1ff','Core · Styling · Build'],['#44e2cd','Framework · Deploy'],['#4edea3','3D · State / Data']].map(([c,l]) => (
+            <span class="flex items-center gap-1.5 font-code-snippet text-[9px]" style={`color:${c}`}>
+              <span class="w-1.5 h-1.5 rounded-full inline-block" style={`background:${c}`}></span>{l}
+            </span>
+          ))}
+        </div>
+
+        <!-- Bottom hint -->
+        <div class="absolute bottom-4 left-4 z-10 pointer-events-none">
+          <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+            Atom Network // Move to Disturb · Scroll to Zoom
+          </span>
+        </div>
+      </div>
+
+      <!-- Right chips — 4 cols -->
+      <div class="col-span-1 md:col-span-4 flex flex-col gap-bento-gap md:h-full overflow-y-auto">
+        {categories.map(cat => (
+          <div class="stkv2-panel bento-card p-5 rounded-xl flex flex-col justify-center">
+            <h3 class="font-headline-md text-headline-md text-primary mb-3 flex items-center gap-2">
+              <span class="material-symbols-outlined text-secondary text-[20px]">{cat.icon}</span>
+              {cat.label}
+            </h3>
+            <div class="flex flex-wrap gap-1.5">
+              {cat.chips.map(chip => (
+                <span class="tech-chip px-2.5 py-1 rounded font-code-snippet text-[11px] text-on-surface-variant">
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- Modal — fullscreen expanded canvas for more play area -->
+<div id="stk-v2-modal"
+  class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm hidden flex-col gap-3 p-4 md:p-6">
+
+  <!-- Top bar -->
+  <div class="flex items-center justify-between shrink-0">
+    <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+      Atom Network // Move to Disturb · Scroll to Zoom
+    </span>
+    <button id="stk-v2-modal-close"
+      class="w-9 h-9 rounded-lg border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:border-outline-variant transition-colors">
+      <span class="material-symbols-outlined text-[18px]">close_fullscreen</span>
+    </button>
+  </div>
+
+  <!-- Canvas lands here when expanded -->
+  <div id="stk-v2-modal-canvas"
+    class="flex-1 bento-card rounded-xl overflow-hidden relative min-h-0"
+    style="cursor:crosshair">
+  </div>
+
+</div>
+
+<style>
+  @keyframes stkLabelPulse {
+    0%, 100% { filter: brightness(1)   drop-shadow(0 0 3px currentColor); }
+    50%       { filter: brightness(1.4) drop-shadow(0 0 9px currentColor); }
+  }
+</style>
+
+<script>
+  import * as THREE from 'three';
+  import * as CANNON from 'cannon-es';
+  import { fadeUp, staggerFadeUp, onEnterOnce } from '../scripts/animations.js';
+
+  fadeUp('#tech-stack-v2 .stkv2-header', '#tech-stack-v2');
+  staggerFadeUp('#tech-stack-v2 .stkv2-panel', '#tech-stack-v2 .grid', { stagger: 0.1, start: 'top 75%' });
+  onEnterOnce('#tech-stack-v2', initAtoms);
+
+  // ── Three.js + cannon-es atom constellation ──────────────────────────────
+  function initAtoms() {
+    const container = document.getElementById('stk-canvas-v2');
+    if (!container) return;
+
+    // ── Scene ──────────────────────────────────────────────────────────────
+    const scene  = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(65, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 30;
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // ── Modal — expands canvas to full screen for more play area ───────────
+    const modalEl       = document.getElementById('stk-v2-modal');
+    const modalCanvas   = document.getElementById('stk-v2-modal-canvas');
+    let   activeHost    = container; // whichever div currently holds the renderer
+
+    function resizeTo(host) {
+      activeHost = host;
+      // Wait one rAF so the host has its final layout dimensions
+      requestAnimationFrame(() => {
+        const w = host.clientWidth, h = host.clientHeight;
+        renderer.setSize(w, h);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        needsCursorInit = true;
+      });
+    }
+
+    function openModal() {
+      modalEl?.classList.remove('hidden');
+      modalEl?.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+      if (modalCanvas) {
+        modalCanvas.appendChild(renderer.domElement);
+        modalCanvas.appendChild(labelOverlay);
+        resizeTo(modalCanvas);
+      }
+    }
+    function closeModal() {
+      container.appendChild(renderer.domElement);
+      container.appendChild(labelOverlay);
+      resizeTo(container);
+      modalEl?.classList.remove('flex');
+      modalEl?.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('stk-v2-modal-open')?.addEventListener('click', openModal);
+    document.getElementById('stk-v2-modal-close')?.addEventListener('click', closeModal);
+    modalEl?.addEventListener('click', e => { if (e.target === modalEl) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && activeHost === modalCanvas) closeModal(); });
+
+    const group = new THREE.Group();
+    scene.add(group);
+    const clock = new THREE.Clock();
+    let elapsed = 0;
+
+    // ── Cannon-es: zero gravity, high damping (viscous liquid) ────────────
+    const world = new CANNON.World({ gravity: new CANNON.Vec3(0, 0, 0) });
+    world.allowSleep = false;
+
+    // ── Node data (positions scaled ×1.35 for breathing room) ─────────────
+    const P = '#c0c1ff', S = '#44e2cd', T = '#4edea3';
+    const SP = 1.35; // position spread factor — more breathing room between nodes
+
+    const NODES = [
+      { label:'HTML5',          c:P, p:[-14*SP,  2*SP,  1*SP] },
+      { label:'CSS3',           c:P, p:[-13*SP, -3*SP, -1*SP] },
+      { label:'JavaScript',     c:P, p:[-10*SP,  1*SP,  3*SP] },
+      { label:'TypeScript',     c:P, p:[-11*SP,  4*SP, -2*SP] },
+      { label:'JSX / TSX',      c:P, p:[ -9*SP, -1*SP,  2*SP] },
+      { label:'WebAssembly',    c:P, p:[-12*SP, -5*SP,  2*SP] },
+      { label:'React',          c:S, p:[ -4*SP,  6*SP,  1*SP] },
+      { label:'Next.js',        c:S, p:[ -2*SP,  8*SP, -1*SP] },
+      { label:'Astro',          c:S, p:[ -5*SP,  3*SP,  4*SP] },
+      { label:'Vue',            c:S, p:[ -1*SP,  5*SP,  3*SP] },
+      { label:'Svelte',         c:S, p:[ -3*SP,  2*SP, -3*SP] },
+      { label:'Nuxt',           c:S, p:[  0*SP,  7*SP,  2*SP] },
+      { label:'Tailwind',       c:P, p:[ -7*SP, -5*SP,  0*SP] },
+      { label:'SCSS / SASS',    c:P, p:[ -4*SP, -7*SP,  1*SP] },
+      { label:'GSAP',           c:S, p:[ -5*SP, -3*SP,  4*SP] },
+      { label:'Framer Motion',  c:S, p:[ -3*SP, -5*SP, -3*SP] },
+      { label:'CSS-in-JS',      c:P, p:[ -8*SP, -3*SP, -2*SP] },
+      { label:'Three.js',       c:T, p:[  0*SP,  0*SP,  6*SP] },
+      { label:'WebGL',          c:T, p:[  2*SP,  2*SP,  5*SP] },
+      { label:'Canvas API',     c:T, p:[ -2*SP, -2*SP,  7*SP] },
+      { label:'Redux',          c:T, p:[  3*SP,  4*SP,  2*SP] },
+      { label:'Zustand',        c:T, p:[  5*SP,  1*SP, -2*SP] },
+      { label:'React Query',    c:T, p:[  2*SP, -3*SP,  1*SP] },
+      { label:'GraphQL',        c:T, p:[  6*SP, -1*SP,  3*SP] },
+      { label:'WebSocket',      c:T, p:[  4*SP,  3*SP, -4*SP] },
+      { label:'tRPC',           c:T, p:[  7*SP,  4*SP,  0*SP] },
+      { label:'Vite',           c:P, p:[ 10*SP,  4*SP,  1*SP] },
+      { label:'ESBuild',        c:P, p:[ 12*SP,  2*SP,  2*SP] },
+      { label:'Webpack',        c:P, p:[ 11*SP, -1*SP, -2*SP] },
+      { label:'ESLint',         c:P, p:[  9*SP,  0*SP,  3*SP] },
+      { label:'Vitest',         c:P, p:[ 13*SP, -3*SP,  1*SP] },
+      { label:'Playwright',     c:P, p:[ 10*SP, -4*SP,  3*SP] },
+      { label:'Docker',         c:S, p:[ 16*SP,  3*SP,  0*SP] },
+      { label:'AWS',            c:S, p:[ 18*SP,  1*SP, -1*SP] },
+      { label:'Vercel',         c:S, p:[ 15*SP, -2*SP,  2*SP] },
+      { label:'GitHub Actions', c:S, p:[ 17*SP, -4*SP,  0*SP] },
+      { label:'Nginx',          c:S, p:[ 19*SP, -1*SP,  3*SP] },
+    ];
+
+    // ── Stars ──────────────────────────────────────────────────────────────
+    const STAR_COUNT = 700;
+    const starPos = new Float32Array(STAR_COUNT * 3);
+    for (let i = 0; i < STAR_COUNT; i++) {
+      const r  = 35 + Math.random() * 45;
+      const th = Math.random() * Math.PI * 2;
+      const ph = Math.acos(2 * Math.random() - 1);
+      starPos[i*3]   = r * Math.sin(ph) * Math.cos(th);
+      starPos[i*3+1] = r * Math.sin(ph) * Math.sin(th);
+      starPos[i*3+2] = r * Math.cos(ph);
+    }
+    const starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    group.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color:0xffffff, size:1.6, sizeAttenuation:false, transparent:true, opacity:0.55 })));
+    group.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color:0x44e2cd, size:2.8, sizeAttenuation:false, transparent:true, opacity:0.08 })));
+
+    // ── Ambient bubbles ────────────────────────────────────────────────────
+    const ambShapes = [new THREE.IcosahedronGeometry(0.22,0), new THREE.OctahedronGeometry(0.20), new THREE.TetrahedronGeometry(0.25)];
+    const ambColors = [0x44e2cd, 0xc0c1ff, 0x4edea3];
+    for (let i = 0; i < 55; i++) {
+      const m = new THREE.Mesh(ambShapes[i % 3], new THREE.MeshBasicMaterial({ color:ambColors[i%3], wireframe:true, transparent:true, opacity:0.05+Math.random()*0.09 }));
+      const r = 12 + Math.random() * 22;
+      const th = Math.random() * Math.PI * 2, ph = Math.acos(2*Math.random()-1);
+      m.position.set(r*Math.sin(ph)*Math.cos(th), r*Math.sin(ph)*Math.sin(th), r*Math.cos(ph));
+      m.userData = { rx:(Math.random()-.5)*0.012, ry:(Math.random()-.5)*0.012 };
+      group.add(m);
+    }
+
+    // ── Geometry pool ──────────────────────────────────────────────────────
+    const geoPool = [
+      new THREE.IcosahedronGeometry(0.78, 1),
+      new THREE.IcosahedronGeometry(0.82, 0),
+      new THREE.OctahedronGeometry(0.80),
+      new THREE.DodecahedronGeometry(0.72),
+      new THREE.TetrahedronGeometry(0.92),
+    ];
+
+    // ── Node meshes + cannon bodies ────────────────────────────────────────
+    const meshes = [];
+    const bodies = [];
+    const nodeShape = new CANNON.Sphere(0.5);
+
+    NODES.forEach((node, idx) => {
+      const mat  = new THREE.MeshBasicMaterial({ color:new THREE.Color(node.c), wireframe:true, transparent:true, opacity:0.82 });
+      const mesh = new THREE.Mesh(geoPool[idx % geoPool.length], mat);
+      mesh.position.set(...node.p);
+      const rng = (a, b) => a + Math.random() * (b - a);
+      mesh.userData = {
+        base: new THREE.Vector3(...node.p),
+        osc: {
+          fx:rng(0.18,0.45), px:rng(0,Math.PI*2), ax:rng(0.5,1.2),
+          fy:rng(0.20,0.50), py:rng(0,Math.PI*2), ay:rng(0.5,1.2),
+          fz:rng(0.15,0.40), pz:rng(0,Math.PI*2), az:rng(0.3,0.8),
+          fs:rng(0.30,0.70), ps:rng(0,Math.PI*2),
+          rx:rng(-0.008,0.008), ry:rng(-0.008,0.008),
+        },
+      };
+      group.add(mesh);
+      meshes.push(mesh);
+
+      const body = new CANNON.Body({
+        mass: 1,
+        linearDamping:  0.97,
+        angularDamping: 1.0,
+        shape: nodeShape,
+        collisionFilterGroup: 0,
+        collisionFilterMask:  0,
+      });
+      body.position.set(...node.p);
+      body.allowSleep = false;
+      world.addBody(body);
+      bodies.push(body);
+    });
+
+    // ── Edge buffer ────────────────────────────────────────────────────────
+    const MAX_EDGES  = meshes.length * meshes.length;
+    const edgePosArr = new Float32Array(MAX_EDGES * 6);
+    const edgeColArr = new Float32Array(MAX_EDGES * 6);
+    const edgeGeo    = new THREE.BufferGeometry();
+    edgeGeo.setAttribute('position', new THREE.BufferAttribute(edgePosArr, 3));
+    edgeGeo.setAttribute('color',    new THREE.BufferAttribute(edgeColArr, 3));
+    group.add(new THREE.LineSegments(edgeGeo, new THREE.LineBasicMaterial({ vertexColors:true, transparent:true, opacity:0.22 })));
+    const CONNECT_DIST = 7.5; // scaled with node spread
+    const pa = edgeGeo.attributes.position;
+    const ca = edgeGeo.attributes.color;
+    const _fc = new THREE.Color(), _tc = new THREE.Color();
+
+    // ── Labels ─────────────────────────────────────────────────────────────
+    const labelOverlay = document.createElement('div');
+    labelOverlay.style.cssText = 'position:absolute;inset:0;pointer-events:none;overflow:hidden';
+    container.appendChild(labelOverlay);
+
+    const labelEls = NODES.map(node => {
+      const div = document.createElement('div');
+      div.textContent = node.label;
+      const delay = (Math.random() * 3).toFixed(2);
+      div.style.cssText = `
+        position:absolute;left:0;top:0;
+        font-family:"Courier New",Courier,monospace;
+        font-size:10.5px;font-weight:700;letter-spacing:.07em;
+        color:${node.c};background:rgba(3,3,6,.93);
+        padding:3px 8px;border-radius:4px;border:1px solid ${node.c}66;
+        white-space:nowrap;pointer-events:none;
+        filter:drop-shadow(0 0 3px ${node.c});
+        animation:stkLabelPulse 2.8s ${delay}s ease-in-out infinite;
+        will-change:transform,opacity;
+      `;
+      labelOverlay.appendChild(div);
+      return div;
+    });
+
+    // ── Cursor + zoom ──────────────────────────────────────────────────────
+    const cursorNDC       = new THREE.Vector2(999, 999);
+    const prevCursorLocal = new THREE.Vector3();
+    const cursorLocalVel  = new THREE.Vector3();
+    let mouseX = 0, mouseY = 0, needsCursorInit = true;
+    const Z_START = 30, Z_MAX_ZOOM = 15;
+    let targetZ = Z_START;
+
+    function ndcToLocal(ndc, worldZ) {
+      const vec = new THREE.Vector3(ndc.x, ndc.y, 0.5).unproject(camera);
+      const dir = vec.sub(camera.position).normalize();
+      if (Math.abs(dir.z) < 0.0001) return new THREE.Vector3();
+      const t  = (worldZ - camera.position.z) / dir.z;
+      const wp = camera.position.clone().add(dir.multiplyScalar(t));
+      return group.worldToLocal(wp);
+    }
+
+    // Attach cursor + wheel listeners to any host div (used for both
+    // the small section canvas and the expanded modal canvas)
+    function attachListeners(el) {
+      el.addEventListener('mouseenter', () => { needsCursorInit = true; });
+      el.addEventListener('mousemove', e => {
+        if (activeHost !== el) return;
+        const r = el.getBoundingClientRect();
+        const cx = e.clientX - r.left, cy = e.clientY - r.top;
+        cursorNDC.set((cx / r.width) * 2 - 1, -(cy / r.height) * 2 + 1);
+        mouseX = cx - r.width / 2; mouseY = cy - r.height / 2;
+      });
+      el.addEventListener('mouseleave', () => {
+        if (activeHost !== el) return;
+        cursorNDC.set(999, 999); mouseX = 0; mouseY = 0;
+        cursorLocalVel.set(0, 0, 0); needsCursorInit = true;
+      });
+      el.addEventListener('wheel', e => {
+        e.preventDefault();
+        targetZ = THREE.MathUtils.clamp(targetZ - e.deltaY * 0.04, Z_MAX_ZOOM, Z_START);
+      }, { passive: false });
+    }
+    attachListeners(container);
+    if (modalCanvas) attachListeners(modalCanvas);
+
+    window.addEventListener('resize', () => {
+      const w = activeHost.clientWidth, h = activeHost.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    });
+
+    // ── Reusable cannon vectors ────────────────────────────────────────────
+    const _cForce   = new CANNON.Vec3();
+    const _cImpulse = new CANNON.Vec3();
+
+    // Spring: pulls nodes back toward their oscillation orbit
+    const SPRING_K  = 2.8;
+    // Vortex: makes nodes swirl AROUND cursor (tangential force), not flee
+    const VORTEX_R  = 9.0;
+    const VORTEX_STR = 5.0;
+    // Node-node separation to add spacing
+    const SEP_R = 4.0, SEP_F = 2.5;
+
+    // ── Animate ────────────────────────────────────────────────────────────
+    const wp  = new THREE.Vector3();
+    const prj = new THREE.Vector3();
+
+    (function animate() {
+      requestAnimationFrame(animate);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      elapsed += dt;
+      const t = elapsed;
+
+      camera.position.z += (targetZ - camera.position.z) * 0.06;
+      group.rotation.y += 0.001 + (mouseX * 0.0006 - group.rotation.y) * 0.03;
+      group.rotation.x +=         (mouseY * 0.0006 - group.rotation.x) * 0.03;
+
+      // Cursor velocity in group-local space
+      const cursorLocal = ndcToLocal(cursorNDC, 0);
+      if (needsCursorInit) {
+        prevCursorLocal.copy(cursorLocal);
+        cursorLocalVel.set(0, 0, 0);
+        needsCursorInit = false;
+      } else {
+        cursorLocalVel.subVectors(cursorLocal, prevCursorLocal);
+        prevCursorLocal.copy(cursorLocal);
+      }
+      const cursorSpeed  = cursorLocalVel.length();
+      const cursorActive = cursorNDC.x < 2;
+
+      // ── Per-node forces ───────────────────────────────────────────────
+      meshes.forEach((m, i) => {
+        const { base, osc } = m.userData;
+        const body = bodies[i];
+
+        // Oscillation target
+        const ox = base.x + Math.sin(t * osc.fx + osc.px) * osc.ax;
+        const oy = base.y + Math.sin(t * osc.fy + osc.py) * osc.ay;
+        const oz = base.z + Math.sin(t * osc.fz + osc.pz) * osc.az;
+
+        _cForce.set(
+          (ox - body.position.x) * SPRING_K,
+          (oy - body.position.y) * SPRING_K,
+          (oz - body.position.z) * SPRING_K,
+        );
+        body.applyForce(_cForce, body.position);
+
+        // Cursor vortex: tangential force makes nodes orbit around cursor,
+        // not flee from it. Strength scales with cursor speed.
+        if (cursorActive && cursorSpeed > 0.003) {
+          const dx   = body.position.x - cursorLocal.x;
+          const dy   = body.position.y - cursorLocal.y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < VORTEX_R && dist > 0.01) {
+            const falloff = (1 - dist / VORTEX_R) ** 2;
+            // Tangential direction (90° CCW of cursor→node vector)
+            const tx = -dy / dist;
+            const ty =  dx / dist;
+            // Scale by cursor speed so fast movement = more swirl
+            const str = cursorSpeed * falloff * VORTEX_STR;
+            _cImpulse.set(tx * str, ty * str, 0);
+            body.applyImpulse(_cImpulse, body.position);
+          }
+        }
+      });
+
+      // ── Pairwise separation (adds visual space between nodes) ─────────
+      for (let i = 0; i < bodies.length - 1; i++) {
+        for (let j = i + 1; j < bodies.length; j++) {
+          const pi = bodies[i].position, pj = bodies[j].position;
+          const dx = pi.x - pj.x, dy = pi.y - pj.y, dz = pi.z - pj.z;
+          const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+          if (dist < SEP_R && dist > 0.01) {
+            const str = (1 - dist / SEP_R) * SEP_F / dist;
+            _cForce.set(dx*str, dy*str, dz*str);
+            bodies[i].applyForce(_cForce, pi);
+            _cForce.set(-dx*str, -dy*str, -dz*str);
+            bodies[j].applyForce(_cForce, pj);
+          }
+        }
+      }
+
+      // ── Step physics ──────────────────────────────────────────────────
+      world.step(1 / 60, dt, 3);
+
+      // Ambient bubble spin
+      group.children.forEach(child => {
+        if (child.userData.rx !== undefined && !child.userData.base) {
+          child.rotation.x += child.userData.rx;
+          child.rotation.y += child.userData.ry;
+        }
+      });
+
+      // Sync Three.js from cannon + own spin
+      meshes.forEach((m, i) => {
+        const bp = bodies[i].position;
+        m.position.set(bp.x, bp.y, bp.z);
+        const { osc } = m.userData;
+        m.scale.setScalar(1 + Math.sin(t * osc.fs + osc.ps) * 0.09);
+        m.rotation.x += osc.rx;
+        m.rotation.y += osc.ry;
+      });
+
+      // ── Edges ─────────────────────────────────────────────────────────
+      let ei = 0;
+      for (let i = 0; i < meshes.length; i++) {
+        for (let j = i + 1; j < meshes.length; j++) {
+          if (meshes[i].position.distanceTo(meshes[j].position) < CONNECT_DIST) {
+            const pi = meshes[i].position, pj = meshes[j].position;
+            pa.array[ei*6+0]=pi.x; pa.array[ei*6+1]=pi.y; pa.array[ei*6+2]=pi.z;
+            pa.array[ei*6+3]=pj.x; pa.array[ei*6+4]=pj.y; pa.array[ei*6+5]=pj.z;
+            _fc.set(NODES[i].c); _tc.set(NODES[j].c);
+            ca.array[ei*6+0]=_fc.r; ca.array[ei*6+1]=_fc.g; ca.array[ei*6+2]=_fc.b;
+            ca.array[ei*6+3]=_tc.r; ca.array[ei*6+4]=_tc.g; ca.array[ei*6+5]=_tc.b;
+            ei++;
+          }
+        }
+      }
+      for (let k = ei*6; k < pa.array.length; k++) { pa.array[k]=0; ca.array[k]=0; }
+      pa.needsUpdate = true; ca.needsUpdate = true;
+      edgeGeo.setDrawRange(0, ei * 2);
+
+      // ── Labels ────────────────────────────────────────────────────────
+      const W = activeHost.clientWidth, H = activeHost.clientHeight;
+      meshes.forEach((m, i) => {
+        m.getWorldPosition(wp);
+        const opacity = THREE.MathUtils.clamp((wp.z + 18) / 36, 0, 1);
+        prj.copy(wp).project(camera);
+        const sx = ( prj.x * 0.5 + 0.5) * W;
+        const sy = (-prj.y * 0.5 + 0.5) * H - 22;
+        const el = labelEls[i];
+        el.style.visibility = (sx < -80 || sx > W+80 || sy < -30 || sy > H+30) ? 'hidden' : 'visible';
+        el.style.opacity    = opacity.toFixed(2);
+        el.style.transform  = `translate(calc(${sx}px - 50%), calc(${sy}px - 100%))`;
+      });
+
+      renderer.render(scene, camera);
+    })();
+  }
+</script>
