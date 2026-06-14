@@ -13,10 +13,11 @@ export function fadeUp(selector, trigger, {
   ease = 'power3.out',
   start = 'top 80%',
   delay = 0,
+  toggleActions = 'play none none reverse',
 } = {}) {
   gsap.to(selector, {
     opacity: 1, y: 0, duration, ease, delay,
-    scrollTrigger: { trigger, start },
+    scrollTrigger: { trigger, start, toggleActions },
   });
 }
 
@@ -32,10 +33,11 @@ export function staggerFadeUp(selector, trigger, {
   stagger = 0.12,
   start = 'top 78%',
   onEnter,
+  toggleActions = 'play none none reverse',
 } = {}) {
   gsap.to(selector, {
     opacity: 1, y: 0, duration, ease, stagger,
-    scrollTrigger: { trigger, start, onEnter },
+    scrollTrigger: { trigger, start, onEnter, toggleActions },
   });
 }
 
@@ -66,13 +68,15 @@ export function slideFromSides(elements, {
   ease = 'power3.out',
   start = 'top 82%',
   reverseCheck = (_, i) => i % 2 !== 0,
+  toggleActions = 'play none none reverse',
 } = {}) {
   elements.forEach((el, i) => {
-    gsap.from(el, {
-      opacity: 0, x: reverseCheck(el, i) ? xOffset : -xOffset,
-      duration, ease,
-      scrollTrigger: { trigger: el, start },
-    });
+    // fromTo keeps explicit from/to so reverse animates back to the correct hidden state
+    gsap.fromTo(el,
+      { opacity: 0, x: reverseCheck(el, i) ? xOffset : -xOffset },
+      { opacity: 1, x: 0, duration, ease,
+        scrollTrigger: { trigger: el, start, toggleActions } }
+    );
   });
 }
 
@@ -129,10 +133,11 @@ export function cascadeVoxels(selector, {
   duration = 0.3,
   ease = 'back.out(1.5)',
 } = {}) {
-  gsap.from(selector, {
-    opacity: 0, scale: 0, duration, ease,
-    stagger: { amount, from: 'start' },
-  });
+  // fromTo keeps explicit states so killing mid-stagger and replaying always works
+  gsap.fromTo(selector,
+    { opacity: 0, scale: 0 },
+    { opacity: 1, scale: 1, duration, ease, stagger: { amount, from: 'start' } }
+  );
 }
 
 /**

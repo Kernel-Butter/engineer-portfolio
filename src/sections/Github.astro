@@ -166,10 +166,29 @@ const repos = [
 </section>
 
 <script>
-  import { fadeUp, staggerFadeUp, cascadeVoxels, onEnterOnce } from '../scripts/animations.js';
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { fadeUp, staggerFadeUp, cascadeVoxels } from '../scripts/animations.js';
 
   fadeUp('#github .gh-header', '#github');
   staggerFadeUp('#github .gh-card', '#github .grid');
-  onEnterOnce('#github .gh-card', () => cascadeVoxels('#github .voxel'), { start: 'top 75%' });
   staggerFadeUp('#github .gh-repo', '#github .gh-repo', { stagger: 0.1, start: 'top 85%' });
+
+  // Replay cascade every time the heatmap enters view — onEnterOnce broke when
+  // the card reversed mid-stagger (leaving later voxels stuck at scale:0)
+  function replayCascade() {
+    gsap.killTweensOf('#github .voxel');
+    cascadeVoxels('#github .voxel');
+  }
+
+  ScrollTrigger.create({
+    trigger: '#github .gh-card',
+    start: 'top 75%',
+    onEnter: replayCascade,
+    onEnterBack: replayCascade,
+    onLeaveBack() {
+      gsap.killTweensOf('#github .voxel');
+      gsap.set('#github .voxel', { clearProps: 'transform,opacity' });
+    },
+  });
 </script>

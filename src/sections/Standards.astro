@@ -149,17 +149,18 @@ const a11yRows = [
 </section>
 
 <script>
-  import { fadeUp, staggerFadeUp, animateGauge, countUp, animateBar } from '../scripts/animations.js';
+  import { fadeUp, staggerFadeUp, animateGauge, countUp, animateBar, onEnterOnce } from '../scripts/animations.js';
 
   fadeUp('#standards .std-header', '#standards');
-  staggerFadeUp('#standards .std-card', '#standards .grid', {
-    onEnter() {
-      animateGauge('lh-arc');
-      countUp('lh-counter', 100);
-      animateBar('#type-bar', 100, { delay: 0.3 });
-      document.querySelectorAll('#standards .cwv-bar').forEach((bar, i) => {
-        animateBar(bar, Number(bar.dataset.pct), { duration: 1, delay: 0.2 + i * 0.1 });
-      });
-    },
-  });
+  staggerFadeUp('#standards .std-card', '#standards .grid');
+
+  // Gauge / counter / bars fire once — can't cleanly reverse an SVG arc mid-draw
+  onEnterOnce('#standards .grid', () => {
+    animateGauge('lh-arc');
+    countUp('lh-counter', 100);
+    animateBar('#type-bar', 100, { delay: 0.3 });
+    document.querySelectorAll('#standards .cwv-bar').forEach((bar, i) => {
+      animateBar(bar, Number(bar.dataset.pct), { duration: 1, delay: 0.2 + i * 0.1 });
+    });
+  }, { start: 'top 78%' });
 </script>
