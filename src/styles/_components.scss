@@ -1,6 +1,3 @@
-// ─── Shared UI components used across multiple sections ──────
-
-// Glassmorphism bento card
 .bento-card {
   background: rgba(23, 23, 23, 0.6);
   backdrop-filter: blur(12px);
@@ -10,7 +7,6 @@
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-  // Gradient border on hover via mask trick
   &::before {
     content: '';
     position: absolute;
@@ -33,7 +29,6 @@
   }
 }
 
-// Glass panel (ai-workflow, writing, standards)
 .glass-panel {
   background: rgba(23, 23, 23, 0.6);
   backdrop-filter: blur(12px);
@@ -61,7 +56,6 @@
   }
 }
 
-// Glass card (career timeline)
 .glass-card {
   background: rgba(23, 23, 23, 0.6);
   backdrop-filter: blur(12px);
@@ -76,7 +70,6 @@
   }
 }
 
-// Tech chip (tech stack section)
 .tech-chip {
   background-color: #171717;
   border: 1px solid rgba(255,255,255,0.05);

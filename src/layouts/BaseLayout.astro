@@ -1,0 +1,51 @@
+---
+import Nav from '../components/Nav.astro';
+import Preloader from '../components/Preloader.astro';
+import '../styles/tailwind.css';
+import '../styles/global.scss';
+
+const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
+---
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+</head>
+<body class="antialiased">
+
+  <Preloader />
+
+  <div id="main-content">
+    <Nav />
+    <slot />
+    <footer class="bg-surface-container-lowest border-t border-outline-variant/20 py-12">
+      <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto gap-gutter">
+        <div class="font-headline-md text-headline-md text-primary font-bold tracking-tighter">
+          TERMINAL_VELOCITY.ENGINEER
+        </div>
+        <div class="font-code-snippet text-code-snippet text-on-surface-variant opacity-60 text-center">
+          ©2025 TERMINAL_VELOCITY.ENGINEER // STATUS: AVAILABLE_FOR_WORK
+        </div>
+        <nav class="flex flex-wrap justify-center gap-6">
+          <a href="#" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">GITHUB</a>
+          <a href="#" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">LINKEDIN</a>
+          <a href="#" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">CV_DL</a>
+        </nav>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    import Alpine from 'alpinejs';
+    window.Alpine = Alpine;
+    Alpine.start();
+  </script>
+
+</body>
+</html>

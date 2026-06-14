@@ -1,0 +1,50 @@
+<div id="preloader">
+  <canvas id="particle-canvas"></canvas>
+  <div class="loader-content">
+
+    <div class="text-center mb-8">
+      <h1 class="font-headline-lg text-headline-lg text-primary tracking-tighter uppercase glitch-text"
+          data-text="SYS.ENGINEER">SYS.ENGINEER</h1>
+      <p id="status-message" class="font-code-snippet text-code-snippet text-tertiary mt-2 tracking-widest opacity-80">
+        Initializing System...
+      </p>
+    </div>
+
+    <div class="w-full max-w-md">
+      <div class="progress-data mb-2 text-primary font-code-snippet text-label-sm">
+        <span id="loading-file">boot_sequence.sh</span>
+        <span id="progress-percent">00.0%</span>
+      </div>
+      <div class="progress-track rounded-full">
+        <div class="progress-fill rounded-full" id="progress-bar"></div>
+      </div>
+    </div>
+
+    <div class="w-full max-w-md mt-6 h-32 overflow-hidden relative">
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#0a0a0a] z-10 pointer-events-none"></div>
+      <div id="terminal-logs" class="font-code-snippet text-label-sm text-on-surface-variant/60 flex flex-col gap-1 transition-transform duration-300"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { initPreloader } from '../scripts/preloader.js';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  initPreloader(() => {
+    gsap.to('#main-content', {
+      opacity: 1,
+      autoAlpha: 1,
+      duration: 1,
+      ease: 'power2.out',
+      onComplete() {
+        ScrollTrigger.refresh();
+        document.dispatchEvent(new CustomEvent('portfolio:ready'));
+      },
+    });
+  });
+</script>

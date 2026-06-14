@@ -1,17 +1,13 @@
 import { gsap } from 'gsap';
 
-/**
- * Cinematic preloader — particle canvas + progress ticker.
- * Calls onComplete() after the GSAP fade-out finishes.
- */
 export function initPreloader(onComplete) {
   const els = {
-    preloader:    document.getElementById('preloader'),
-    bar:          document.getElementById('progress-bar'),
-    pct:          document.getElementById('progress-percent'),
-    status:       document.getElementById('status-message'),
-    logs:         document.getElementById('terminal-logs'),
-    file:         document.getElementById('loading-file'),
+    preloader: document.getElementById('preloader'),
+    bar:       document.getElementById('progress-bar'),
+    pct:       document.getElementById('progress-percent'),
+    status:    document.getElementById('status-message'),
+    logs:      document.getElementById('terminal-logs'),
+    file:      document.getElementById('loading-file'),
   };
 
   const FILES = [
@@ -24,7 +20,6 @@ export function initPreloader(onComplete) {
     'establishing_secure_connection...',
   ];
 
-  // ── Particle canvas ─────────────────────────────────────────
   const canvas = document.getElementById('particle-canvas');
   const ctx    = canvas.getContext('2d');
   const COLORS = ['#c0c1ff', '#44e2cd', '#4edea3'];
@@ -78,7 +73,6 @@ export function initPreloader(onComplete) {
   };
   loop();
 
-  // ── Terminal logs ────────────────────────────────────────────
   const addLog = text => {
     const el = document.createElement('div');
     el.textContent = `> ${text}`;
@@ -89,7 +83,6 @@ export function initPreloader(onComplete) {
   addLog('Initializing kernel...');
   addLog('Mounting virtual DOM...');
 
-  // ── Progress ticker ──────────────────────────────────────────
   let progress  = 0;
   let fileIndex = 0;
 
@@ -121,7 +114,7 @@ export function initPreloader(onComplete) {
       }
     }
 
-    els.bar.style.width  = `${progress}%`;
-    els.pct.textContent  = `${progress < 10 ? '0' : ''}${progress.toFixed(1)}%`;
+    els.bar.style.width = `${progress}%`;
+    els.pct.textContent = `${progress < 10 ? '0' : ''}${progress.toFixed(1)}%`;
   }, 80);
 }
