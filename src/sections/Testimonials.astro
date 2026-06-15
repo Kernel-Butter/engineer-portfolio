@@ -1,55 +1,59 @@
 ---
-const testimonials = [
+import BlobCard from '../components/BlobCard.astro';
+import type { BlobConfig } from '../components/BlobCard.astro';
+
+const testimonials: Array<{
+  id: number; span: number; name: string; initials: string; role: string;
+  quote: string; tags: { label: string; color: string; dot?: string }[];
+  avatarGrad: string; ringColor: string; large: boolean;
+  blobs: BlobConfig[];
+}> = [
   {
-    id: 1,
-    span: 8,
-    name: 'Marcus R.',
-    initials: 'MR',
+    id: 1, span: 8, name: 'Marcus R.', initials: 'MR',
     role: 'VP ENGINEERING @ NEURAL_SYNC',
     quote: 'The architectural decisions made during the core refactor didn\'t just solve our scaling issues; they laid a foundation we\'ll be building on for the next five years. Precision engineering meets uncompromising execution.',
     tags: [
       { label: 'SYSTEM_ARCH', color: 'text-primary border-outline-variant/30' },
       { label: 'RUST',        color: 'text-primary border-outline-variant/30' },
     ],
-    avatarGrad: 'from-primary/40 to-secondary/20',
-    ringColor:  'border-primary/30',
-    large: true,
+    avatarGrad: 'from-primary/40 to-secondary/20', ringColor: 'border-primary/30', large: true,
+    blobs: [
+      { color: 'bg-indigo-500/20', position: '-top-16 -right-16', size: 'w-72 h-72', blur: 'blur-[80px]', anim: 'a', dur: '14s' },
+      { color: 'bg-indigo-400/15', position: 'bottom-0 left-0',   size: 'w-52 h-52', blur: 'blur-[55px]', anim: 'b', dur: '10s', delay: '-5s' },
+    ],
   },
   {
-    id: 2,
-    span: 4,
-    name: 'Elena K.',
-    initials: 'EK',
+    id: 2, span: 4, name: 'Elena K.', initials: 'EK',
     role: 'FOUNDER @ DATAVOID',
     quote: 'Delivered a complex WebGL visualization engine weeks ahead of schedule. The code was practically poetry.',
     tags: [{ label: 'FRONTEND', color: 'text-secondary border-secondary/20', dot: 'bg-secondary' }],
-    avatarGrad: 'from-secondary/40 to-tertiary/20',
-    ringColor:  'border-secondary/30',
-    large: false,
+    avatarGrad: 'from-secondary/40 to-tertiary/20', ringColor: 'border-secondary/30', large: false,
+    blobs: [
+      { color: 'bg-teal-500/20', position: '-top-10 -right-10', size: 'w-60 h-60', blur: 'blur-[70px]', anim: 'b', dur: '12s' },
+      { color: 'bg-teal-400/15', position: 'bottom-0 left-0',   size: 'w-40 h-40', blur: 'blur-[50px]', anim: 'c', dur: '8s', delay: '-3s' },
+    ],
   },
   {
-    id: 3,
-    span: 4,
-    name: 'David C.',
-    initials: 'DC',
+    id: 3, span: 4, name: 'David C.', initials: 'DC',
     role: 'CTO @ QUANTUM_LEAP',
     quote: 'An absolute machine. Turned our chaotic microservices into a streamlined, high-performance cluster.',
     tags: [{ label: 'DEVOPS', color: 'text-tertiary border-tertiary/20', dot: 'bg-tertiary' }],
-    avatarGrad: 'from-tertiary/40 to-primary/20',
-    ringColor:  'border-tertiary/30',
-    large: false,
+    avatarGrad: 'from-tertiary/40 to-primary/20', ringColor: 'border-tertiary/30', large: false,
+    blobs: [
+      { color: 'bg-violet-500/20', position: '-bottom-16 -left-16', size: 'w-60 h-60', blur: 'blur-[70px]', anim: 'c', dur: '13s' },
+      { color: 'bg-violet-400/15', position: 'top-0 right-0',       size: 'w-40 h-40', blur: 'blur-[50px]', anim: 'a', dur: '9s', delay: '-4s' },
+    ],
   },
   {
-    id: 4,
-    span: 8,
-    name: 'Sarah J.',
-    initials: 'SJ',
+    id: 4, span: 8, name: 'Sarah J.', initials: 'SJ',
     role: 'LEAD SEC_OPS @ SHIELD_NET',
     quote: 'When it comes to securing critical infrastructure, there is zero margin for error. The auditing and subsequent patching implemented were flawless. It\'s rare to find someone who understands deep systems-level security and can communicate it clearly to stakeholders.',
     tags: [],
-    avatarGrad: 'from-primary/30 to-secondary/40',
-    ringColor:  'border-primary/50',
-    large: true,
+    avatarGrad: 'from-primary/30 to-secondary/40', ringColor: 'border-primary/50', large: true,
+    blobs: [
+      { color: 'bg-indigo-500/20', position: '-bottom-16 right-8', size: 'w-72 h-72', blur: 'blur-[80px]', anim: 'a', dur: '16s', delay: '-6s' },
+      { color: 'bg-indigo-400/15', position: 'top-0 -left-8',      size: 'w-56 h-56', blur: 'blur-[60px]', anim: 'b', dur: '11s' },
+    ],
   },
 ];
 ---
@@ -72,8 +76,9 @@ const testimonials = [
     <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
 
       {testimonials.map(t => (
-        <div
+        <BlobCard
           class={`tm-card bento-card rounded-xl p-8 relative overflow-hidden group cursor-pointer md:col-span-${t.span}`}
+          blobs={t.blobs}
           data-tilt
         >
 
@@ -124,7 +129,7 @@ const testimonials = [
             </div>
 
           </div>
-        </div>
+        </BlobCard>
       ))}
 
     </div>

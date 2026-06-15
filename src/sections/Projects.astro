@@ -1,4 +1,6 @@
 ---
+import BlobCard from '../components/BlobCard.astro';
+
 const bars = Array.from({ length: 32 }, () => ({
   height: Math.floor(Math.random() * 60 + 10),
   opacity: (Math.random() * 0.6 + 0.2).toFixed(2),
@@ -26,8 +28,16 @@ const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
     <!-- Bento grid -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
 
-      <!-- Project 1: Quantum Dashboard — 8 cols -->
-      <article class="proj-card bento-card rounded-xl md:col-span-8 flex flex-col p-8 group">
+      <!-- Project 1: Quantum Dashboard — 8 cols (indigo) -->
+      <BlobCard
+        tag="article"
+        class="proj-card bento-card rounded-xl md:col-span-8 flex flex-col p-8 group relative"
+        pattern="grid"
+        blobs={[
+          { color: 'bg-indigo-500/25', position: '-top-20 -left-16', size: 'w-80 h-80', blur: 'blur-[90px]', anim: 'a', dur: '14s' },
+          { color: 'bg-indigo-400/15', position: 'bottom-0 right-4',  size: 'w-52 h-52', blur: 'blur-[65px]', anim: 'b', dur: '9s', delay: '-4s' },
+        ]}
+      >
         <div class="flex justify-between items-start mb-6">
           <div>
             <h3 class="font-headline-md text-headline-md text-primary mb-2">Quantum Dashboard</h3>
@@ -77,10 +87,18 @@ const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
             </p>
           </div>
         </div>
-      </article>
+      </BlobCard>
 
-      <!-- Project 2: Aurelius Commerce — 4 cols -->
-      <article class="proj-card bento-card rounded-xl md:col-span-4 flex flex-col p-8 group">
+      <!-- Project 2: Aurelius Commerce — 4 cols (teal) -->
+      <BlobCard
+        tag="article"
+        class="proj-card bento-card rounded-xl md:col-span-4 flex flex-col p-8 group relative"
+        pattern="lines"
+        blobs={[
+          { color: 'bg-teal-500/25', position: '-top-10 -right-10', size: 'w-56 h-56', blur: 'blur-[70px]', anim: 'b', dur: '11s' },
+          { color: 'bg-teal-400/15', position: 'bottom-0 left-0',   size: 'w-40 h-40', blur: 'blur-[50px]', anim: 'c', dur: '8s', delay: '-3s' },
+        ]}
+      >
         <div class="flex justify-between items-start mb-6">
           <div>
             <h3 class="font-headline-md text-headline-md text-primary mb-2">Aurelius Commerce</h3>
@@ -107,10 +125,18 @@ const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
           <h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2">Lighthouse Score</h4>
           <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary font-bold">98/100</span>
         </div>
-      </article>
+      </BlobCard>
 
-      <!-- Project 3: Synthetix AI — full width -->
-      <article class="proj-card bento-card rounded-xl md:col-span-12 flex flex-col md:flex-row p-8 group gap-8">
+      <!-- Project 3: Synthetix AI — full width (violet) -->
+      <BlobCard
+        tag="article"
+        class="proj-card bento-card rounded-xl md:col-span-12 flex flex-col md:flex-row p-8 group gap-8 relative"
+        pattern="dots"
+        blobs={[
+          { color: 'bg-violet-500/20', position: '-top-16 left-8',  size: 'w-80 h-80', blur: 'blur-[90px]', anim: 'c', dur: '15s' },
+          { color: 'bg-violet-400/15', position: 'top-8 right-16', size: 'w-72 h-72', blur: 'blur-[80px]', anim: 'a', dur: '11s', delay: '-7s' },
+        ]}
+      >
         <div class="w-full md:w-1/3 flex flex-col">
           <div class="mb-4">
             <h3 class="font-headline-md text-headline-md text-primary mb-2">Synthetix AI</h3>
@@ -155,7 +181,7 @@ const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
             <p class="font-headline-md text-headline-md text-on-surface">40% Faster Shipping</p>
           </div>
         </div>
-      </article>
+      </BlobCard>
 
     </div>
   </div>

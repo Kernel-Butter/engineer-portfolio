@@ -1,0 +1,63 @@
+---
+export interface BlobConfig {
+  /** Tailwind bg-color/opacity class, e.g. 'bg-indigo-500/25' */
+  color: string;
+  /** Absolute position offset classes, e.g. '-top-20 -left-16' */
+  position: string;
+  /** Which drift keyframe to use */
+  anim: 'a' | 'b' | 'c';
+  /** Tailwind size classes, defaults to 'w-72 h-72' */
+  size?: string;
+  /** Tailwind blur class, defaults to 'blur-[80px]' */
+  blur?: string;
+  /** CSS duration string, overrides --blob-dur default, e.g. '14s' */
+  dur?: string;
+  /** CSS delay string (can be negative), e.g. '-5s' */
+  delay?: string;
+}
+
+interface Props {
+  /** HTML tag to render, defaults to 'div' */
+  tag?: 'div' | 'article' | 'section' | 'li';
+  /** All classes for the root element (card styles, grid spans, padding, etc.) */
+  class?: string;
+  /** Background texture pattern */
+  pattern?: 'grid' | 'lines' | 'dots' | 'brackets' | 'none';
+  /** Blob definitions — each renders an animated, blurred, shape-morphing div */
+  blobs?: BlobConfig[];
+}
+
+const {
+  tag: Tag = 'div',
+  class: className = '',
+  pattern = 'none',
+  blobs = [],
+} = Astro.props;
+
+function blobStyle(blob: BlobConfig): string {
+  const parts: string[] = [];
+  if (blob.dur)   parts.push(`--blob-dur: ${blob.dur}`);
+  if (blob.delay) parts.push(`--blob-delay: ${blob.delay}`);
+  return parts.join('; ');
+}
+---
+
+<Tag class={className}>
+  {pattern !== 'none' && (
+    <div class={`blob-pattern-${pattern} absolute inset-0 rounded-[inherit] pointer-events-none`}></div>
+  )}
+  {blobs.map(blob => (
+    <div
+      class:list={[
+        'absolute pointer-events-none',
+        `blob-anim-${blob.anim}`,
+        blob.color,
+        blob.size  ?? 'w-72 h-72',
+        blob.position,
+        blob.blur  ?? 'blur-[80px]',
+      ]}
+      style={blobStyle(blob) || undefined}
+    />
+  ))}
+  <slot />
+</Tag>
