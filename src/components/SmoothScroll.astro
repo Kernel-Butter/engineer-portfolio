@@ -1,0 +1,108 @@
+<!-- Custom scrollbar DOM -->
+<div id="scb-track" aria-hidden="true">
+  <div id="scb-thumb"></div>
+</div>
+
+<style>
+  /* ── Hide native scrollbar (webkit + Firefox) ───────────────────────────── */
+  html {
+    scrollbar-width: none; /* Firefox */
+  }
+  html::-webkit-scrollbar {
+    display: none; /* Chrome / Safari / Edge */
+  }
+
+  /* ── Custom scrollbar track ─────────────────────────────────────────────── */
+  #scb-track {
+    position: fixed;
+    right: 6px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    z-index: 9999;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 2px;
+  }
+
+  /* ── Thumb: flowing gradient shader ─────────────────────────────────────── */
+  #scb-thumb {
+    position: absolute;
+    left: 0;
+    width: 3px;
+    border-radius: 2px;
+    /* Extended gradient so flow animation feels continuous */
+    background: linear-gradient(
+      180deg,
+      #c0c1ff 0%,
+      #44e2cd 33%,
+      #4edea3 50%,
+      #c0c1ff 66%,
+      #44e2cd 83%,
+      #4edea3 100%
+    );
+    background-size: 100% 300%;
+    background-position: 0% 0%;
+    box-shadow:
+      0 0 6px  rgba(192, 193, 255, 0.9),
+      0 0 14px rgba(68,  226, 205, 0.5),
+      0 0 28px rgba(78,  222, 163, 0.25);
+    animation: scb-flow 3s linear infinite;
+    /* Fade in on first scroll */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  #scb-thumb.visible {
+    opacity: 1;
+  }
+
+  @keyframes scb-flow {
+    0%   { background-position: 0%   0%; }
+    100% { background-position: 0% 100%; }
+  }
+</style>
+
+<script>
+  import Lenis from 'lenis';
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+
+  gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+  // ── Init Lenis ─────────────────────────────────────────────────────────────
+  const lenis = new Lenis({
+    duration: 1.3,
+    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    touchMultiplier: 1.8,
+    infinite: false,
+  });
+
+  // Pipe Lenis scroll events into ScrollTrigger so all existing animations work
+  lenis.on('scroll', () => ScrollTrigger.update());
+
+  gsap.ticker.add((time: number) => {
+    lenis.raf(time * 1000);
+  });
+  gsap.ticker.lagSmoothing(0);
+
+  // Expose on window so Nav's ScrollToPlugin handler can delegate to Lenis
+  (window as any).__lenis = lenis;
+
+  // ── Custom scrollbar ───────────────────────────────────────────────────────
+  const track = document.getElementById('scb-track')!;
+  const thumb = document.getElementById('scb-thumb')!;
+
+  lenis.on('scroll', ({ scroll, limit }: { scroll: number; limit: number }) => {
+    if (!thumb.classList.contains('visible')) thumb.classList.add('visible');
+
+    const trackH   = track.clientHeight;
+    const thumbH   = Math.max(40, (window.innerHeight / document.documentElement.scrollHeight) * trackH);
+    const maxTop   = trackH - thumbH;
+    const progress = limit > 0 ? scroll / limit : 0;
+
+    thumb.style.height = `${thumbH}px`;
+    thumb.style.top    = `${progress * maxTop}px`;
+  });
+</script>

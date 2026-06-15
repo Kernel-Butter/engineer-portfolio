@@ -1,6 +1,7 @@
 ---
 import Nav from '../components/Nav.astro';
 import Preloader from '../components/Preloader.astro';
+import SmoothScroll from '../components/SmoothScroll.astro';
 import '../styles/tailwind.css';
 import '../styles/global.scss';
 
@@ -20,6 +21,7 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
 <body class="antialiased">
 
   <Preloader />
+  <SmoothScroll />
 
   <div id="main-content">
     <Nav />
