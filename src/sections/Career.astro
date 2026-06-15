@@ -99,24 +99,24 @@ const roles = [
           <div class={`w-full md:w-[45%] pl-12 ${role.reverse ? 'md:pl-0 md:pr-8' : 'md:pl-8'}`}>
             <div class="glass-card rounded-lg p-6">
 
-              <div class={`flex items-start justify-between mb-4 ${role.reverse ? 'md:flex-row-reverse' : ''}`}>
-                <div class={role.reverse ? 'md:text-right' : ''}>
+              <div class="flex items-start justify-between mb-4">
+                <div>
                   <h3 class="font-headline-md text-headline-md text-primary mb-1">{role.title}</h3>
                   <div class="font-code-snippet text-code-snippet text-on-surface-variant">{role.company}</div>
                 </div>
                 <span class="material-symbols-outlined text-secondary opacity-50">{role.icon}</span>
               </div>
 
-              <ul class={`space-y-3 font-body-md text-body-md text-on-surface ${role.reverse ? 'md:text-right' : ''}`}>
+              <ul class="space-y-3 font-body-md text-body-md text-on-surface">
                 {role.bullets.map(b => (
-                  <li class={`flex items-start ${role.reverse ? 'md:flex-row-reverse' : ''}`}>
-                    <span class={`text-secondary font-code-snippet mt-1 shrink-0 ${role.reverse ? 'md:ml-2 mr-2 md:mr-0' : 'mr-2'}`}>&gt;</span>
+                  <li class="flex items-start">
+                    <span class="text-secondary font-code-snippet mt-1 shrink-0 mr-2">&gt;</span>
                     {b}
                   </li>
                 ))}
               </ul>
 
-              <div class={`mt-6 flex flex-wrap gap-2 ${role.reverse ? 'md:justify-end' : ''}`}>
+              <div class="mt-6 flex flex-wrap gap-2">
                 {role.chips.map(c => (
                   <span class={`px-3 py-1 rounded font-label-sm text-label-sm bg-[#171717] ${c.accent ? 'text-tertiary border border-tertiary/30' : 'text-on-surface-variant border border-white/10'}`}>
                     {c.label}

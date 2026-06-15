@@ -1,6 +1,4 @@
 ---
-import BlobCard from '../components/BlobCard.astro';
-
 const vitals = [
   { label: 'LCP', full: 'Largest Contentful Paint', value: '0.8', unit: 's',  pct: '25' },
   { label: 'FID', full: 'First Input Delay',         value: '12',  unit: 'ms', pct: '8'  },
@@ -34,14 +32,8 @@ const a11yRows = [
     <!-- Bento Grid -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
 
-      <!-- Lighthouse Score (col-span-8) — subtle teal blobs behind the gauge -->
-      <BlobCard
-        class="std-card bento-card md:col-span-8 p-8 flex flex-col md:flex-row items-center justify-between gap-8 group relative"
-        blobs={[
-          { color: 'bg-teal-500/15', position: 'top-4 right-4',    size: 'w-56 h-56', blur: 'blur-[70px]', anim: 'b', dur: '13s' },
-          { color: 'bg-teal-400/10', position: '-bottom-8 left-8', size: 'w-48 h-48', blur: 'blur-[60px]', anim: 'c', dur: '9s', delay: '-5s' },
-        ]}
-      >
+      <!-- Lighthouse Score (col-span-8) -->
+      <div class="std-card bento-card md:col-span-8 p-8 flex flex-col md:flex-row items-center justify-between gap-8 group">
         <div class="space-y-4 w-full md:w-1/2">
           <div class="flex items-center gap-3 text-secondary">
             <span class="material-symbols-outlined text-[32px]">speed</span>
@@ -60,7 +52,7 @@ const a11yRows = [
 
         <!-- Gauge -->
         <div class="relative w-48 h-48 flex items-center justify-center shrink-0">
-          <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+          <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100" style="overflow: visible">
             <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
             <circle
               id="lh-arc"
@@ -77,7 +69,7 @@ const a11yRows = [
             <span id="lh-counter" class="font-headline-lg text-headline-lg text-white">0</span>
           </div>
         </div>
-      </BlobCard>
+      </div>
 
       <!-- Type Coverage (col-span-4) -->
       <div class="std-card bento-card md:col-span-4 p-6 flex flex-col justify-between">
@@ -157,18 +149,33 @@ const a11yRows = [
 </section>
 
 <script>
-  import { fadeUp, staggerFadeUp, animateGauge, countUp, animateBar, onEnterOnce } from '../scripts/animations.js';
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { fadeUp, staggerFadeUp, animateGauge, countUp, animateBar } from '../scripts/animations.js';
 
   fadeUp('#standards .std-header', '#standards');
   staggerFadeUp('#standards .std-card', '#standards .grid');
 
-  // Gauge / counter / bars fire once — can't cleanly reverse an SVG arc mid-draw
-  onEnterOnce('#standards .grid', () => {
+  function playMetrics() {
+    gsap.killTweensOf('#lh-arc, #type-bar, #standards .cwv-bar');
+    gsap.set('#lh-arc', { strokeDashoffset: 282.7 });
+    const counter = document.getElementById('lh-counter');
+    if (counter) counter.textContent = '0';
+    gsap.set('#type-bar', { width: '0%' });
+    gsap.set('#standards .cwv-bar', { width: '0%' });
+
     animateGauge('lh-arc');
     countUp('lh-counter', 100);
     animateBar('#type-bar', 100, { delay: 0.3 });
-    document.querySelectorAll('#standards .cwv-bar').forEach((bar, i) => {
+    document.querySelectorAll<HTMLElement>('#standards .cwv-bar').forEach((bar, i) => {
       animateBar(bar, Number(bar.dataset.pct), { duration: 1, delay: 0.2 + i * 0.1 });
     });
-  }, { start: 'top 78%' });
+  }
+
+  ScrollTrigger.create({
+    trigger: '#standards .grid',
+    start: 'top 78%',
+    onEnter:     playMetrics,
+    onEnterBack: playMetrics,
+  });
 </script>
