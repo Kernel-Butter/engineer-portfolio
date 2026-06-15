@@ -51,7 +51,7 @@
       e.preventDefault();
       const lenis = (window as any).__lenis;
       if (lenis) {
-        lenis.scrollTo(target, { offset: -80, duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+        lenis.scrollTo(target, { offset: -40, duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
       } else {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
