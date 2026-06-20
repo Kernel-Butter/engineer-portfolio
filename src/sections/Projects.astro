@@ -6,6 +6,49 @@ const bars = Array.from({ length: 32 }, () => ({
   opacity: (Math.random() * 0.6 + 0.2).toFixed(2),
 }));
 const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
+
+const projects = [
+  {
+    id: 0,
+    name: 'Quantum Dashboard',
+    chips: ['Live', 'WebGL', 'Data Viz'],
+    problem: 'Severe rendering lag during real-time ingestion of complex node graphs.',
+    approach: 'Custom WebGL shaders offloading matrix calculations to GPU.',
+    resultMetric: '60fps',
+    resultContext: '@ 100k nodes',
+    resultMetricClass: 'font-headline-md text-headline-md text-on-surface font-bold',
+    colSpan: 'md:col-span-8',
+    vizType: 'bars',
+    blobs: [
+      { color: 'bg-indigo-500/25', position: '-top-20 -left-16', size: 'w-80 h-80', blur: 'blur-[90px]', anim: 'a', dur: '14s' },
+      { color: 'bg-indigo-400/15', position: 'bottom-0 right-4',  size: 'w-52 h-52', blur: 'blur-[65px]', anim: 'b', dur: '9s', delay: '-4s' },
+    ],
+    pattern: 'grid',
+    icon: 'query_stats',
+    problemAccent: 'secondary',
+    approachAccent: 'tertiary',
+    resultAccent: 'primary',
+  },
+  {
+    id: 1,
+    name: 'Aurelius Commerce',
+    chips: ['Next.js', 'Edge'],
+    problem: 'Poor SEO and slow TTFB on a high-end headless storefront.',
+    approach: 'Re-architected routing using Next.js App Router with globally distributed Edge caching.',
+    resultMetric: '98/100',
+    resultContext: 'Lighthouse Score',
+    colSpan: 'md:col-span-4',
+    blobs: [
+      { color: 'bg-teal-500/25', position: '-top-10 -right-10', size: 'w-56 h-56', blur: 'blur-[70px]', anim: 'b', dur: '11s' },
+      { color: 'bg-teal-400/15', position: 'bottom-0 left-0',   size: 'w-40 h-40', blur: 'blur-[50px]', anim: 'c', dur: '8s', delay: '-3s' },
+    ],
+    pattern: 'lines',
+    icon: 'shopping_cart',
+    problemAccent: 'secondary',
+    approachAccent: 'tertiary',
+    resultAccent: 'primary',
+  },
+];
 ---
 
 <section id="projects" class="py-section-padding px-margin-mobile md:px-margin-desktop">
@@ -15,12 +58,12 @@ const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
     <header class="proj-header mb-16">
       <div class="flex items-center gap-3 mb-4">
         <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-        <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">// CASE_STUDIES</span>
+        <span data-cms="projects.sectionLabel" class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">// CASE_STUDIES</span>
       </div>
       <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">
-        <span class="text-secondary">//</span> Featured Projects
+        <span class="text-secondary">//</span> <span data-cms="projects.sectionTitle">Featured Projects</span>
       </h2>
-      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+      <p data-cms="projects.sectionSubtitle" class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
         High-performance architectural solutions and technical case studies. Focusing on rendering optimization, edge infrastructure, and complex data parsing.
       </p>
     </header>
@@ -40,7 +83,7 @@ const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
       >
         <div class="flex justify-between items-start mb-6">
           <div>
-            <h3 class="font-headline-md text-headline-md text-primary mb-2">Quantum Dashboard</h3>
+            <h3 data-cms="projects.items.0.name" class="font-headline-md text-headline-md text-primary mb-2">Quantum Dashboard</h3>
             <div class="flex gap-2 flex-wrap">
               <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface rounded flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span> Live
@@ -74,16 +117,17 @@ const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-auto">
           <div>
             <h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-2">Problem</h4>
-            <p class="font-body-md text-body-md text-on-surface-variant">Severe rendering lag during real-time ingestion of complex node graphs.</p>
+            <p data-cms="projects.items.0.problem" class="font-body-md text-body-md text-on-surface-variant">Severe rendering lag during real-time ingestion of complex node graphs.</p>
           </div>
           <div>
             <h4 class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mb-2">Approach</h4>
-            <p class="font-body-md text-body-md text-on-surface-variant">Custom WebGL shaders offloading matrix calculations to GPU.</p>
+            <p data-cms="projects.items.0.approach" class="font-body-md text-body-md text-on-surface-variant">Custom WebGL shaders offloading matrix calculations to GPU.</p>
           </div>
           <div>
             <h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2">Result</h4>
             <p class="font-headline-md text-headline-md text-on-surface font-bold">
-              60fps <span class="font-body-md text-body-md text-on-surface-variant font-normal">@ 100k nodes</span>
+              <span data-cms="projects.items.0.resultMetric">60fps</span>
+              <span data-cms="projects.items.0.resultContext" class="font-body-md text-body-md text-on-surface-variant font-normal"> @ 100k nodes</span>
             </p>
           </div>
         </div>
@@ -101,7 +145,7 @@ const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
       >
         <div class="flex justify-between items-start mb-6">
           <div>
-            <h3 class="font-headline-md text-headline-md text-primary mb-2">Aurelius Commerce</h3>
+            <h3 data-cms="projects.items.1.name" class="font-headline-md text-headline-md text-primary mb-2">Aurelius Commerce</h3>
             <div class="flex gap-2 flex-wrap">
               <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">Next.js</span>
               <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">Edge</span>
@@ -113,17 +157,19 @@ const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
         <div class="flex-grow flex flex-col justify-center gap-6 py-4">
           <div>
             <h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-2">Problem</h4>
-            <p class="font-body-md text-body-md text-on-surface-variant">Poor SEO and slow TTFB on a high-end headless storefront.</p>
+            <p data-cms="projects.items.1.problem" class="font-body-md text-body-md text-on-surface-variant">Poor SEO and slow TTFB on a high-end headless storefront.</p>
           </div>
           <div>
             <h4 class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mb-2">Approach</h4>
-            <p class="font-body-md text-body-md text-on-surface-variant">Re-architected routing using Next.js App Router with globally distributed Edge caching.</p>
+            <p data-cms="projects.items.1.approach" class="font-body-md text-body-md text-on-surface-variant">Re-architected routing using Next.js App Router with globally distributed Edge caching.</p>
           </div>
         </div>
 
         <div class="mt-auto pt-6 border-t border-outline-variant/20">
-          <h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2">Lighthouse Score</h4>
-          <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary font-bold">98/100</span>
+          <h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2">
+            <span data-cms="projects.items.1.resultContext">Lighthouse Score</span>
+          </h4>
+          <span data-cms="projects.items.1.resultMetric" class="font-headline-lg-mobile text-headline-lg-mobile text-secondary font-bold">98/100</span>
         </div>
       </BlobCard>
 
@@ -139,23 +185,23 @@ const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
       >
         <div class="w-full md:w-1/3 flex flex-col">
           <div class="mb-4">
-            <h3 class="font-headline-md text-headline-md text-primary mb-2">Synthetix AI</h3>
+            <h3 data-cms="projects.items.2.name" class="font-headline-md text-headline-md text-primary mb-2">Synthetix AI</h3>
             <div class="flex gap-2">
               <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">AST</span>
               <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">Parsers</span>
             </div>
           </div>
-          <p class="font-body-md text-body-md text-on-surface-variant mb-6">
+          <p data-cms="projects.items.2.description" class="font-body-md text-body-md text-on-surface-variant mb-6">
             A design-to-code pipeline automating UI handoff from Figma to production React.
           </p>
           <div class="mt-auto flex flex-col gap-4">
             <div>
               <h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-1">Problem</h4>
-              <p class="font-body-md text-body-md text-on-surface-variant">Friction and inconsistency in manual implementation from design tokens.</p>
+              <p data-cms="projects.items.2.problem" class="font-body-md text-body-md text-on-surface-variant">Friction and inconsistency in manual implementation from design tokens.</p>
             </div>
             <div>
               <h4 class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mb-1">Approach</h4>
-              <p class="font-body-md text-body-md text-on-surface-variant">Custom AST parsers translating Figma JSON to semantic React + Tailwind components.</p>
+              <p data-cms="projects.items.2.approach" class="font-body-md text-body-md text-on-surface-variant">Custom AST parsers translating Figma JSON to semantic React + Tailwind components.</p>
             </div>
           </div>
         </div>
@@ -178,7 +224,10 @@ const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
 <span class="text-outline">// Result: 40% faster shipping.</span></pre>
           <div class="absolute bottom-6 right-6 bg-surface-dim/90 backdrop-blur-sm px-6 py-4 rounded border border-primary/20">
             <h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-1">Impact</h4>
-            <p class="font-headline-md text-headline-md text-on-surface">40% Faster Shipping</p>
+            <p class="font-headline-md text-headline-md text-on-surface">
+              <span data-cms="projects.items.2.resultMetric">40% Faster</span>
+              <span data-cms="projects.items.2.resultContext"> Shipping</span>
+            </p>
           </div>
         </div>
       </BlobCard>

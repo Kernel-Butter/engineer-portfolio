@@ -1,0 +1,225 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AiWorkflow from '../../sections/AiWorkflow.astro';
+import AiWorkflowPipeline from '../../sections/AiWorkflowPipeline.astro';
+import TechStack from '../../sections/TechStack.astro';
+import TechStackV2 from '../../sections/TechStackV2.astro';
+import ValueProp from '../../sections/ValueProp.astro';
+import ValuePropV2 from '../../sections/ValuePropV2.astro';
+import MechanicalGrid from '../../sections/MechanicalGrid.astro';
+import ButtonAnimations from '../../sections/ButtonAnimations.astro';
+import TransitionShowcase from '../../sections/TransitionShowcase.astro';
+import { experiments, statusMeta } from '../../data/experiments.js';
+
+export function getStaticPaths() {
+  return experiments.map(e => ({ params: { slug: e.slug } }));
+}
+
+const { slug } = Astro.params;
+const exp      = experiments.find(e => e.slug === slug)!;
+const isMulti  = exp.variants.length > 1;
+
+const idx  = experiments.indexOf(exp);
+const prev = experiments[idx - 1] ?? null;
+const next = experiments[idx + 1] ?? null;
+
+const componentMap: Record<string, any> = {
+  AiWorkflow,
+  AiWorkflowPipeline,
+  TechStack,
+  TechStackV2,
+  ValueProp,
+  ValuePropV2,
+  MechanicalGrid,
+  ButtonAnimations,
+  TransitionShowcase,
+};
+---
+
+<BaseLayout title={`${exp.title} // Experiments`}>
+
+  <!-- ── TOPBAR ──────────────────────────────────────── -->
+  <div
+    class="sticky top-0 z-50 border-b border-outline-variant/20 backdrop-blur-md"
+    style="background:rgba(11,11,11,.92)"
+  >
+    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex items-center justify-between h-14">
+
+      <a href="/experiments"
+        class="flex items-center gap-2 font-code-snippet text-[11px] uppercase tracking-widest text-on-surface-variant/50 hover:text-on-surface transition-colors">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        Experiments
+      </a>
+
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-[16px]" style={`color:${exp.accent};opacity:.5`}>{exp.icon}</span>
+        <span class="font-code-snippet text-[11px] uppercase tracking-widest text-on-surface/60">{exp.title}</span>
+      </div>
+
+      <div class="flex items-center gap-1">
+        {prev && (
+          <a href={`/experiments/${prev.slug}`}
+            class="flex items-center gap-1 font-code-snippet text-[10px] uppercase tracking-widest text-on-surface-variant/40 hover:text-on-surface transition-colors px-2 py-1"
+            title={prev.title}>
+            <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+            <span class="hidden md:inline">Prev</span>
+          </a>
+        )}
+        {next && (
+          <a href={`/experiments/${next.slug}`}
+            class="flex items-center gap-1 font-code-snippet text-[10px] uppercase tracking-widest text-on-surface-variant/40 hover:text-on-surface transition-colors px-2 py-1"
+            title={next.title}>
+            <span class="hidden md:inline">Next</span>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+          </a>
+        )}
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── TAB BAR (sticky, just below topbar) ─────────── -->
+  {isMulti && (
+    <div
+      id="exp-tab-bar"
+      class="sticky z-40 border-b border-outline-variant/15 backdrop-blur-md"
+      style="top:56px; background:rgba(9,9,9,.94)"
+    >
+      <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex items-end gap-0 overflow-x-auto">
+        {exp.variants.map((v, i) => {
+          const vs = statusMeta[v.status as keyof typeof statusMeta];
+          return (
+            <button
+              class="exp-tab flex items-center gap-2.5 px-5 py-3.5 border-b-2 font-code-snippet text-[11px] uppercase tracking-widest whitespace-nowrap transition-all duration-200 flex-shrink-0"
+              data-tab={i}
+              data-accent={exp.accent}
+              style={i === 0
+                ? `border-color:${exp.accent};color:${exp.accent}`
+                : 'border-color:transparent;color:rgba(255,255,255,.3)'}
+            >
+              <span
+                class="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-opacity duration-200"
+                style={`background:${vs.color};opacity:${i === 0 ? 1 : 0.4}`}
+              ></span>
+              {v.label}
+              <span
+                class="hidden sm:inline font-code-snippet text-[8px] uppercase tracking-widest px-1.5 py-0.5 rounded border flex-shrink-0"
+                style={`color:${vs.color};border-color:${vs.border};background:${vs.bg}`}
+              >{vs.label}</span>
+            </button>
+          );
+        })}
+
+        <!-- Desc that updates with active tab -->
+        <div class="flex-1 hidden lg:flex items-center justify-end pb-3 pr-1">
+          {exp.variants.map((v, i) => (
+            <span
+              class="exp-tab-subtitle font-code-snippet text-[10px] text-on-surface-variant/30 uppercase tracking-widest"
+              data-subtitle={i}
+              style={i === 0 ? '' : 'display:none'}
+            >{v.subtitle}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )}
+
+  <!-- ── VARIANT PANELS ──────────────────────────────── -->
+  <div id="exp-panels">
+    {exp.variants.map((variant, i) => {
+      const Component = componentMap[variant.key];
+      return (
+        <div
+          class="exp-panel"
+          data-panel={i}
+          style={i === 0 ? '' : 'display:none'}
+        >
+          <Component />
+        </div>
+      );
+    })}
+  </div>
+
+  <!-- ── ADJACENT NAV ────────────────────────────────── -->
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-14 border-t border-outline-variant/10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      {prev ? (
+        <a href={`/experiments/${prev.slug}`}
+          class="group flex items-center gap-4 p-5 rounded-xl border border-outline-variant/15 hover:border-outline-variant/40 bg-surface-container hover:-translate-y-0.5 transition-all duration-200">
+          <span class="material-symbols-outlined text-[20px] text-on-surface-variant/40 group-hover:text-on-surface transition-colors">arrow_back</span>
+          <div>
+            <div class="font-code-snippet text-[9px] text-on-surface-variant/30 uppercase tracking-widest mb-0.5">Previous</div>
+            <div class="font-headline-sm text-headline-sm text-on-surface/70 group-hover:text-on-surface transition-colors">{prev.title}</div>
+            <div class="font-code-snippet text-[9px] text-on-surface-variant/30 uppercase tracking-widest">{prev.variants.length > 1 ? `${prev.variants.length} variants` : prev.variants[0].label}</div>
+          </div>
+        </a>
+      ) : <div />}
+
+      {next ? (
+        <a href={`/experiments/${next.slug}`}
+          class="group flex items-center justify-end gap-4 p-5 rounded-xl border border-outline-variant/15 hover:border-outline-variant/40 bg-surface-container hover:-translate-y-0.5 transition-all duration-200 text-right sm:col-start-2">
+          <div>
+            <div class="font-code-snippet text-[9px] text-on-surface-variant/30 uppercase tracking-widest mb-0.5">Next</div>
+            <div class="font-headline-sm text-headline-sm text-on-surface/70 group-hover:text-on-surface transition-colors">{next.title}</div>
+            <div class="font-code-snippet text-[9px] text-on-surface-variant/30 uppercase tracking-widest">{next.variants.length > 1 ? `${next.variants.length} variants` : next.variants[0].label}</div>
+          </div>
+          <span class="material-symbols-outlined text-[20px] text-on-surface-variant/40 group-hover:text-on-surface transition-colors">arrow_forward</span>
+        </a>
+      ) : <div />}
+
+    </div>
+
+    <div class="mt-8 flex justify-center">
+      <a href="/experiments"
+        class="inline-flex items-center gap-2 font-code-snippet text-[11px] uppercase tracking-widest text-on-surface-variant/30 hover:text-on-surface transition-colors">
+        <span class="material-symbols-outlined text-[14px]">grid_view</span>
+        All Experiments
+      </a>
+    </div>
+  </div>
+
+</BaseLayout>
+
+<script>
+  function initTabs() {
+    const tabs      = document.querySelectorAll<HTMLElement>('.exp-tab');
+    const panels    = document.querySelectorAll<HTMLElement>('.exp-panel');
+    const subtitles = document.querySelectorAll<HTMLElement>('.exp-tab-subtitle');
+    if (!tabs.length) return;
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const idx    = Number(tab.dataset.tab);
+        const accent = tab.dataset.accent ?? '#c0c1ff';
+
+        // Update tabs
+        tabs.forEach((t, i) => {
+          const dot = t.querySelector('span') as HTMLElement;
+          if (i === idx) {
+            t.style.borderColor = accent;
+            t.style.color       = accent;
+            if (dot) dot.style.opacity = '1';
+          } else {
+            t.style.borderColor = 'transparent';
+            t.style.color       = 'rgba(255,255,255,.3)';
+            if (dot) dot.style.opacity = '0.4';
+          }
+        });
+
+        // Switch panels
+        panels.forEach((p, i) => {
+          p.style.display = i === idx ? '' : 'none';
+        });
+
+        // Switch subtitles
+        subtitles.forEach((s, i) => {
+          s.style.display = i === idx ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  // Run on initial load and every ClientRouter navigation
+  document.addEventListener('astro:page-load', initTabs);
+</script>

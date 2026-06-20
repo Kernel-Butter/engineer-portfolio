@@ -1,0 +1,269 @@
+<section id="mechanical-grid" class="relative w-full overflow-hidden" style="height:100svh; min-height:600px; background:#050505;">
+
+  <canvas id="mg-canvas" class="absolute inset-0 w-full h-full"></canvas>
+
+  <!-- Center label -->
+  <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-10">
+    <div class="font-code-snippet text-[11px] text-secondary/40 uppercase tracking-[0.3em] mb-3">EXPERIMENT_04</div>
+    <h2 class="font-headline-lg text-headline-lg text-on-surface/10 tracking-tighter">MECHANICAL_GRID</h2>
+  </div>
+
+  <!-- Debug readout -->
+  <div class="absolute bottom-6 left-6 font-code-snippet text-[10px] text-on-surface-variant/20 pointer-events-none z-10 leading-5">
+    <div id="mg-coords">X:---- Y:----</div>
+    <div id="mg-fold">FOLD: --°</div>
+  </div>
+</section>
+
+<script>
+const canvas   = document.getElementById('mg-canvas') as HTMLCanvasElement;
+const ctx      = canvas.getContext('2d')!;
+const elCoords = document.getElementById('mg-coords')!;
+const elFold   = document.getElementById('mg-fold')!;
+
+// ── Config ────────────────────────────────────────────────────────────────────
+const CELL      = 54;           // cell size px
+const RADIUS    = 230;          // cursor active radius
+const MAX_FOLD  = Math.PI * 0.44; // ~80° — just under 90° so we never see the back face
+const FOV       = 700;          // perspective strength
+const LERP      = 0.13;         // fold lerp speed
+const LERP_SIDE = 0.18;         // side-flip lerp (which triangle opens)
+
+// Theme
+const COL_A    = [192, 193, 255] as const; // primary
+const COL_B    = [ 68, 226, 205] as const; // secondary
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let W = 0, H = 0, cols = 0, rows = 0;
+let mouseX = -9999, mouseY = -9999;
+
+interface Cell {
+  cx: number; cy: number;
+  fold: number;        // current fold angle
+  foldT: number;       // target fold angle
+  side: number;        // current side blend (-1=lower tri, +1=upper tri)
+  sideT: number;       // target side
+}
+
+let cells: Cell[] = [];
+
+// ── Setup ─────────────────────────────────────────────────────────────────────
+function resize() {
+  const sec = canvas.parentElement!;
+  W = sec.clientWidth;
+  H = sec.clientHeight;
+  canvas.width  = W;
+  canvas.height = H;
+
+  cols = Math.ceil(W / CELL) + 1;
+  rows = Math.ceil(H / CELL) + 1;
+  const ox = (W - (cols - 1) * CELL) / 2;
+  const oy = (H - (rows - 1) * CELL) / 2;
+
+  cells = [];
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++)
+      cells.push({ cx: ox + c * CELL, cy: oy + r * CELL, fold: 0, foldT: 0, side: 1, sideT: 1 });
+}
+
+// ── 3D helpers ────────────────────────────────────────────────────────────────
+// Rodrigues' rotation of point P around axis defined by two hinge points (both z=0)
+function rotate3d(
+  px: number, py: number, pz: number,
+  h1x: number, h1y: number,
+  h2x: number, h2y: number,
+  angle: number
+): [number, number, number] {
+  // Hinge axis unit vector (in xy plane, z=0)
+  const dx = h2x - h1x, dy = h2y - h1y;
+  const len = Math.hypot(dx, dy);
+  const ux = dx / len, uy = dy / len, uz = 0;
+
+  // Translate to hinge origin
+  let qx = px - h1x, qy = py - h1y, qz = pz;
+
+  const cos = Math.cos(angle), sin = Math.sin(angle);
+  const dot = qx * ux + qy * uy + qz * uz;
+
+  // Cross product u × q
+  const crx = uy * qz - uz * qy;
+  const cry = uz * qx - ux * qz;
+  const crz = ux * qy - uy * qx;
+
+  return [
+    h1x + qx * cos + crx * sin + ux * dot * (1 - cos),
+    h1y + qy * cos + cry * sin + uy * dot * (1 - cos),
+           qz * cos + crz * sin + uz * dot * (1 - cos),
+  ];
+}
+
+// Simple per-cell perspective (vanishing point = cell center on z=0 plane)
+function project(x3: number, y3: number, z3: number, cx: number, cy: number): [number, number] {
+  const s = FOV / (FOV - z3);
+  return [cx + (x3 - cx) * s, cy + (y3 - cy) * s];
+}
+
+// ── Draw one cell ─────────────────────────────────────────────────────────────
+function drawCell(cell: Cell) {
+  const { cx, cy, fold, side } = cell;
+  const h  = CELL / 2;
+
+  // Corners of the cell (z=0)
+  const TL = [cx - h, cy - h] as const;
+  const TR = [cx + h, cy - h] as const;
+  const BR = [cx + h, cy + h] as const;
+  const BL = [cx - h, cy + h] as const;
+
+  // Distance for alpha/color
+  const dist  = Math.hypot(mouseX - cx, mouseY - cy);
+  const norm  = Math.max(0, 1 - dist / RADIUS);        // 0..1 fade
+  if (norm <= 0.02) return;
+
+  // ── Cell border ────────────────────────────────────────────────────────────
+  ctx.strokeStyle = `rgba(192,193,255,${(0.05 + norm * 0.12).toFixed(2)})`;
+  ctx.lineWidth   = 0.8;
+  ctx.strokeRect(cx - h + 0.5, cy - h + 0.5, CELL - 1, CELL - 1);
+
+  // ── Hinge = the \ diagonal (TL → BR) ──────────────────────────────────────
+  // Hinge line: always TL to BR
+  // Upper free vertex: TR  (folds upward, +Z)
+  // Lower free vertex: BL  (folds upward, +Z from the other side)
+  // `side` blend: positive = upper tri opens, negative = lower tri opens
+
+  // Which free vertex is active?
+  const useTR = side >= 0;
+  const freeVx = useTR ? TR : BL;
+
+  // Static (flat) triangle that stays
+  const flatA  = useTR ? TL : TR;
+  const flatB  = useTR ? BR : BR;
+  const flatFV = useTR ? BL : TL;
+
+  // Draw flat triangle — very faint
+  const flatAlpha = norm * 0.06;
+  ctx.beginPath();
+  ctx.moveTo(flatA[0], flatA[1]);
+  ctx.lineTo(flatB[0], flatB[1]);
+  ctx.lineTo(flatFV[0], flatFV[1]);
+  ctx.closePath();
+  ctx.fillStyle = `rgba(192,193,255,${flatAlpha.toFixed(2)})`;
+  ctx.fill();
+
+  // ── Fold the active triangle around the \ diagonal ─────────────────────────
+  // Free vertex in 3D (lifted by fold angle)
+  const [rfx, rfy, rfz] = rotate3d(
+    freeVx[0], freeVx[1], 0,
+    TL[0], TL[1],
+    BR[0], BR[1],
+    -fold * (useTR ? 1 : -1)   // flip sign so fold goes toward viewer (+Z) on both sides
+  );
+
+  // Project the lifted vertex
+  const [pfx, pfy] = project(rfx, rfy, rfz, cx, cy);
+
+  // Shading: brighter as fold increases (more face area visible)
+  const foldRatio  = fold / MAX_FOLD;          // 0..1
+  const faceAlpha  = norm * (0.15 + foldRatio * 0.55);
+  const edgeAlpha  = norm * (0.3  + foldRatio * 0.6);
+
+  // Face gradient: col_B (tip) → col_A (base)
+  const grad = ctx.createLinearGradient(pfx, pfy, (TL[0] + BR[0]) / 2, (TL[1] + BR[1]) / 2);
+  grad.addColorStop(0, `rgba(${COL_B.join(',')},${faceAlpha.toFixed(2)})`);
+  grad.addColorStop(1, `rgba(${COL_A.join(',')},${(faceAlpha * 0.4).toFixed(2)})`);
+
+  // Draw folded triangle face
+  ctx.beginPath();
+  ctx.moveTo(TL[0], TL[1]);
+  ctx.lineTo(BR[0], BR[1]);
+  ctx.lineTo(pfx, pfy);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Hinge edge highlight
+  ctx.beginPath();
+  ctx.moveTo(TL[0], TL[1]);
+  ctx.lineTo(BR[0], BR[1]);
+  ctx.strokeStyle = `rgba(${COL_A.join(',')},${edgeAlpha.toFixed(2)})`;
+  ctx.lineWidth   = 0.8 + foldRatio * 0.8;
+  ctx.stroke();
+
+  // Fold edge (the lifted edge of the flap)
+  ctx.beginPath();
+  ctx.moveTo(TL[0], TL[1]);
+  ctx.lineTo(pfx, pfy);
+  ctx.moveTo(BR[0], BR[1]);
+  ctx.lineTo(pfx, pfy);
+  ctx.strokeStyle = `rgba(${COL_B.join(',')},${(edgeAlpha * 0.6).toFixed(2)})`;
+  ctx.lineWidth   = 0.5;
+  ctx.stroke();
+}
+
+// ── Main loop ─────────────────────────────────────────────────────────────────
+function tick() {
+  ctx.clearRect(0, 0, W, H);
+
+  let maxFold = 0;
+
+  for (const cell of cells) {
+    const dist     = Math.hypot(mouseX - cell.cx, mouseY - cell.cy);
+    const norm     = Math.max(0, 1 - dist / RADIUS);
+
+    if (norm > 0) {
+      // Which triangle opens: whichever free vertex is closer to mouse
+      const dTR = Math.hypot(mouseX - (cell.cx + CELL / 2), mouseY - (cell.cy - CELL / 2));
+      const dBL = Math.hypot(mouseX - (cell.cx - CELL / 2), mouseY - (cell.cy + CELL / 2));
+      cell.sideT = dTR < dBL ? 1 : -1;
+
+      // Fold amount: eased falloff so center is most open
+      cell.foldT = MAX_FOLD * Math.pow(norm, 0.7);
+    } else {
+      cell.foldT  = 0;
+    }
+
+    // Lerp
+    cell.fold += (cell.foldT  - cell.fold)  * LERP;
+    cell.side += (cell.sideT  - cell.side)  * LERP_SIDE;
+
+    if (Math.abs(cell.fold) > 0.003) drawCell(cell);
+    if (cell.fold > maxFold) maxFold = cell.fold;
+  }
+
+  // HUD
+  elFold.textContent = `FOLD: ${(maxFold * 180 / Math.PI).toFixed(0)}°`;
+
+  requestAnimationFrame(tick);
+}
+
+// ── Events ────────────────────────────────────────────────────────────────────
+const section = document.getElementById('mechanical-grid')!;
+
+section.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  mouseX = e.clientX - r.left;
+  mouseY = e.clientY - r.top;
+  elCoords.textContent = `X:${String(Math.round(mouseX)).padStart(4,'0')} Y:${String(Math.round(mouseY)).padStart(4,'0')}`;
+});
+
+section.addEventListener('mouseleave', () => {
+  mouseX = -9999; mouseY = -9999;
+  elCoords.textContent = 'X:---- Y:----';
+  elFold.textContent   = 'FOLD: --°';
+});
+
+// Touch support
+section.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const r  = canvas.getBoundingClientRect();
+  const t  = e.touches[0];
+  mouseX   = t.clientX - r.left;
+  mouseY   = t.clientY - r.top;
+}, { passive: false });
+
+section.addEventListener('touchend', () => { mouseX = -9999; mouseY = -9999; });
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+resize();
+tick();
+new ResizeObserver(resize).observe(canvas.parentElement!);
+</script>

@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import Nav from '../components/Nav.astro';
 import Preloader from '../components/Preloader.astro';
 import SmoothScroll from '../components/SmoothScroll.astro';
@@ -13,6 +14,7 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
+  <ClientRouter />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -22,6 +24,17 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
 
   <Preloader />
   <SmoothScroll />
+
+  <!-- Page transition overlay — survives every DOM swap via transition:persist -->
+  <div
+    id="pt-overlay"
+    transition:persist
+    aria-hidden="true"
+    style="position:fixed;inset:0;z-index:500;pointer-events:none;transform:translateY(100%);background:#0a0a0a;display:flex;align-items:center;justify-content:center;"
+  >
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(192,193,255,0.012) 3px,rgba(192,193,255,0.012) 4px);pointer-events:none"></div>
+    <span style="position:relative;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(192,193,255,0.3)">SYS.NAVIGATING</span>
+  </div>
 
   <div id="main-content">
     <Nav />
@@ -47,6 +60,32 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
     import Alpine from 'alpinejs';
     window.Alpine = Alpine;
     Alpine.start();
+  </script>
+
+  <script>
+    import { initCMS } from '../scripts/cms.js';
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCMS);
+    } else {
+      initCMS();
+    }
+  </script>
+
+  <script>
+    // After the very first load the preloader is persisted (hidden via transition:persist).
+    // On every subsequent ClientRouter navigation, #main-content is re-inserted
+    // with opacity:0/visibility:hidden from CSS — we reveal it here.
+    document.addEventListener('astro:page-load', () => {
+      if (sessionStorage.getItem('preloader_done') !== '1') return;
+
+      const main = document.getElementById('main-content');
+      if (main) {
+        main.style.opacity    = '1';
+        main.style.visibility = 'visible';
+      }
+      document.body.style.overflow = 'auto';
+      document.dispatchEvent(new CustomEvent('portfolio:ready'));
+    });
   </script>
 
 </body>

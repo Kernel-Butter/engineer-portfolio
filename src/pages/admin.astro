@@ -1,0 +1,1560 @@
+---
+import { DEFAULTS } from '../data/defaults.js';
+const defaultsJSON = JSON.stringify(DEFAULTS);
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Portfolio CMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0b0b0b;
+      --surface:      #141414;
+      --surface-hi:   #1e1e1e;
+      --border:       #2a2a2a;
+      --border-hi:    #3a3a3a;
+      --text:         #d1d1d1;
+      --text-dim:     #6b6b6b;
+      --primary:      #c0c1ff;
+      --secondary:    #44e2cd;
+      --accent:       #4edea3;
+      --danger:       #ff5555;
+      --font:         'JetBrains Mono', 'Courier New', monospace;
+    }
+
+    body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* Material Symbols must override the body font */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      direction: ltr;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── SCREENS ── */
+    .screen { display: none; }
+    .screen.active { display: flex; }
+
+    /* ── AUTH SCREENS ── */
+    #screen-setup, #screen-login, #screen-forgot {
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Scanline overlay on auth screens */
+    #screen-setup::before,
+    #screen-login::before,
+    #screen-forgot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(192,193,255,0.014) 3px, rgba(192,193,255,0.014) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Ambient glow blobs */
+    #screen-setup::after,
+    #screen-login::after,
+    #screen-forgot::after {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(192,193,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .auth-wrap {
+      width: 100%;
+      max-width: 520px;
+      padding: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Window chrome bar */
+    .auth-chrome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1a1a1a;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      padding: 10px 16px;
+    }
+
+    .auth-chrome-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .auth-chrome-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .auth-chrome-dots span:nth-child(1) { background: #ff5f57; }
+    .auth-chrome-dots span:nth-child(2) { background: #febc2e; }
+    .auth-chrome-dots span:nth-child(3) { background: #28c840; }
+
+    .auth-chrome-title {
+      font-size: 11px;
+      letter-spacing: .18em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .auth-chrome-badge {
+      font-size: 10px;
+      letter-spacing: .12em;
+      color: var(--accent);
+      padding: 2px 8px;
+      border: 1px solid rgba(78,222,163,.25);
+      border-radius: 3px;
+    }
+
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0 0 10px 10px;
+      padding: 40px 44px 44px;
+      box-shadow:
+        0 0 0 1px rgba(192,193,255,0.04),
+        0 24px 60px rgba(0,0,0,.6),
+        0 0 80px rgba(192,193,255,0.04);
+    }
+
+    .auth-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .auth-eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse-dot 2s ease infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; box-shadow: 0 0 8px var(--accent); }
+      50%      { opacity: .5; box-shadow: 0 0 3px var(--accent); }
+    }
+
+    .auth-eyebrow-text {
+      font-size: 11px;
+      letter-spacing: .2em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .auth-brand {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: var(--primary);
+      margin-bottom: 6px;
+      text-shadow: 0 0 30px rgba(192,193,255,0.3);
+    }
+
+    .auth-sub {
+      font-size: 13px;
+      letter-spacing: .2em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .auth-desc {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+
+    .auth-note {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 20px;
+      line-height: 1.75;
+      padding: 14px 16px;
+      background: rgba(255,85,85,.04);
+      border-radius: 6px;
+      border: 1px solid rgba(255,85,85,.12);
+    }
+
+    .auth-note b { color: var(--danger); }
+
+    .auth-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--secondary);
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: .05em;
+      opacity: .7;
+      transition: opacity .15s;
+    }
+    .auth-link:hover { opacity: 1; }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      15%      { transform: translateX(-7px); }
+      30%      { transform: translateX( 6px); }
+      45%      { transform: translateX(-5px); }
+      60%      { transform: translateX( 4px); }
+      75%      { transform: translateX(-3px); }
+    }
+
+    .err-msg {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #ff6b6b;
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: rgba(255,85,85,.12);
+      border-radius: 7px;
+      border: 1px solid rgba(255,85,85,.4);
+      box-shadow: 0 0 14px rgba(255,85,85,.15);
+      letter-spacing: .04em;
+    }
+    .err-msg.visible {
+      display: flex;
+      animation: shake .45s ease;
+    }
+    .err-msg::before {
+      content: '✕';
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255,85,85,.25);
+      border: 1px solid rgba(255,85,85,.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+      line-height: 1;
+      text-align: center;
+    }
+
+    /* ── APP SCREEN ── */
+    #screen-app { flex-direction: column; min-height: 100vh; }
+
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.35; } }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; height: 52px;
+      background: rgba(14,14,14,.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100; flex-shrink: 0;
+    }
+    .topbar-brand {
+      font-size: 11px; font-weight: 700; letter-spacing: .25em;
+      color: var(--primary); display: flex; align-items: center; gap: 10px;
+    }
+    .topbar-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); box-shadow: 0 0 7px var(--accent);
+      animation: pulse 2s ease infinite;
+    }
+    .topbar-right { display: flex; align-items: center; gap: 4px; }
+    .topbar-divider { width: 1px; height: 18px; background: var(--border); margin: 0 6px; }
+    .save-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      padding: 3px 10px; border-radius: 20px;
+      background: rgba(78,222,163,.1); color: var(--accent);
+      border: 1px solid rgba(78,222,163,.22); transition: all .25s; margin-right: 4px;
+    }
+    .save-badge.unsaved {
+      background: rgba(255,170,0,.1); color: #ffaa00;
+      border-color: rgba(255,170,0,.28); box-shadow: 0 0 10px rgba(255,170,0,.08);
+    }
+
+    /* ── APP BODY ── */
+    .app-body { display: flex; flex: 1; overflow: hidden; height: calc(100vh - 52px); }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 218px; flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow-y: auto;
+    }
+    .sidebar-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .22em;
+      color: var(--text-dim); text-transform: uppercase;
+      padding: 20px 18px 8px; opacity: .45;
+    }
+    .nav-btn {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 10px 16px 10px 18px;
+      background: none; border: none; border-left: 2px solid transparent;
+      color: #555; font-family: var(--font); font-size: 12px;
+      font-weight: 500; letter-spacing: .07em; text-transform: uppercase;
+      cursor: pointer; transition: all .14s; text-align: left;
+    }
+    .nav-btn:hover { color: var(--text); background: rgba(255,255,255,.025); }
+    .nav-btn.active {
+      color: var(--primary); border-left-color: var(--primary);
+      background: rgba(192,193,255,.055); font-weight: 700;
+    }
+    .nav-icon {
+      font-size: 15px; width: 18px; display: flex;
+      align-items: center; justify-content: center;
+      opacity: .45; transition: opacity .14s; flex-shrink: 0;
+    }
+    .nav-btn.active .nav-icon,
+    .nav-btn:hover  .nav-icon { opacity: 1; }
+    .sidebar-divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+    .sidebar-bottom  { padding: 14px; margin-top: auto; }
+
+    /* ── CONTENT AREA ── */
+    .content-area { flex: 1; overflow-y: auto; background: var(--bg); display: flex; flex-direction: column; }
+
+    /* ── FORM STRUCTURE ── */
+    .form-header {
+      padding: 28px 36px 22px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .form-eyebrow {
+      font-size: 10px; letter-spacing: .22em; color: var(--text-dim);
+      text-transform: uppercase; opacity: .5; margin-bottom: 5px;
+    }
+    .form-title {
+      font-size: 20px; font-weight: 700; letter-spacing: .1em;
+      color: var(--primary); margin-bottom: 5px;
+    }
+    .form-desc { font-size: 12px; color: var(--text-dim); line-height: 1.65; }
+
+    .form-body { padding: 28px 36px 80px; flex: 1; }
+
+    .form-actions {
+      position: sticky; bottom: 0;
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 36px;
+      background: rgba(14,14,14,.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── FIELD BLOCKS ── */
+    .fields-block { margin-bottom: 36px; }
+    .fields-block-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 18px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .fields-block-title {
+      font-size: 10px; font-weight: 700; letter-spacing: .2em;
+      color: var(--text-dim); text-transform: uppercase; opacity: .55;
+    }
+    .fields-block-count {
+      font-size: 10px; padding: 1px 8px; border-radius: 10px;
+      background: rgba(192,193,255,.08); color: var(--primary); letter-spacing: .05em;
+    }
+
+    /* 2-col grid for flat (section-level) fields */
+    .flat-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px;
+    }
+    .flat-grid .fg-wide { grid-column: 1 / -1; }
+
+    /* ── FIELD GROUP ── */
+    .field-group { display: flex; flex-direction: column; }
+
+    label {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 10px; font-weight: 700; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--text-dim);
+      margin-bottom: 7px;
+    }
+    .ftype {
+      font-size: 9px; font-weight: 600; letter-spacing: .06em;
+      padding: 2px 6px; border-radius: 3px; text-transform: uppercase; flex-shrink: 0;
+    }
+    .ftype-text     { background: rgba(192,193,255,.1);  color: var(--primary); }
+    .ftype-textarea { background: rgba(147,112,219,.14); color: #b89ddb; }
+    .ftype-bullets  { background: rgba(68,226,205,.1);   color: var(--secondary); }
+    .ftype-chips    { background: rgba(78,222,163,.1);   color: var(--accent); }
+    .ftype-url      { background: rgba(255,185,0,.1);    color: #ffc542; }
+
+    .field-hint {
+      font-size: 11px; color: var(--text-dim); margin-bottom: 6px;
+      opacity: .5; font-style: italic;
+    }
+
+    input[type="text"], input[type="password"], textarea {
+      width: 100%;
+      background: rgba(255,255,255,.025);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 7px;
+      padding: 10px 13px;
+      color: var(--text); font-family: var(--font); font-size: 13px;
+      line-height: 1.55; outline: none;
+      transition: border-color .14s, box-shadow .14s, background .14s;
+    }
+    input:focus, textarea:focus {
+      border-color: rgba(192,193,255,.45);
+      box-shadow: 0 0 0 3px rgba(192,193,255,.055);
+      background: rgba(192,193,255,.018);
+    }
+    textarea { resize: vertical; min-height: 82px; }
+    input::placeholder, textarea::placeholder { color: rgba(107,107,107,.55); font-style: italic; }
+
+    /* Auth screen inputs — bigger */
+    .auth-card input[type="password"],
+    .auth-card input[type="text"] { font-size: 15px; padding: 13px 16px; }
+
+    /* ── LIST ITEM CARDS ── */
+    .list-section { display: flex; flex-direction: column; gap: 14px; }
+
+    .list-item-card {
+      background: rgba(255,255,255,.018);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px; overflow: hidden;
+    }
+
+    .list-item-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px;
+      background: rgba(255,255,255,.025);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .list-item-num {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .li-badge {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(192,193,255,.1);
+      border: 1px solid rgba(192,193,255,.18);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: var(--primary);
+    }
+    .li-label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim);
+    }
+    .list-item-controls { display: flex; gap: 4px; }
+
+    /* 2-col grid inside each list item */
+    .list-item-body {
+      padding: 18px 20px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px 22px;
+    }
+    .list-item-body .fg-wide { grid-column: 1 / -1; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 6px;
+      font-family: var(--font); font-size: 11px; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      cursor: pointer; border: 1px solid transparent;
+      transition: all .14s; text-decoration: none; white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--primary); color: #0b0b0b; border-color: var(--primary);
+    }
+    .btn-primary:hover { filter: brightness(1.08); box-shadow: 0 0 18px rgba(192,193,255,.28); }
+
+    .auth-card .btn-primary { font-size: 13px; padding: 14px 20px; letter-spacing: .18em; }
+
+    .btn-outline {
+      background: transparent; border-color: rgba(255,255,255,.12); color: #888;
+    }
+    .btn-outline:hover { border-color: rgba(192,193,255,.3); color: var(--text); }
+
+    .btn-ghost {
+      background: transparent; border-color: transparent; color: #666; font-size: 11px;
+    }
+    .btn-ghost:hover { color: var(--text); background: rgba(255,255,255,.06); }
+
+    .btn-danger {
+      background: transparent; border-color: rgba(255,85,85,.25); color: rgba(255,85,85,.6);
+    }
+    .btn-danger:hover { background: rgba(255,85,85,.07); border-color: rgba(255,85,85,.45); color: var(--danger); }
+
+    .btn-sm { padding: 4px 9px; font-size: 10px; border-radius: 4px; }
+
+    .add-item-btn {
+      width: 100%; padding: 13px;
+      background: transparent;
+      border: 1px dashed rgba(68,226,205,.2);
+      border-radius: 8px;
+      color: rgba(68,226,205,.5);
+      font-family: var(--font); font-size: 10px; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      cursor: pointer; transition: all .18s; margin-top: 4px;
+    }
+    .add-item-btn:hover {
+      border-color: var(--secondary); color: var(--secondary);
+      background: rgba(68,226,205,.03);
+    }
+
+    /* ── SETTINGS ── */
+    .settings-card {
+      background: rgba(255,255,255,.018);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px; overflow: hidden; margin-bottom: 18px;
+    }
+    .settings-card-head {
+      padding: 12px 18px;
+      background: rgba(255,255,255,.025);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .settings-card-title {
+      font-size: 10px; font-weight: 700; letter-spacing: .18em;
+      color: var(--text-dim); text-transform: uppercase;
+    }
+    .settings-card-body { padding: 18px 20px; }
+    .settings-card-body .field-group { margin-bottom: 14px; }
+    .settings-card-body .field-group:last-child { margin-bottom: 0; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4a4a4a; }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface-hi);
+      border: 1px solid var(--border-hi);
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 12px;
+      letter-spacing: .1em;
+      color: var(--accent);
+      z-index: 9999;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all .3s ease;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { color: var(--danger); border-color: rgba(255,85,85,.3); }
+
+    /* ── PASSWORD TOGGLE WRAPPER ── */
+    .pass-wrap {
+      position: relative;
+    }
+
+    .pass-wrap input[type="password"],
+    .pass-wrap input[type="text"] {
+      padding-right: 48px;
+    }
+
+    .pass-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color .15s, background .15s;
+      line-height: 1;
+    }
+
+    .pass-toggle:hover {
+      color: var(--primary);
+      background: rgba(192,193,255,.08);
+    }
+
+    .pass-toggle .material-symbols-outlined {
+      font-size: 20px;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SETUP SCREEN  (first visit)
+════════════════════════════════════════════ -->
+<div id="screen-setup" class="screen">
+  <div class="auth-wrap">
+    <!-- Window chrome -->
+    <div class="auth-chrome">
+      <div class="auth-chrome-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="auth-chrome-title">portfolio_cms — admin_access</div>
+      <div class="auth-chrome-badge">SYS_SECURE</div>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-eyebrow">
+        <div class="auth-eyebrow-dot"></div>
+        <div class="auth-eyebrow-text">First Time Setup</div>
+      </div>
+      <div class="auth-brand">PORTFOLIO_CMS</div>
+      <div class="auth-sub">// Initializing access control layer</div>
+
+      <div class="auth-desc">
+        Create a passcode to protect this admin panel.<br/>
+        Also create a <strong style="color:var(--text)">backup recovery code</strong> — write it down somewhere safe in case you forget the primary.
+      </div>
+
+      <div class="field-group">
+        <label>Admin Passcode</label>
+        <div class="pass-wrap">
+          <input id="setup-pass" type="password" placeholder="Choose a strong passcode..." autocomplete="new-password" />
+          <button type="button" class="pass-toggle" onclick="togglePass('setup-pass',this)" aria-label="Toggle visibility">
+            <span class="material-symbols-outlined">visibility</span>
+          </button>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Backup Recovery Code</label>
+        <div class="pass-wrap">
+          <input id="setup-backup" type="password" placeholder="Backup code (write this down)..." autocomplete="new-password" />
+          <button type="button" class="pass-toggle" onclick="togglePass('setup-backup',this)" aria-label="Toggle visibility">
+            <span class="material-symbols-outlined">visibility</span>
+          </button>
+        </div>
+      </div>
+      <div id="setup-err" class="err-msg"></div>
+
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:20px" onclick="handleSetup()">
+        INITIALIZE_CMS →
+      </button>
+      <p class="auth-note">
+        <b>Note:</b> Passcodes are SHA-256 hashed and stored only in this browser's localStorage. Clearing browser data will require re-setup.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     LOGIN SCREEN
+════════════════════════════════════════════ -->
+<div id="screen-login" class="screen">
+  <div class="auth-wrap">
+    <!-- Window chrome -->
+    <div class="auth-chrome">
+      <div class="auth-chrome-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="auth-chrome-title">portfolio_cms — admin_access</div>
+      <div class="auth-chrome-badge">SYS_SECURE</div>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-eyebrow">
+        <div class="auth-eyebrow-dot"></div>
+        <div class="auth-eyebrow-text">Authentication Required</div>
+      </div>
+      <div class="auth-brand">PORTFOLIO_CMS</div>
+      <div class="auth-sub">// Enter passcode to continue</div>
+
+      <div class="field-group" style="margin-top:28px">
+        <label>Passcode</label>
+        <div class="pass-wrap">
+          <input id="login-pass" type="password" placeholder="Enter passcode..." autocomplete="current-password" onkeydown="if(event.key==='Enter')handleLogin()" />
+          <button type="button" class="pass-toggle" onclick="togglePass('login-pass',this)" aria-label="Toggle visibility">
+            <span class="material-symbols-outlined">visibility</span>
+          </button>
+        </div>
+      </div>
+      <div id="login-err" class="err-msg">Incorrect passcode. Try again.</div>
+
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:20px" onclick="handleLogin()">
+        ENTER_ADMIN →
+      </button>
+      <span class="auth-link" onclick="showScreen('forgot')">Forgot passcode? Use backup recovery code →</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FORGOT / RECOVERY SCREEN
+════════════════════════════════════════════ -->
+<div id="screen-forgot" class="screen">
+  <div class="auth-wrap">
+    <!-- Window chrome -->
+    <div class="auth-chrome">
+      <div class="auth-chrome-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="auth-chrome-title">portfolio_cms — recovery_mode</div>
+      <div class="auth-chrome-badge" style="color:var(--danger);border-color:rgba(255,85,85,.3)">SYS_LOCKED</div>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-eyebrow">
+        <div class="auth-eyebrow-dot" style="background:var(--danger);box-shadow:0 0 8px var(--danger)"></div>
+        <div class="auth-eyebrow-text" style="color:var(--danger)">Recovery Mode</div>
+      </div>
+      <div class="auth-brand" style="color:var(--secondary)">PORTFOLIO_CMS</div>
+      <div class="auth-sub">// Restoring access via backup code</div>
+
+      <div class="auth-desc" style="margin-top:28px">
+        Enter your backup recovery code to regain access to the admin panel.
+      </div>
+
+      <div class="field-group">
+        <label>Backup Recovery Code</label>
+        <div class="pass-wrap">
+          <input id="backup-pass" type="password" placeholder="Enter backup code..." onkeydown="if(event.key==='Enter')handleBackupLogin()" />
+          <button type="button" class="pass-toggle" onclick="togglePass('backup-pass',this)" aria-label="Toggle visibility">
+            <span class="material-symbols-outlined">visibility</span>
+          </button>
+        </div>
+      </div>
+      <div id="backup-err" class="err-msg">Incorrect backup code.</div>
+
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:20px" onclick="handleBackupLogin()">
+        RESTORE_ACCESS →
+      </button>
+      <span class="auth-link" onclick="showScreen('login')">← Back to login</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN APP
+════════════════════════════════════════════ -->
+<div id="screen-app" class="screen">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-dot"></div>
+      PORTFOLIO_CMS
+    </div>
+    <div class="topbar-right">
+      <div id="save-badge" class="save-badge">✓ SAVED</div>
+      <div class="topbar-divider"></div>
+      <button class="btn btn-ghost btn-sm" onclick="exportContent()" title="Export JSON">
+        <span class="material-symbols-outlined" style="font-size:14px">download</span> Export
+      </button>
+      <label class="btn btn-ghost btn-sm" for="import-file" style="cursor:pointer" title="Import JSON">
+        <span class="material-symbols-outlined" style="font-size:14px">upload</span> Import
+      </label>
+      <input id="import-file" type="file" accept=".json" style="display:none" onchange="importContent(event)" />
+      <a href="/" target="_blank" class="btn btn-ghost btn-sm" title="View site">
+        <span class="material-symbols-outlined" style="font-size:14px">open_in_new</span> View
+      </a>
+      <div class="topbar-divider"></div>
+      <button class="btn btn-ghost btn-sm" onclick="logout()" title="Log out">
+        <span class="material-symbols-outlined" style="font-size:14px">logout</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <div class="app-body">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sidebar-label">Sections</div>
+      <button class="nav-btn" data-section="hero" onclick="setSection('hero')">
+        <span class="nav-icon material-symbols-outlined">person</span> Hero
+      </button>
+      <button class="nav-btn" data-section="projects" onclick="setSection('projects')">
+        <span class="nav-icon material-symbols-outlined">folder_special</span> Projects
+      </button>
+      <button class="nav-btn" data-section="career" onclick="setSection('career')">
+        <span class="nav-icon material-symbols-outlined">timeline</span> Career
+      </button>
+      <button class="nav-btn" data-section="contact" onclick="setSection('contact')">
+        <span class="nav-icon material-symbols-outlined">mail</span> Contact
+      </button>
+      <button class="nav-btn" data-section="testimonials" onclick="setSection('testimonials')">
+        <span class="nav-icon material-symbols-outlined">format_quote</span> Testimonials
+      </button>
+
+      <hr class="sidebar-divider" />
+
+      <div class="sidebar-label">System</div>
+      <button class="nav-btn" data-section="settings" onclick="setSection('settings')">
+        <span class="nav-icon material-symbols-outlined">settings</span> Settings
+      </button>
+
+      <div class="sidebar-bottom">
+        <button class="btn btn-danger btn-sm" style="width:100%;justify-content:center;gap:6px" onclick="resetAllToDefaults()">
+          <span class="material-symbols-outlined" style="font-size:13px">restart_alt</span> Reset All
+        </button>
+      </div>
+    </nav>
+
+    <!-- FORM AREA -->
+    <main id="form-area" class="content-area"></main>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script define:vars={{ defaultsJSON }}>
+  /* ═══════════════════════════════
+     CONSTANTS & STATE
+  ═══════════════════════════════ */
+  const DEFAULTS  = JSON.parse(defaultsJSON);
+  const CMS_KEY   = 'portfolio_cms_v1';
+  const AUTH_PRI  = 'cms_auth_primary';
+  const AUTH_BAK  = 'cms_auth_backup';
+  const SESSION   = 'cms_session';
+
+  const STATE = {
+    section: 'hero',
+    content: {},
+    dirty: false,
+  };
+
+  /* ═══════════════════════════════
+     SCHEMA — drives the form UI
+  ═══════════════════════════════ */
+  const SCHEMA = {
+    hero: {
+      label: 'HERO',
+      desc: 'The main landing section at the top of your portfolio.',
+      fields: [
+        { key: 'eyebrow',        label: 'Eyebrow Text',              type: 'text',     hint: 'Small label above the headline' },
+        { key: 'headlinePrefix', label: 'Headline — Main Part',       type: 'text',     hint: 'e.g. ENGINEERING (space included)' },
+        { key: 'headlineAccent', label: 'Headline — Accent (colored)', type: 'text',    hint: 'e.g. EXPERIENCE.' },
+        { key: 'subheadline',    label: 'Subheadline',               type: 'textarea' },
+        { key: 'tagline',        label: 'Tagline (green)',            type: 'text' },
+        { key: 'ctaLabel',       label: 'CTA Button Label',           type: 'text' },
+        { key: 'ctaHref',        label: 'CTA Button Link',            type: 'text',    hint: '#contact or full URL' },
+        { key: 'statusLabel',    label: 'Status Label (bottom right)', type: 'text' },
+      ],
+    },
+
+    projects: {
+      label: 'PROJECTS',
+      desc: 'Featured case studies displayed in the bento grid.',
+      fields: [
+        { key: 'sectionLabel',    label: 'Section Label',    type: 'text' },
+        { key: 'sectionTitle',    label: 'Section Title',    type: 'text' },
+        { key: 'sectionSubtitle', label: 'Section Subtitle', type: 'textarea' },
+      ],
+      list: {
+        key: 'items',
+        label: 'PROJECT',
+        itemFields: [
+          { key: 'name',          label: 'Project Name',         type: 'text' },
+          { key: 'chips',         label: 'Tags',                 type: 'chips',    hint: 'Comma-separated: WebGL, React, TypeScript' },
+          { key: 'problem',       label: 'Problem',              type: 'textarea' },
+          { key: 'approach',      label: 'Approach / Solution',  type: 'textarea' },
+          { key: 'resultMetric',  label: 'Result Metric',        type: 'text',     hint: 'e.g. 60fps  or  98/100' },
+          { key: 'resultContext', label: 'Result Context',        type: 'text',     hint: 'e.g. @ 100k nodes' },
+        ],
+      },
+    },
+
+    career: {
+      label: 'CAREER',
+      desc: 'Work experience entries shown on the animated timeline.',
+      fields: [
+        { key: 'sectionLabel',    label: 'Section Label',    type: 'text' },
+        { key: 'sectionTitle',    label: 'Section Title',    type: 'text' },
+        { key: 'sectionSubtitle', label: 'Section Subtitle', type: 'textarea' },
+      ],
+      list: {
+        key: 'roles',
+        label: 'ROLE',
+        itemFields: [
+          { key: 'period',   label: 'Period',              type: 'text',     hint: 'e.g. 2021 — PRESENT' },
+          { key: 'location', label: 'Location',            type: 'text' },
+          { key: 'title',    label: 'Job Title',           type: 'text' },
+          { key: 'company',  label: 'Company',             type: 'text',     hint: 'UPPERCASE recommended' },
+          { key: 'bullets',  label: 'Bullet Points',       type: 'bullets',  hint: 'One bullet per line' },
+          { key: 'chips',    label: 'Tech Stack',          type: 'chips',    hint: 'Comma-separated: Go, Kubernetes' },
+        ],
+      },
+    },
+
+    contact: {
+      label: 'CONTACT',
+      desc: 'Contact section at the bottom of the portfolio.',
+      fields: [
+        { key: 'statusBadge',      label: 'Status Badge',          type: 'text',     hint: 'e.g. STATUS: AVAILABLE' },
+        { key: 'headlineLine1',    label: 'Headline Line 1',        type: 'text' },
+        { key: 'headlineLine2',    label: 'Headline Line 2',        type: 'text' },
+        { key: 'subheadline',      label: 'Subheadline',           type: 'textarea' },
+        { key: 'hint',             label: 'Hint Text',              type: 'text' },
+        { key: 'githubHref',       label: 'GitHub URL',             type: 'text' },
+        { key: 'linkedinHref',     label: 'LinkedIn URL',           type: 'text' },
+        { key: 'bookCallTitle',    label: 'Book a Call — Title',    type: 'text' },
+        { key: 'bookCallSubtitle', label: 'Book a Call — Subtitle', type: 'text' },
+        { key: 'formTitle',        label: 'Contact Form Title',     type: 'text' },
+      ],
+    },
+
+    testimonials: {
+      label: 'TESTIMONIALS',
+      desc: 'Social proof quotes from clients and colleagues.',
+      fields: [],
+      list: {
+        key: 'items',
+        label: 'TESTIMONIAL',
+        itemFields: [
+          { key: 'name',     label: 'Name',            type: 'text' },
+          { key: 'initials', label: 'Initials',         type: 'text',     hint: 'e.g. MR (shown in avatar)' },
+          { key: 'role',     label: 'Role & Company',  type: 'text' },
+          { key: 'quote',    label: 'Quote',            type: 'textarea' },
+          { key: 'tags',     label: 'Tags',             type: 'chips',    hint: 'Comma-separated labels' },
+        ],
+      },
+    },
+
+    settings: {
+      label: 'SETTINGS',
+      desc: 'Admin panel configuration.',
+    },
+  };
+
+  /* ═══════════════════════════════
+     SHA-256 helper
+  ═══════════════════════════════ */
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  /* ═══════════════════════════════
+     SCREEN MANAGEMENT
+  ═══════════════════════════════ */
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(`screen-${name}`).classList.add('active');
+  }
+
+  /* ═══════════════════════════════
+     INIT
+  ═══════════════════════════════ */
+  async function init() {
+    if (!localStorage.getItem(AUTH_PRI)) {
+      localStorage.setItem(AUTH_PRI, await sha256('Bitch@1'));
+      localStorage.setItem(AUTH_BAK, await sha256('backup2025'));
+    }
+    if (sessionStorage.getItem(SESSION) === '1') openApp();
+    else showScreen('login');
+  }
+
+  function openApp() {
+    showScreen('app');
+    const raw = localStorage.getItem(CMS_KEY);
+    STATE.content = raw ? deepMerge(JSON.parse(raw), DEFAULTS) : deepClone(DEFAULTS);
+    setSection('hero');
+  }
+
+  /* ═══════════════════════════════
+     AUTH HANDLERS
+  ═══════════════════════════════ */
+  async function handleSetup() {
+    const pass   = document.getElementById('setup-pass').value.trim();
+    const backup = document.getElementById('setup-backup').value.trim();
+    const err    = document.getElementById('setup-err');
+
+    err.classList.remove('visible');
+
+    if (!pass || !backup) {
+      err.textContent = 'Both fields are required.';
+      return err.classList.add('visible');
+    }
+    if (pass === backup) {
+      err.textContent = 'Passcode and backup code must be different.';
+      return err.classList.add('visible');
+    }
+    if (pass.length < 6) {
+      err.textContent = 'Passcode must be at least 6 characters.';
+      return err.classList.add('visible');
+    }
+
+    localStorage.setItem(AUTH_PRI, await sha256(pass));
+    localStorage.setItem(AUTH_BAK, await sha256(backup));
+    sessionStorage.setItem(SESSION, '1');
+    openApp();
+  }
+
+  async function handleLogin() {
+    const pass = document.getElementById('login-pass').value;
+    const err  = document.getElementById('login-err');
+    const hash = await sha256(pass);
+
+    err.classList.remove('visible');
+
+    if (hash === localStorage.getItem(AUTH_PRI)) {
+      sessionStorage.setItem(SESSION, '1');
+      openApp();
+    } else {
+      err.classList.add('visible');
+    }
+  }
+
+  async function handleBackupLogin() {
+    const pass = document.getElementById('backup-pass').value;
+    const err  = document.getElementById('backup-err');
+    const hash = await sha256(pass);
+
+    err.classList.remove('visible');
+
+    if (hash === localStorage.getItem(AUTH_BAK)) {
+      sessionStorage.setItem(SESSION, '1');
+      openApp();
+    } else {
+      err.classList.add('visible');
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem(SESSION);
+    showScreen('login');
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-err').classList.remove('visible');
+  }
+
+  /* ═══════════════════════════════
+     SECTION NAVIGATION
+  ═══════════════════════════════ */
+  function setSection(key) {
+    STATE.section = key;
+
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.section === key);
+    });
+
+    const area = document.getElementById('form-area');
+    area.innerHTML = key === 'settings' ? renderSettings() : renderSectionForm(key);
+
+    // Wire up input listeners for autosave
+    area.querySelectorAll('[data-path]').forEach(el => {
+      el.addEventListener('input', () => handleFieldInput(el));
+    });
+  }
+
+  /* ═══════════════════════════════
+     FORM RENDERING
+  ═══════════════════════════════ */
+  function renderSectionForm(key) {
+    const schema = SCHEMA[key];
+    if (!schema) return '';
+    const data = STATE.content[key] ?? DEFAULTS[key] ?? {};
+
+    let html = `
+      <div class="form-header">
+        <div class="form-eyebrow">Content Editor</div>
+        <div class="form-title">${schema.label}</div>
+        <div class="form-desc">${schema.desc}</div>
+      </div>
+      <div class="form-body">`;
+
+    // Flat fields — 2-col grid
+    if (schema.fields?.length) {
+      html += `<div class="fields-block">
+        <div class="fields-block-header">
+          <div class="fields-block-title">Section Fields</div>
+          <div class="fields-block-count">${schema.fields.length} fields</div>
+        </div>
+        <div class="flat-grid">
+          ${schema.fields.map(f => {
+            const isWide = f.type === 'textarea' || f.type === 'bullets';
+            return renderField(f, getVal(data, f.key), `${key}.${f.key}`, isWide ? 'fg-wide' : '');
+          }).join('')}
+        </div>
+      </div>`;
+    }
+
+    // List items
+    if (schema.list) {
+      const items = data[schema.list.key] ?? DEFAULTS[key]?.[schema.list.key] ?? [];
+      html += `<div class="fields-block">
+        <div class="fields-block-header">
+          <div class="fields-block-title">${schema.list.label}s</div>
+          <div class="fields-block-count">${items.length} items</div>
+        </div>
+        <div class="list-section">`;
+
+      items.forEach((item, i) => {
+        html += `
+          <div class="list-item-card">
+            <div class="list-item-header">
+              <div class="list-item-num">
+                <div class="li-badge">${i + 1}</div>
+                <div class="li-label">${schema.list.label} ${i + 1}</div>
+              </div>
+              <div class="list-item-controls">
+                ${i > 0 ? `<button class="btn btn-ghost btn-sm" onclick="moveItem('${key}','${schema.list.key}',${i},-1)" title="Move up"><span class="material-symbols-outlined" style="font-size:13px">arrow_upward</span></button>` : ''}
+                ${i < items.length - 1 ? `<button class="btn btn-ghost btn-sm" onclick="moveItem('${key}','${schema.list.key}',${i},1)" title="Move down"><span class="material-symbols-outlined" style="font-size:13px">arrow_downward</span></button>` : ''}
+                ${items.length > 1 ? `<button class="btn btn-danger btn-sm" onclick="removeItem('${key}','${schema.list.key}',${i})" title="Remove"><span class="material-symbols-outlined" style="font-size:13px">delete</span></button>` : ''}
+              </div>
+            </div>
+            <div class="list-item-body">
+              ${schema.list.itemFields.map(f => {
+                let val = item[f.key];
+                if (val == null) val = DEFAULTS[key]?.[schema.list.key]?.[i]?.[f.key] ?? (f.type === 'chips' || f.type === 'bullets' ? [] : '');
+                const display = Array.isArray(val)
+                  ? (f.type === 'bullets' ? val.join('\n') : val.join(', '))
+                  : val;
+                const isWide = f.type === 'textarea' || f.type === 'bullets';
+                return renderField(f, display, `${key}.${schema.list.key}.${i}.${f.key}`, isWide ? 'fg-wide' : '');
+              }).join('')}
+            </div>
+          </div>`;
+      });
+
+      html += `
+          <button class="add-item-btn" onclick="addItem('${key}','${schema.list.key}')">
+            <span style="font-size:13px;vertical-align:middle">+</span> Add ${schema.list.label}
+          </button>
+        </div>
+      </div>`;
+    }
+
+    html += `</div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="saveContent()">
+          <span class="material-symbols-outlined" style="font-size:14px">save</span> Save Changes
+        </button>
+        <button class="btn btn-outline" onclick="resetSection('${key}')">
+          <span class="material-symbols-outlined" style="font-size:14px">restart_alt</span> Reset Section
+        </button>
+      </div>`;
+
+    return html;
+  }
+
+  function renderField(field, value, path, extraClass = '') {
+    const id   = `f-${path.replace(/\./g, '-')}`;
+    const val  = value ?? '';
+    const type = field.type ?? 'text';
+    const isUrl = field.key?.toLowerCase().includes('href') || field.key?.toLowerCase().includes('url');
+    const badgeClass = isUrl ? 'ftype-url' : `ftype-${type}`;
+    const badgeLabel = isUrl ? 'URL' : type;
+    const hint = field.hint ? `<div class="field-hint">${field.hint}</div>` : '';
+
+    let input;
+    if (type === 'textarea' || type === 'bullets') {
+      input = `<textarea id="${id}" data-path="${path}" data-type="${type}" rows="${type === 'bullets' ? 4 : 3}" placeholder="${type === 'bullets' ? 'One bullet per line…' : 'Enter text…'}">${escHtml(String(val))}</textarea>`;
+    } else {
+      input = `<input type="text" id="${id}" data-path="${path}" data-type="${type}" value="${escAttr(String(val))}" placeholder="${isUrl ? 'https://…' : 'Enter value…'}">`;
+    }
+
+    return `<div class="field-group ${extraClass}">
+      <label for="${id}">${field.label}<span class="ftype ${badgeClass}">${badgeLabel}</span></label>
+      ${hint}${input}
+    </div>`;
+  }
+
+  function renderSettings() {
+    return `
+      <div class="form-header">
+        <div class="form-eyebrow">System</div>
+        <div class="form-title">SETTINGS</div>
+        <div class="form-desc">Admin panel configuration and passcode management.</div>
+      </div>
+      <div class="form-body">
+
+      <div class="settings-card">
+        <div class="settings-card-head">
+          <div class="settings-card-title">Change Passcode</div>
+        </div>
+        <div class="settings-card-body">
+          <div class="field-group" style="margin-bottom:14px">
+            <label>Current Passcode</label>
+            <div class="pass-wrap">
+              <input type="password" id="chg-current" placeholder="Current passcode…" />
+              <button type="button" class="pass-toggle" onclick="togglePass('chg-current',this)" aria-label="Toggle visibility">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <div class="field-group" style="margin-bottom:14px">
+            <label>New Passcode</label>
+            <div class="pass-wrap">
+              <input type="password" id="chg-new" placeholder="New passcode…" />
+              <button type="button" class="pass-toggle" onclick="togglePass('chg-new',this)" aria-label="Toggle visibility">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <div class="field-group" style="margin-bottom:14px">
+            <label>New Backup Recovery Code</label>
+            <div class="pass-wrap">
+              <input type="password" id="chg-backup" placeholder="New backup code…" />
+              <button type="button" class="pass-toggle" onclick="togglePass('chg-backup',this)" aria-label="Toggle visibility">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <div id="chg-err" class="err-msg"></div>
+          <div id="chg-ok" style="display:none;font-size:12px;color:var(--accent);margin-top:10px;font-weight:600">
+            <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle">check_circle</span> Passcode updated successfully.
+          </div>
+          <button class="btn btn-primary" style="margin-top:14px" onclick="changePasscode()">
+            <span class="material-symbols-outlined" style="font-size:14px">lock_reset</span> Update Passcode
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-card-head">
+          <div class="settings-card-title">Data Management</div>
+        </div>
+        <div class="settings-card-body">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+            <button class="btn btn-outline" onclick="exportContent()">
+              <span class="material-symbols-outlined" style="font-size:14px">download</span> Export JSON
+            </button>
+            <label class="btn btn-outline" for="import-file2" style="cursor:pointer">
+              <span class="material-symbols-outlined" style="font-size:14px">upload</span> Import JSON
+            </label>
+            <input id="import-file2" type="file" accept=".json" style="display:none" onchange="importContent(event)" />
+            <button class="btn btn-danger" onclick="resetAllToDefaults()">
+              <span class="material-symbols-outlined" style="font-size:14px">restart_alt</span> Reset All
+            </button>
+          </div>
+          <p style="font-size:11px;color:var(--text-dim);line-height:1.75;border-top:1px solid rgba(255,255,255,.06);padding-top:12px">
+            <b style="color:var(--text)">Export</b> — downloads current CMS content as <code style="color:var(--secondary);background:rgba(68,226,205,.08);padding:1px 5px;border-radius:3px">portfolio-content.json</code>.<br>
+            <b style="color:var(--text)">Import</b> — loads a previously exported JSON and replaces all content.<br>
+            <b style="color:var(--danger)">Reset All</b> — clears all custom content and restores hardcoded defaults.
+          </p>
+        </div>
+      </div>
+      </div>
+    `;
+  }
+
+  /* ═══════════════════════════════
+     FIELD CHANGE HANDLER
+  ═══════════════════════════════ */
+  function handleFieldInput(el) {
+    const path = el.dataset.path;
+    const type = el.dataset.type;
+    let value  = el.value;
+
+    if (type === 'bullets') {
+      value = value.split('\n').map(s => s.trim()).filter(Boolean);
+    } else if (type === 'chips') {
+      value = value.split(',').map(s => s.trim()).filter(Boolean);
+    }
+
+    setPath(STATE.content, path, value);
+    markDirty();
+  }
+
+  /* ═══════════════════════════════
+     CONTENT PERSISTENCE
+  ═══════════════════════════════ */
+  function saveContent() {
+    localStorage.setItem(CMS_KEY, JSON.stringify(STATE.content));
+    markSaved();
+    showToast('✓ Content saved');
+  }
+
+  function exportContent() {
+    const blob = new Blob([JSON.stringify(STATE.content, null, 2)], { type: 'application/json' });
+    const a    = Object.assign(document.createElement('a'), {
+      href:     URL.createObjectURL(blob),
+      download: 'portfolio-content.json',
+    });
+    a.click();
+    showToast('↓ Exported portfolio-content.json');
+  }
+
+  function importContent(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data    = JSON.parse(ev.target.result);
+        STATE.content = deepMerge(data, DEFAULTS);
+        localStorage.setItem(CMS_KEY, JSON.stringify(STATE.content));
+        setSection(STATE.section);
+        markSaved();
+        showToast('↑ Content imported');
+      } catch {
+        showToast('✗ Invalid JSON file', true);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }
+
+  function resetAllToDefaults() {
+    if (!confirm('Reset ALL content to defaults? This cannot be undone.')) return;
+    localStorage.removeItem(CMS_KEY);
+    STATE.content = deepClone(DEFAULTS);
+    setSection(STATE.section);
+    markSaved();
+    showToast('↺ All content reset to defaults');
+  }
+
+  function resetSection(key) {
+    if (!confirm(`Reset the ${key.toUpperCase()} section to defaults?`)) return;
+    STATE.content[key] = deepClone(DEFAULTS[key] ?? {});
+    saveContent();
+    setSection(key);
+    showToast(`↺ ${key} section reset`);
+  }
+
+  /* ═══════════════════════════════
+     LIST ITEM MANAGEMENT
+  ═══════════════════════════════ */
+  function addItem(sectionKey, listKey) {
+    const schema = SCHEMA[sectionKey];
+    if (!schema?.list) return;
+
+    const blank = {};
+    schema.list.itemFields.forEach(f => {
+      blank[f.key] = (f.type === 'bullets' || f.type === 'chips') ? [] : '';
+    });
+
+    ensureList(sectionKey, listKey);
+    STATE.content[sectionKey][listKey].push(blank);
+    saveContent();
+    setSection(sectionKey);
+  }
+
+  function removeItem(sectionKey, listKey, idx) {
+    if (!confirm('Remove this item?')) return;
+    ensureList(sectionKey, listKey);
+    STATE.content[sectionKey][listKey].splice(idx, 1);
+    saveContent();
+    setSection(sectionKey);
+  }
+
+  function moveItem(sectionKey, listKey, idx, dir) {
+    ensureList(sectionKey, listKey);
+    const list    = STATE.content[sectionKey][listKey];
+    const newIdx  = idx + dir;
+    if (newIdx < 0 || newIdx >= list.length) return;
+    [list[idx], list[newIdx]] = [list[newIdx], list[idx]];
+    saveContent();
+    setSection(sectionKey);
+  }
+
+  function ensureList(sectionKey, listKey) {
+    if (!STATE.content[sectionKey]) STATE.content[sectionKey] = {};
+    if (!STATE.content[sectionKey][listKey]) {
+      STATE.content[sectionKey][listKey] = deepClone(DEFAULTS[sectionKey]?.[listKey] ?? []);
+    }
+  }
+
+  /* ═══════════════════════════════
+     PASSCODE CHANGE
+  ═══════════════════════════════ */
+  async function changePasscode() {
+    const current = document.getElementById('chg-current').value;
+    const next    = document.getElementById('chg-new').value.trim();
+    const backup  = document.getElementById('chg-backup').value.trim();
+    const err     = document.getElementById('chg-err');
+    const ok      = document.getElementById('chg-ok');
+
+    err.classList.remove('visible');
+    ok.style.display = 'none';
+
+    const curHash = await sha256(current);
+    if (curHash !== localStorage.getItem(AUTH_PRI)) {
+      err.textContent = 'Current passcode is incorrect.';
+      return err.classList.add('visible');
+    }
+    if (!next || !backup) {
+      err.textContent = 'New passcode and backup code are required.';
+      return err.classList.add('visible');
+    }
+    if (next === backup) {
+      err.textContent = 'New passcode and backup code must be different.';
+      return err.classList.add('visible');
+    }
+    if (next.length < 6) {
+      err.textContent = 'New passcode must be at least 6 characters.';
+      return err.classList.add('visible');
+    }
+
+    localStorage.setItem(AUTH_PRI, await sha256(next));
+    localStorage.setItem(AUTH_BAK, await sha256(backup));
+    ok.style.display = 'block';
+    document.getElementById('chg-current').value = '';
+    document.getElementById('chg-new').value     = '';
+    document.getElementById('chg-backup').value  = '';
+  }
+
+  /* ═══════════════════════════════
+     UI HELPERS
+  ═══════════════════════════════ */
+  function markDirty() {
+    STATE.dirty = true;
+    const b = document.getElementById('save-badge');
+    b.textContent = '● UNSAVED';
+    b.classList.add('unsaved');
+  }
+
+  function markSaved() {
+    STATE.dirty = false;
+    const b = document.getElementById('save-badge');
+    b.textContent = '✓ SAVED';
+    b.classList.remove('unsaved');
+  }
+
+  let toastTimer;
+  function showToast(msg, isErr = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.toggle('error', isErr);
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  /* ═══════════════════════════════
+     UTILS
+  ═══════════════════════════════ */
+  function deepClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
+
+  function deepMerge(stored, defaults) {
+    if (!stored || typeof stored !== 'object') return deepClone(defaults);
+    const result = deepClone(defaults);
+    for (const key of Object.keys(stored)) {
+      if (stored[key] == null) continue;
+      if (Array.isArray(stored[key])) {
+        result[key] = stored[key];
+      } else if (typeof stored[key] === 'object') {
+        result[key] = deepMerge(stored[key], result[key] ?? {});
+      } else {
+        result[key] = stored[key];
+      }
+    }
+    return result;
+  }
+
+  function setPath(obj, path, value) {
+    const parts = path.split('.');
+    let cur = obj;
+    for (let i = 0; i < parts.length - 1; i++) {
+      const k = isNaN(Number(parts[i])) ? parts[i] : Number(parts[i]);
+      if (cur[k] == null) cur[k] = isNaN(Number(parts[i + 1])) ? {} : [];
+      cur = cur[k];
+    }
+    const last = parts.at(-1);
+    cur[isNaN(Number(last)) ? last : Number(last)] = value;
+  }
+
+  function getVal(obj, key) {
+    return obj?.[key] ?? DEFAULTS[STATE.section]?.[key] ?? '';
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function escAttr(s) {
+    return s.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  /* ═══════════════════════════════
+     PASSWORD VISIBILITY TOGGLE
+  ═══════════════════════════════ */
+  function togglePass(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon  = btn.querySelector('.material-symbols-outlined');
+    if (input.type === 'password') {
+      input.type  = 'text';
+      icon.textContent = 'visibility_off';
+      btn.style.color  = 'var(--primary)';
+    } else {
+      input.type  = 'password';
+      icon.textContent = 'visibility';
+      btn.style.color  = '';
+    }
+    input.focus();
+  }
+
+  /* ═══════════════════════════════
+     WARN ON UNSAVED CHANGES
+  ═══════════════════════════════ */
+  window.addEventListener('beforeunload', e => {
+    if (STATE.dirty) e.preventDefault();
+  });
+
+  /* ═══════════════════════════════
+     KEYBOARD SHORTCUT: Ctrl+S
+  ═══════════════════════════════ */
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's' && STATE.section !== 'settings') {
+      e.preventDefault();
+      saveContent();
+    }
+  });
+
+  /* ═══════════════════════════════
+     EXPOSE FUNCTIONS TO GLOBAL SCOPE
+     (needed for inline onclick attrs)
+  ═══════════════════════════════ */
+  Object.assign(window, {
+    togglePass, handleSetup, handleLogin, handleBackupLogin,
+    showScreen, logout, setSection, exportContent, importContent,
+    resetAllToDefaults, resetSection, addItem, removeItem,
+    moveItem, changePasscode, saveContent,
+  });
+
+  // BOOT
+  init();
+</script>
+
+</body>
+</html>

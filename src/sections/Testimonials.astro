@@ -101,18 +101,18 @@ const testimonials: Array<{
             <!-- Avatar + name -->
             <div class={`flex items-center gap-4 ${t.large && t.id !== 4 ? 'mb-8' : t.id !== 4 ? 'mb-6' : 'shrink-0'}`}>
               <div class={`rounded-full border-2 ${t.ringColor} bg-gradient-to-br ${t.avatarGrad} flex items-center justify-center font-headline-md text-headline-md text-on-surface font-bold ${t.large ? 'w-16 h-16' : 'w-12 h-12'}`}>
-                {t.initials}
+                <span data-cms={`testimonials.items.${t.id - 1}.initials`}>{t.initials}</span>
               </div>
               <div>
-                <h3 class="font-headline-md text-headline-md text-on-surface">{t.name}</h3>
-                <p class="font-label-sm text-label-sm text-secondary mt-1">{t.role}</p>
+                <h3 data-cms={`testimonials.items.${t.id - 1}.name`} class="font-headline-md text-headline-md text-on-surface">{t.name}</h3>
+                <p data-cms={`testimonials.items.${t.id - 1}.role`} class="font-label-sm text-label-sm text-secondary mt-1">{t.role}</p>
               </div>
             </div>
 
             <!-- Quote -->
             <div class="flex flex-col flex-grow justify-between">
               <p class={`text-on-surface-variant ${t.large ? 'font-body-lg text-body-lg' : 'font-body-md text-body-md italic'}`}>
-                "{t.quote}"
+                "<span data-cms={`testimonials.items.${t.id - 1}.quote`}>{t.quote}</span>"
               </p>
 
               <!-- Tags -->

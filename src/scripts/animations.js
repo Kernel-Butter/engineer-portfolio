@@ -148,3 +148,94 @@ export function cascadeVoxels(selector, {
 export function onEnterOnce(trigger, callback, { start = 'top 85%' } = {}) {
   ScrollTrigger.create({ trigger, start, once: true, onEnter: callback });
 }
+
+// ── Button mouse interaction primitives ─────────────────────────────────────
+
+/**
+ * Magnetic cursor-tracking: button follows the mouse, snaps back on leave.
+ * @param {HTMLElement} el
+ * @param {{ strength?: number }} [opts]
+ */
+export function magneticButton(el, { strength = 0.2 } = {}) {
+  el.addEventListener('mousemove', e => {
+    const r = el.getBoundingClientRect();
+    gsap.to(el, {
+      x: (e.clientX - r.left - r.width  / 2) * strength,
+      y: (e.clientY - r.top  - r.height / 2) * strength,
+      duration: 0.2, ease: 'power2.out',
+    });
+  });
+  el.addEventListener('mouseleave', () => {
+    gsap.to(el, { x: 0, y: 0, duration: 0.4, ease: 'elastic.out(1,0.5)' });
+  });
+}
+
+/**
+ * Radial ripple: expand a child element on hover, collapse on leave.
+ * @param {HTMLElement} btn
+ * @param {HTMLElement} rippleEl
+ */
+export function rippleHover(btn, rippleEl) {
+  btn.addEventListener('mouseenter', () => { rippleEl.style.transform = 'scale(1)'; });
+  btn.addEventListener('mouseleave', () => { rippleEl.style.transform = 'scale(0)'; });
+}
+
+/**
+ * Shimmer sweep: slide a highlight bar across the button on hover.
+ * @param {HTMLElement} btn
+ * @param {HTMLElement} shimmerEl
+ */
+export function shimmerHover(btn, shimmerEl) {
+  btn.addEventListener('mouseenter', () => {
+    gsap.fromTo(shimmerEl, { x: '-100%' }, { x: '120%', duration: 0.5, ease: 'power2.inOut' });
+  });
+  btn.addEventListener('mouseleave', () => {
+    gsap.set(shimmerEl, { x: '-100%' });
+  });
+}
+
+/**
+ * Click burst: scatter colored particles from the click point.
+ * @param {HTMLElement} el
+ * @param {{ count?: number, color?: string, radius?: number }} [opts]
+ */
+export function clickBurst(el, { count = 6, color = '#44e2cd', radius = 55 } = {}) {
+  el.addEventListener('click', e => {
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('span');
+      p.style.cssText = `position:fixed;width:6px;height:6px;border-radius:50%;background:${color};pointer-events:none;z-index:9999;left:${e.clientX}px;top:${e.clientY}px;transform:translate(-50%,-50%)`;
+      document.body.appendChild(p);
+      const angle = (Math.PI * 2 / count) * i;
+      gsap.to(p, {
+        x: Math.cos(angle) * radius,
+        y: Math.sin(angle) * radius,
+        opacity: 0, duration: 0.55, ease: 'power2.out',
+        onComplete: () => p.remove(),
+      });
+    }
+  });
+}
+
+/**
+ * Scramble text: randomise chars on hover, resolve back to original.
+ * @param {HTMLElement} el
+ * @param {{ pool?: string, speed?: number }} [opts]
+ */
+export function scrambleText(el, { pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_', speed = 0.45 } = {}) {
+  const original = (el.textContent ?? '').trim();
+  let ticker = null;
+  el.addEventListener('mouseenter', () => {
+    let progress = 0;
+    if (ticker) clearInterval(ticker);
+    ticker = setInterval(() => {
+      el.textContent = original.split('').map((c, i) => {
+        if (c === '_' || c === ' ') return c;
+        if (i < progress) return original[i];
+        return pool[Math.floor(Math.random() * pool.length)];
+      }).join('');
+      progress += speed;
+      if (progress >= original.length) { clearInterval(ticker); el.textContent = original; }
+    }, 30);
+  });
+  el.addEventListener('mouseleave', () => { if (ticker) clearInterval(ticker); el.textContent = original; });
+}

@@ -1,6 +1,15 @@
 import { gsap } from 'gsap';
 
 export function initPreloader(onComplete) {
+  // Already ran this session — skip straight to content
+  if (sessionStorage.getItem('preloader_done') === '1') {
+    const preloaderEl = document.getElementById('preloader');
+    if (preloaderEl) preloaderEl.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    onComplete(true); // true = instant, skip fade-in animation
+    return;
+  }
+
   const els = {
     preloader: document.getElementById('preloader'),
     bar:       document.getElementById('progress-bar'),
@@ -102,7 +111,8 @@ export function initPreloader(onComplete) {
           els.preloader.style.display = 'none';
           running = false;
           document.body.style.overflow = 'auto';
-          onComplete();
+          sessionStorage.setItem('preloader_done', '1');
+          onComplete(false); // false = first run, animate fade-in
         },
       });
     } else {

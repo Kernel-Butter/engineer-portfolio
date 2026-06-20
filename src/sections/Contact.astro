@@ -2,8 +2,8 @@
 import BlobCard from '../components/BlobCard.astro';
 
 const socials = [
-  { label: 'GitHub',   icon: 'code',   href: '#', hoverColor: 'hover:text-primary' },
-  { label: 'LinkedIn', icon: 'work',   href: '#', hoverColor: 'hover:text-secondary' },
+  { label: 'GitHub',   icon: 'code',   hoverColor: 'hover:text-primary',   cmsKey: 'contact.githubHref'   },
+  { label: 'LinkedIn', icon: 'work',   hoverColor: 'hover:text-secondary', cmsKey: 'contact.linkedinHref' },
 ];
 ---
 
@@ -22,14 +22,15 @@ const socials = [
         <!-- Status badge -->
         <span class="inline-flex items-center gap-2 self-start px-3 py-1 rounded bg-[#171717] text-tertiary font-label-sm text-label-sm border border-tertiary/20 shadow-[0_0_10px_rgba(78,222,163,0.1)]">
           <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
-          STATUS: AVAILABLE
+          <span data-cms="contact.statusBadge">STATUS: AVAILABLE</span>
         </span>
 
         <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tighter uppercase drop-shadow-[0_0_15px_rgba(192,193,255,0.2)]">
-          LET'S BUILD<br />THE FUTURE.
+          <span data-cms="contact.headlineLine1">LET'S BUILD</span><br />
+          <span data-cms="contact.headlineLine2">THE FUTURE.</span>
         </h2>
 
-        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">
+        <p data-cms="contact.subheadline" class="font-body-lg text-body-lg text-on-surface-variant max-w-md">
           Currently accepting high-impact projects. Friction-free booking below.
         </p>
       </div>
@@ -38,7 +39,7 @@ const socials = [
       <div class="border-t border-outline-variant/20 pt-8 space-y-4 font-code-snippet text-code-snippet text-outline">
         <p class="flex items-center gap-3">
           <span class="material-symbols-outlined text-secondary" style="font-variation-settings:'FILL' 1">terminal</span>
-          <span class="text-on-surface-variant">Hiring me is easy. Here is exactly how to start.</span>
+          <span data-cms="contact.hint" class="text-on-surface-variant">Hiring me is easy. Here is exactly how to start.</span>
         </p>
       </div>
 
@@ -46,7 +47,8 @@ const socials = [
       <div class="flex gap-4">
         {socials.map(s => (
           <a
-            href={s.href}
+            data-cms-href={s.cmsKey}
+            href="#"
             aria-label={s.label}
             class={`w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant ${s.hoverColor} hover:bg-surface-container-high transition-colors border border-outline-variant/30`}
           >
@@ -69,8 +71,8 @@ const socials = [
       >
         <div class="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
         <div class="relative z-10 text-center md:text-left">
-          <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Book a Technical Discovery</h3>
-          <p class="font-code-snippet text-code-snippet text-outline">30-min deep dive into your architecture.</p>
+          <h3 data-cms="contact.bookCallTitle" class="font-headline-md text-headline-md text-on-surface mb-2">Book a Technical Discovery</h3>
+          <p data-cms="contact.bookCallSubtitle" class="font-code-snippet text-code-snippet text-outline">30-min deep dive into your architecture.</p>
         </div>
         <button
           id="schedule-btn"
@@ -89,7 +91,7 @@ const socials = [
       <div class="ct-card bento-card rounded-xl p-8 flex-grow">
         <h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
           <span class="material-symbols-outlined text-tertiary">mail</span>
-          Direct Transmission
+          <span data-cms="contact.formTitle">Direct Transmission</span>
         </h3>
 
         <form id="contact-form" class="space-y-6" novalidate>
@@ -141,27 +143,17 @@ const socials = [
 </section>
 
 <script>
-  import { gsap } from 'gsap';
-  import { fadeUp, staggerFadeUp } from '../scripts/animations.js';
+  import { fadeUp, staggerFadeUp, magneticButton, rippleHover, clickBurst } from '../scripts/animations.js';
 
   fadeUp('#contact .ct-left',  '#contact', { start: 'top 78%' });
   staggerFadeUp('#contact .ct-card', '#contact .grid', { stagger: 0.15, start: 'top 75%' });
 
-  // Magnetic effect on Schedule button
-  const btn     = document.getElementById('schedule-btn');
-  const ripple  = document.getElementById('schedule-ripple');
+  const btn    = document.getElementById('schedule-btn');
+  const ripple = document.getElementById('schedule-ripple');
   if (btn && ripple) {
-    btn.addEventListener('mousemove', e => {
-      const r = btn.getBoundingClientRect();
-      const x = e.clientX - r.left - r.width  / 2;
-      const y = e.clientY - r.top  - r.height / 2;
-      gsap.to(btn, { x: x * 0.2, y: y * 0.2, duration: 0.2, ease: 'power2.out' });
-    });
-    btn.addEventListener('mouseleave', () => {
-      gsap.to(btn, { x: 0, y: 0, duration: 0.4, ease: 'elastic.out(1,0.5)' });
-    });
-    btn.addEventListener('mouseenter', () => { ripple.style.transform = 'scale(1)'; });
-    btn.addEventListener('mouseleave', () => { ripple.style.transform = 'scale(0)'; });
+    magneticButton(btn);
+    rippleHover(btn, ripple);
+    clickBurst(btn);
   }
 
   // Form submit (hook up to EmailJS / backend later)

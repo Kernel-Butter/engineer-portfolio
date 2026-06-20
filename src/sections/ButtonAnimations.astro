@@ -1,0 +1,98 @@
+<section class="py-section-padding px-margin-mobile md:px-margin-desktop">
+  <div class="max-w-container-max mx-auto">
+
+    <div class="flex flex-col gap-2 mb-12">
+      <span class="font-code-snippet text-[11px] text-secondary uppercase tracking-widest">// ANIMATION_LAB</span>
+      <h2 class="font-headline-md text-headline-md text-on-surface">Button Mouse Interactions</h2>
+      <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+        Hover and click each button to test the interaction model before shipping to production.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-bento-gap">
+
+      <!-- 01 — Magnetic + Ripple + Click burst -->
+      <div class="bento-card rounded-xl p-8 flex flex-col items-center gap-6">
+        <div class="text-center">
+          <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest block mb-1">01 — Magnetic</span>
+          <p class="font-code-snippet text-[11px] text-on-surface-variant">Follows cursor · ripple expand · click particle burst</p>
+        </div>
+        <button
+          id="anim-magnetic"
+          class="relative px-8 py-4 bg-primary text-on-primary font-headline-md text-headline-md font-bold rounded-lg flex items-center gap-2 overflow-hidden hover:shadow-[0_0_20px_rgba(192,193,255,0.4)] transition-shadow duration-300"
+        >
+          <span class="material-symbols-outlined">calendar_month</span>
+          SCHEDULE CALL
+          <span
+            id="anim-ripple"
+            class="absolute inset-0 pointer-events-none"
+            style="background:radial-gradient(circle,rgba(68,226,205,0.2) 0%,transparent 70%);transform:scale(0);transition:transform 0.5s ease"
+          ></span>
+        </button>
+      </div>
+
+      <!-- 02 — Magnetic + Shimmer sweep -->
+      <div class="bento-card rounded-xl p-8 flex flex-col items-center gap-6">
+        <div class="text-center">
+          <span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest block mb-1">02 — Shimmer</span>
+          <p class="font-code-snippet text-[11px] text-on-surface-variant">Magnetic pull · light sweep on hover</p>
+        </div>
+        <a
+          id="anim-shimmer"
+          href="#"
+          class="relative bg-primary text-on-primary font-code-snippet text-code-snippet px-8 py-4 rounded flex items-center gap-2 overflow-hidden hover:shadow-[0_0_20px_rgba(68,226,205,0.4)] transition-shadow duration-300"
+        >
+          INITIATE_DEPLOYMENT
+          <span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+          <span
+            id="anim-shimmer-bar"
+            class="absolute inset-0 pointer-events-none"
+            style="background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,0.22) 50%,transparent 62%);transform:translateX(-100%)"
+          ></span>
+        </a>
+      </div>
+
+      <!-- 03 — Letter scramble -->
+      <div class="bento-card rounded-xl p-8 flex flex-col items-center gap-6">
+        <div class="text-center">
+          <span class="font-label-sm text-label-sm text-outline uppercase tracking-widest block mb-1">03 — Scramble</span>
+          <p class="font-code-snippet text-[11px] text-on-surface-variant">Char randomise → resolve on hover</p>
+        </div>
+        <a
+          id="anim-scramble"
+          href="#"
+          class="bg-primary text-on-primary font-label-sm text-label-sm px-4 py-2 rounded uppercase hover:bg-secondary transition-colors duration-300"
+        >
+          HIRE_ME
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  import { magneticButton, rippleHover, clickBurst, shimmerHover, scrambleText } from '../scripts/animations.js';
+
+  const magBtn = document.getElementById('anim-magnetic');
+  const ripple = document.getElementById('anim-ripple');
+  if (magBtn && ripple) {
+    magneticButton(magBtn);
+    rippleHover(magBtn, ripple);
+    clickBurst(magBtn);
+  }
+
+  const shimBtn = document.getElementById('anim-shimmer');
+  const shimBar = document.getElementById('anim-shimmer-bar');
+  if (shimBtn && shimBar) {
+    shimBtn.addEventListener('click', e => e.preventDefault());
+    magneticButton(shimBtn);
+    shimmerHover(shimBtn, shimBar);
+  }
+
+  const scrambleBtn = document.getElementById('anim-scramble');
+  if (scrambleBtn) {
+    scrambleBtn.addEventListener('click', e => e.preventDefault());
+    scrambleText(scrambleBtn);
+  }
+</script>
