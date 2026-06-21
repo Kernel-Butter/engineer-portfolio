@@ -36,45 +36,44 @@
 
   const W = 48, H = 32;
   const RADIUS   = 2.0;
-  /* Back-cap clip plane. z = 0 on a R=2 sphere → spherical cap of height 2.0
-     Surface area of cap = 2πRh = 2π×2×2.0 = 8π = 50% of total 4πR² = 16π */
-  const CLIP_Z   = 0.0;
-  const STIFF    = 0.06;   /* very stiff correction per step → slow wave speed */
-  const DAMP     = 0.998;  /* near-lossless → wave crosses full surface before dying */
-  const PRESSURE = 0.0007; /* barely-there restore → dent holds deep, recovers in seconds */
-  const ITER     = 2;      /* fewer iterations/frame = slower energy propagation */
+  /* Back-cap clip: z = 0.4 → visible cap height 1.6 → 40% visible (60% cut) */
+  const CLIP_Z   = 0.4;
+  const STIFF    = 0.30;   /* spring stiffness per constraint iteration */
+  const DAMP     = 0.993;  /* per-frame velocity damping                */
+  const PRESSURE = 0.0008; /* gentle pull back toward rest sphere       */
+  const ITER     = 8;      /* constraint iterations per step            */
+  /* DT: fraction of velocity applied to position each frame.
+     Slows wave travel without killing wave energy (unlike the old SPEED_SCALE).
+     0.20 ≈ 5× slow-motion  |  0.40 ≈ 2.5× slow-motion  |  1.0 = real-time */
+  const DT       = 0.22;
 
   const geo     = new THREE.SphereGeometry(RADIUS, W, H);
   const posAttr = geo.attributes.position as THREE.BufferAttribute;
   const N       = posAttr.count;
 
-  const cur  = new Float32Array(posAttr.array);
-  const prev = new Float32Array(posAttr.array);
-  const rest = new Float32Array(posAttr.array);
+  /* Explicit velocity array — key to proper slow-motion.
+     Velocity persists frame-to-frame (only DAMP removes it),
+     so wave energy doesn't vanish in 3 frames like it did with Verlet + SPEED_SCALE. */
+  const pos    = new Float32Array(posAttr.array); /* current positions  */
+  const vel    = new Float32Array(N * 3);          /* explicit velocities (start at 0) */
+  const rest   = new Float32Array(posAttr.array); /* rest shape (constant)            */
+  const posOld = new Float32Array(N * 3);          /* positions at frame start (for vel update) */
 
-  /* ── Active vertex mask — back 20% cap is frozen + invisible ──── */
-  const active = new Uint8Array(N);
-  for (let i = 0; i < N; i++) {
-    /* rest[i*3+2] is the original Z of this vertex on the sphere.
-       Vertices with restZ < CLIP_Z are in the back cap → inactive. */
-    active[i] = rest[i*3+2] >= CLIP_Z ? 1 : 0;
-  }
-
-  /* ── Springs: only between two ACTIVE vertices ────────────────── */
-  /* Boundary active vertices lose the springs that used to connect to the
-     now-inactive back cap → free edge → waves reflect chaotically here. */
+  /* ── Springs: ALL vertices participate — no frozen boundary ──────
+     Back-cap vertices are invisible (discarded by shader) but still
+     simulated. The cut edge therefore has all its springs intact and
+     waves flow freely across the boundary instead of getting stuck. */
   interface Spring { a: number; b: number; len: number; }
   const springs: Spring[] = [];
   const edgeSet = new Set<number>();
 
   function addSpring(a: number, b: number) {
-    if (!active[a] || !active[b]) return;           /* skip if either endpoint inactive */
     const key = Math.min(a, b) * 100000 + Math.max(a, b);
     if (edgeSet.has(key)) return;
     edgeSet.add(key);
-    const dx = cur[a*3]   - cur[b*3];
-    const dy = cur[a*3+1] - cur[b*3+1];
-    const dz = cur[a*3+2] - cur[b*3+2];
+    const dx = pos[a*3]   - pos[b*3];
+    const dy = pos[a*3+1] - pos[b*3+1];
+    const dz = pos[a*3+2] - pos[b*3+2];
     springs.push({ a, b, len: Math.sqrt(dx*dx + dy*dy + dz*dz) });
   }
 
@@ -85,48 +84,57 @@
     addSpring(idx[i], idx[i+2]);
   }
 
-  /* ── PBD step ─────────────────────────────────────────────────── */
+  /* ── PBD step (explicit velocity + DT slow-motion) ──────────────
+     Unlike Verlet where velocity = cur−prev (causing v × DT^n decay),
+     here velocity lives in its own array and only loses DAMP per frame.
+     Wave energy therefore persists and travels; DT just slows position steps. */
   function clothStep() {
-    /* 1 — Verlet integrate (active vertices only, no ambient forces)
-       The sphere is silent until clicked. Energy only enters via click impulse. */
+    /* 1 — Save positions, apply forces, integrate */
     for (let i = 0; i < N; i++) {
-      if (!active[i]) continue;
+      posOld[i*3]   = pos[i*3];
+      posOld[i*3+1] = pos[i*3+1];
+      posOld[i*3+2] = pos[i*3+2];
 
-      const ox = cur[i*3],   oy = cur[i*3+1], oz = cur[i*3+2];
-      const px = prev[i*3], py = prev[i*3+1], pz = prev[i*3+2];
+      /* Pressure: gentle pull toward rest shape */
+      vel[i*3]   += (rest[i*3]   - pos[i*3])   * PRESSURE;
+      vel[i*3+1] += (rest[i*3+1] - pos[i*3+1]) * PRESSURE;
+      vel[i*3+2] += (rest[i*3+2] - pos[i*3+2]) * PRESSURE;
 
-      /* Velocity from previous step, bleed a tiny fraction of energy */
-      let vx = (ox - px) * DAMP;
-      let vy = (oy - py) * DAMP;
-      let vz = (oz - pz) * DAMP;
+      /* Damping applied directly to velocity (linear, not exponential) */
+      vel[i*3]   *= DAMP;
+      vel[i*3+1] *= DAMP;
+      vel[i*3+2] *= DAMP;
 
-      /* Pressure: very gentle pull back toward rest sphere.
-         Low value means dent goes deep and recovers slowly. */
-      vx += (rest[i*3]   - ox) * PRESSURE;
-      vy += (rest[i*3+1] - oy) * PRESSURE;
-      vz += (rest[i*3+2] - oz) * PRESSURE;
-
-      prev[i*3]   = ox;  prev[i*3+1] = oy;  prev[i*3+2] = oz;
-      cur[i*3]    = ox + vx;
-      cur[i*3+1]  = oy + vy;
-      cur[i*3+2]  = oz + vz;
+      /* Integrate: DT controls wave speed (slow-motion knob) */
+      pos[i*3]   += vel[i*3]   * DT;
+      pos[i*3+1] += vel[i*3+1] * DT;
+      pos[i*3+2] += vel[i*3+2] * DT;
     }
 
-    /* 2 — Satisfy spring constraints */
+    /* 2 — Satisfy spring constraints (position projection) */
     for (let iter = 0; iter < ITER; iter++) {
       for (const { a, b, len } of springs) {
-        const ax = cur[a*3], ay = cur[a*3+1], az = cur[a*3+2];
-        const bx = cur[b*3], by = cur[b*3+1], bz = cur[b*3+2];
+        const ax = pos[a*3], ay = pos[a*3+1], az = pos[a*3+2];
+        const bx = pos[b*3], by = pos[b*3+1], bz = pos[b*3+2];
         const dx = bx - ax, dy = by - ay, dz = bz - az;
         const d  = Math.sqrt(dx*dx + dy*dy + dz*dz);
         if (d < 1e-6) continue;
-        const corr = (d - len) / d * 0.5 * STIFF;
-        cur[a*3]   += dx * corr;  cur[a*3+1] += dy * corr;  cur[a*3+2] += dz * corr;
-        cur[b*3]   -= dx * corr;  cur[b*3+1] -= dy * corr;  cur[b*3+2] -= dz * corr;
+        const c = (d - len) / d * 0.5 * STIFF;
+        pos[a*3]   += dx*c;  pos[a*3+1] += dy*c;  pos[a*3+2] += dz*c;
+        pos[b*3]   -= dx*c;  pos[b*3+1] -= dy*c;  pos[b*3+2] -= dz*c;
       }
     }
 
-    (posAttr.array as Float32Array).set(cur);
+    /* 3 — Derive velocity from constrained positions (standard PBD update).
+       Spring corrections are baked into the new velocity → wave energy
+       transfers to neighbours and propagates across the surface. */
+    for (let i = 0; i < N; i++) {
+      vel[i*3]   = (pos[i*3]   - posOld[i*3])   / DT;
+      vel[i*3+1] = (pos[i*3+1] - posOld[i*3+1]) / DT;
+      vel[i*3+2] = (pos[i*3+2] - posOld[i*3+2]) / DT;
+    }
+
+    (posAttr.array as Float32Array).set(pos);
     posAttr.needsUpdate = true;
     geo.computeVertexNormals();
   }
@@ -150,31 +158,28 @@
     if (!hits.length) return;
 
     const hp = hits[0].point;
-    const IMPULSE_R   = 1.6;   /* wide crater → more energy enters the wave */
-    const IMPULSE_STR = 0.92;  /* very deep inward dent */
+    const IMPULSE_R   = 1.2;  /* small crater */
+    const IMPULSE_STR = 0.55; /* gentle tap */
 
     for (let i = 0; i < N; i++) {
-      if (!active[i]) continue;
-
-      const dx   = cur[i*3] - hp.x;
-      const dy   = cur[i*3+1] - hp.y;
-      const dz   = cur[i*3+2] - hp.z;
+      const dx   = pos[i*3]   - hp.x;
+      const dy   = pos[i*3+1] - hp.y;
+      const dz   = pos[i*3+2] - hp.z;
       const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
       if (dist > IMPULSE_R) continue;
 
-      /* Smooth quadratic falloff */
       const t   = 1 - dist / IMPULSE_R;
       const str = t * t * IMPULSE_STR;
 
-      /* Radial unit normal of this vertex */
-      const nx = cur[i*3]   / RADIUS;
-      const ny = cur[i*3+1] / RADIUS;
-      const nz = cur[i*3+2] / RADIUS;
+      /* Inward unit normal */
+      const nx = pos[i*3]   / RADIUS;
+      const ny = pos[i*3+1] / RADIUS;
+      const nz = pos[i*3+2] / RADIUS;
 
-      /* INWARD impulse: prev += n*str → velocity v = cur−prev gains −n*str */
-      prev[i*3]   += nx * str;
-      prev[i*3+1] += ny * str;
-      prev[i*3+2] += nz * str;
+      /* Apply inward velocity impulse directly to explicit vel array */
+      vel[i*3]   -= nx * str;
+      vel[i*3+1] -= ny * str;
+      vel[i*3+2] -= nz * str;
     }
   });
 
@@ -283,6 +288,7 @@
     geo.dispose();
     innerMat.dispose();
     outerMat.dispose();
+    (hitSphere.material as THREE.Material).dispose();
     hitSphere.geometry.dispose();
   }, { once: true });
 </script>
