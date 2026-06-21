@@ -1,7 +1,7 @@
 ---
 // LatticeSphere — PBD cloth physics sphere
-// Position-Based Dynamics (industry standard: Nvidia PhysX, Unity, Unreal)
-// Structural + shear + bending springs, Verlet integration, wind + click impulse
+// Position-Based Dynamics: Verlet integration, spring constraints
+// Back-cap cut (20%), free boundary → wave reflection chaos, inward click dent
 ---
 
 <div id="ls-wrap" style="position:relative;width:100%;height:calc(100vh - 56px);overflow:hidden;background:#03030a;">
@@ -32,33 +32,43 @@
 
   /* ══════════════════════════════════════════════════════════════
      CLOTH PHYSICS — Position-Based Dynamics
-     Reference: Müller et al. 2007 "Position Based Dynamics" JVCA
      ══════════════════════════════════════════════════════════════ */
 
-  const W = 48, H = 32;                    /* lat/long grid divisions */
+  const W = 48, H = 32;
   const RADIUS   = 2.0;
-  const STIFF    = 0.88;                   /* spring stiffness [0–1]  */
-  const DAMP     = 0.987;                  /* velocity damping        */
-  const PRESSURE = 0.010;                  /* force pulling toward rest sphere */
-  const ITER     = 4;                      /* PBD constraint iterations */
+  /* Back-cap clip plane. z = -0.4 on a R=2 sphere → spherical cap of height 1.6
+     Surface area of cap = 2πRh = 2π×2×1.6 = 6.4π ≈ 40% of total 4πR² = 16π */
+  const CLIP_Z   = -0.4;
+  const STIFF    = 0.30;   /* slow wave propagation speed */
+  const DAMP     = 0.995;  /* near-zero energy loss → waves travel far and persist */
+  const PRESSURE = 0.003;  /* very gentle restore → dent goes deep, bounces slowly */
+  const ITER     = 5;
 
-  /* Build base sphere geometry (indexed, has UV) */
-  const geo = new THREE.SphereGeometry(RADIUS, W, H);
-
+  const geo     = new THREE.SphereGeometry(RADIUS, W, H);
   const posAttr = geo.attributes.position as THREE.BufferAttribute;
-  const N = posAttr.count;
+  const N       = posAttr.count;
 
-  /* Physics arrays — Verlet integration stores cur + prev positions */
-  const cur  = new Float32Array(posAttr.array);   /* current positions  */
-  const prev = new Float32Array(posAttr.array);   /* previous positions (velocity encoded) */
-  const rest = new Float32Array(posAttr.array);   /* rest sphere positions */
+  const cur  = new Float32Array(posAttr.array);
+  const prev = new Float32Array(posAttr.array);
+  const rest = new Float32Array(posAttr.array);
 
-  /* ── Extract unique edges from index buffer → spring list ─────── */
+  /* ── Active vertex mask — back 20% cap is frozen + invisible ──── */
+  const active = new Uint8Array(N);
+  for (let i = 0; i < N; i++) {
+    /* rest[i*3+2] is the original Z of this vertex on the sphere.
+       Vertices with restZ < CLIP_Z are in the back cap → inactive. */
+    active[i] = rest[i*3+2] >= CLIP_Z ? 1 : 0;
+  }
+
+  /* ── Springs: only between two ACTIVE vertices ────────────────── */
+  /* Boundary active vertices lose the springs that used to connect to the
+     now-inactive back cap → free edge → waves reflect chaotically here. */
   interface Spring { a: number; b: number; len: number; }
   const springs: Spring[] = [];
   const edgeSet = new Set<number>();
 
   function addSpring(a: number, b: number) {
+    if (!active[a] || !active[b]) return;           /* skip if either endpoint inactive */
     const key = Math.min(a, b) * 100000 + Math.max(a, b);
     if (edgeSet.has(key)) return;
     edgeSet.add(key);
@@ -76,52 +86,33 @@
   }
 
   /* ── PBD step ─────────────────────────────────────────────────── */
-  let simTime = 0;
-
-  function clothStep(dt: number) {
-    simTime += dt;
-
-    /* 1 — Apply forces + integrate (Verlet) */
+  function clothStep() {
+    /* 1 — Verlet integrate (active vertices only, no ambient forces)
+       The sphere is silent until clicked. Energy only enters via click impulse. */
     for (let i = 0; i < N; i++) {
+      if (!active[i]) continue;
+
       const ox = cur[i*3],   oy = cur[i*3+1], oz = cur[i*3+2];
       const px = prev[i*3], py = prev[i*3+1], pz = prev[i*3+2];
 
-      /* Velocity from previous step */
+      /* Velocity from previous step, bleed a tiny fraction of energy */
       let vx = (ox - px) * DAMP;
       let vy = (oy - py) * DAMP;
       let vz = (oz - pz) * DAMP;
 
-      /* Pressure: soft pull toward rest sphere surface */
+      /* Pressure: very gentle pull back toward rest sphere.
+         Low value means dent goes deep and recovers slowly. */
       vx += (rest[i*3]   - ox) * PRESSURE;
       vy += (rest[i*3+1] - oy) * PRESSURE;
       vz += (rest[i*3+2] - oz) * PRESSURE;
 
-      /* Wind: two crossing traveling waves → flag-like ripple
-         Wave 1 travels in XZ plane, Wave 2 orthogonal */
-      const rx = rest[i*3] / RADIUS;
-      const ry = rest[i*3+1] / RADIUS;
-      const rz = rest[i*3+2] / RADIUS;
-
-      /* Wind: two crossing traveling waves → flag-like ripple
-         Frequencies and phases tuned for organic cloth motion */
-      const w1 = Math.sin(simTime * 3.8 + rz * 4.5 + rx * 2.0) * 0.0018;
-      const w2 = Math.sin(simTime * 2.9 + rx * 3.5 - ry * 2.5) * 0.0013;
-      const w3 = Math.cos(simTime * 2.2 + ry * 4.0 + rz * 1.8) * 0.0010;
-
-      vx += w1 * rx + w2;
-      vy += w1 * ry + w3;
-      vz += w1 * rz + w2 * 0.5;
-
-      prev[i*3]   = ox;
-      prev[i*3+1] = oy;
-      prev[i*3+2] = oz;
-
-      cur[i*3]   = ox + vx;
-      cur[i*3+1] = oy + vy;
-      cur[i*3+2] = oz + vz;
+      prev[i*3]   = ox;  prev[i*3+1] = oy;  prev[i*3+2] = oz;
+      cur[i*3]    = ox + vx;
+      cur[i*3+1]  = oy + vy;
+      cur[i*3+2]  = oz + vz;
     }
 
-    /* 2 — Satisfy spring constraints (PBD iterations) */
+    /* 2 — Satisfy spring constraints */
     for (let iter = 0; iter < ITER; iter++) {
       for (const { a, b, len } of springs) {
         const ax = cur[a*3], ay = cur[a*3+1], az = cur[a*3+2];
@@ -135,13 +126,12 @@
       }
     }
 
-    /* 3 — Push updated positions back into geometry */
     (posAttr.array as Float32Array).set(cur);
     posAttr.needsUpdate = true;
     geo.computeVertexNormals();
   }
 
-  /* ── Click impulse ────────────────────────────────────────────── */
+  /* ── Click impulse — big INWARD dent ─────────────────────────── */
   const hitSphere = new THREE.Mesh(
     new THREE.SphereGeometry(RADIUS, 32, 32),
     new THREE.MeshBasicMaterial({ visible: false })
@@ -159,62 +149,74 @@
     const hits = raycaster.intersectObject(hitSphere);
     if (!hits.length) return;
 
-    const hp = hits[0].point;                /* click point on sphere */
-    const IMPULSE_R   = 1.2;                 /* influence radius in world units */
-    const IMPULSE_STR = 0.10;
+    const hp = hits[0].point;
+    const IMPULSE_R   = 1.0;   /* focused dent, tight crater */
+    const IMPULSE_STR = 0.55;  /* deep dramatic inward dent */
 
     for (let i = 0; i < N; i++) {
-      const dx = cur[i*3] - hp.x;
-      const dy = cur[i*3+1] - hp.y;
-      const dz = cur[i*3+2] - hp.z;
+      if (!active[i]) continue;
+
+      const dx   = cur[i*3] - hp.x;
+      const dy   = cur[i*3+1] - hp.y;
+      const dz   = cur[i*3+2] - hp.z;
       const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
       if (dist > IMPULSE_R) continue;
 
-      /* Smooth falloff from click centre */
-      const str = (1 - dist / IMPULSE_R) * (1 - dist / IMPULSE_R) * IMPULSE_STR;
+      /* Smooth quadratic falloff */
+      const t   = 1 - dist / IMPULSE_R;
+      const str = t * t * IMPULSE_STR;
 
-      /* Outward impulse (radial from sphere centre) */
+      /* Radial unit normal of this vertex */
       const nx = cur[i*3]   / RADIUS;
       const ny = cur[i*3+1] / RADIUS;
       const nz = cur[i*3+2] / RADIUS;
 
-      /* In Verlet: adding impulse = subtracting from prevPos */
-      prev[i*3]   -= nx * str;
-      prev[i*3+1] -= ny * str;
-      prev[i*3+2] -= nz * str;
+      /* INWARD impulse: prev += n*str → velocity v = cur−prev gains −n*str */
+      prev[i*3]   += nx * str;
+      prev[i*3+1] += ny * str;
+      prev[i*3+2] += nz * str;
     }
   });
 
   /* ══════════════════════════════════════════════════════════════
-     RENDERING — UV-based lattice (no barycentric needed)
-     Grid lines created from UV coordinates in fragment shader
+     RENDERING — UV-based rectangular lattice
+     Back cap clipped in fragment shader using rest-position Z
+     reconstructed from UV coordinates (no extra attribute needed).
      ══════════════════════════════════════════════════════════════ */
 
   const VS = /* glsl */`
     varying vec2 vUV;
-    varying vec3 vNorm;
     void main(){
-      vUV  = uv;
-      vNorm = normalize(normalMatrix * normal);
+      vUV = uv;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   `;
 
-  /* Lattice width — fraction of each UV cell that is strut */
-  const STRUT = 0.12;
+  const W_F = W.toFixed(1), H_F = H.toFixed(1);
+  const STRUT = 0.13;
+
+  /* Back-cap clip: reconstruct rest Z from UV.
+     Three.js SphereGeometry: z = R·sin(u·2π)·sin(v·π)
+     (y is vertical; phi=u·2π is azimuth around Y; theta=v·π is polar from top)
+     Discard anything below CLIP_Z = -1.2 → removes back 20%. */
+  const CLIP_GLSL = /* glsl */`
+    const float PI   = 3.14159265;
+    float restZ = ${RADIUS.toFixed(1)} * sin(vUV.x * 2.0 * PI) * sin(vUV.y * PI);
+    if (restZ < ${CLIP_Z.toFixed(2)}) discard;
+  `;
 
   const LATTICE = /* glsl */`
-    vec2  g       = fract(vUV * vec2(${W}.0, ${H}.0));
+    vec2  g       = fract(vUV * vec2(${W_F}, ${H_F}));
     float minEdge = min(min(g.x, g.y), min(1.0 - g.x, 1.0 - g.y));
     float aa      = max(fwidth(minEdge), 0.001);
     float strut   = 1.0 - smoothstep(${STRUT} - aa, ${STRUT} + aa, minEdge);
-    if(strut < 0.02) discard;
+    if (strut < 0.02) discard;
   `;
 
   const FS_OUTER = /* glsl */`
     varying vec2 vUV;
-    varying vec3 vNorm;
     void main(){
+      ${CLIP_GLSL}
       ${LATTICE}
       vec3 dark   = vec3(0.04, 0.03, 0.10);
       vec3 bright = vec3(0.38, 0.38, 0.72);
@@ -224,8 +226,8 @@
 
   const FS_INNER = /* glsl */`
     varying vec2 vUV;
-    varying vec3 vNorm;
     void main(){
+      ${CLIP_GLSL}
       ${LATTICE}
       vec3 dark   = vec3(0.50, 0.55, 0.60);
       vec3 bright = vec3(0.90, 0.93, 1.00);
@@ -233,7 +235,6 @@
     }
   `;
 
-  /* Inner mesh — BackSide, renders first */
   const innerMat = new THREE.ShaderMaterial({
     vertexShader: VS, fragmentShader: FS_INNER,
     transparent: true, side: THREE.BackSide, depthWrite: true,
@@ -243,7 +244,6 @@
   innerMesh.renderOrder = 0;
   scene.add(innerMesh);
 
-  /* Outer mesh — FrontSide, renders second */
   const outerMat = new THREE.ShaderMaterial({
     vertexShader: VS, fragmentShader: FS_OUTER,
     transparent: true, side: THREE.FrontSide, depthWrite: true,
@@ -252,11 +252,10 @@
   outerMesh.renderOrder = 1;
   scene.add(outerMesh);
 
-  /* ── Post-processing ──────────────────────────────────────────── */
+  /* ── Post / resize / loop ─────────────────────────────────────── */
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
 
-  /* ── Resize ───────────────────────────────────────────────────── */
   function onResize() {
     const w = wrap.clientWidth, h = wrap.clientHeight;
     camera.aspect = w / h;
@@ -267,28 +266,15 @@
   const resizeObs = new ResizeObserver(onResize);
   resizeObs.observe(wrap);
 
-  /* ── Animate ──────────────────────────────────────────────────── */
   let raf = 0;
-  let t   = 0;
-
   function frame() {
     raf = requestAnimationFrame(frame);
-    t += 0.004;
-
-    /* Run cloth simulation */
-    clothStep(0.016);
-
-    /* Slowly orbit camera */
-    camera.position.x = Math.sin(t * 0.18) * 6.5;
-    camera.position.z = Math.cos(t * 0.18) * 6.5;
-    camera.position.y = Math.sin(t * 0.09) * 2.0;
+    clothStep();
     camera.lookAt(0, 0, 0);
-
     composer.render();
   }
   frame();
 
-  /* ── Cleanup ──────────────────────────────────────────────────── */
   document.addEventListener('astro:before-preparation', () => {
     cancelAnimationFrame(raf);
     resizeObs.disconnect();
