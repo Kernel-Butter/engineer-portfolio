@@ -36,13 +36,13 @@
 
   const W = 48, H = 32;
   const RADIUS   = 2.0;
-  /* Back-cap clip plane. z = -0.4 on a R=2 sphere → spherical cap of height 1.6
-     Surface area of cap = 2πRh = 2π×2×1.6 = 6.4π ≈ 40% of total 4πR² = 16π */
-  const CLIP_Z   = -0.4;
-  const STIFF    = 0.30;   /* slow wave propagation speed */
-  const DAMP     = 0.995;  /* near-zero energy loss → waves travel far and persist */
-  const PRESSURE = 0.003;  /* very gentle restore → dent goes deep, bounces slowly */
-  const ITER     = 5;
+  /* Back-cap clip plane. z = 0 on a R=2 sphere → spherical cap of height 2.0
+     Surface area of cap = 2πRh = 2π×2×2.0 = 8π = 50% of total 4πR² = 16π */
+  const CLIP_Z   = 0.0;
+  const STIFF    = 0.06;   /* very stiff correction per step → slow wave speed */
+  const DAMP     = 0.998;  /* near-lossless → wave crosses full surface before dying */
+  const PRESSURE = 0.0007; /* barely-there restore → dent holds deep, recovers in seconds */
+  const ITER     = 2;      /* fewer iterations/frame = slower energy propagation */
 
   const geo     = new THREE.SphereGeometry(RADIUS, W, H);
   const posAttr = geo.attributes.position as THREE.BufferAttribute;
@@ -150,8 +150,8 @@
     if (!hits.length) return;
 
     const hp = hits[0].point;
-    const IMPULSE_R   = 1.0;   /* focused dent, tight crater */
-    const IMPULSE_STR = 0.55;  /* deep dramatic inward dent */
+    const IMPULSE_R   = 1.6;   /* wide crater → more energy enters the wave */
+    const IMPULSE_STR = 0.92;  /* very deep inward dent */
 
     for (let i = 0; i < N; i++) {
       if (!active[i]) continue;
