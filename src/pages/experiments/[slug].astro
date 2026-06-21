@@ -9,6 +9,7 @@ import ValuePropV2 from '../../sections/ValuePropV2.astro';
 import MechanicalGrid from '../../sections/MechanicalGrid.astro';
 import ButtonAnimations from '../../sections/ButtonAnimations.astro';
 import TransitionShowcase from '../../sections/TransitionShowcase.astro';
+import LatticeSphere from '../../sections/LatticeSphere.astro';
 import { experiments, statusMeta } from '../../data/experiments.js';
 
 export function getStaticPaths() {
@@ -24,6 +25,7 @@ const prev = experiments[idx - 1] ?? null;
 const next = experiments[idx + 1] ?? null;
 
 const componentMap: Record<string, any> = {
+  LatticeSphere,
   AiWorkflow,
   AiWorkflowPipeline,
   TechStack,

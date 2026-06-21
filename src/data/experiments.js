@@ -1,5 +1,17 @@
 export const experiments = [
   {
+    slug:     'lattice-sphere',
+    title:    'LATTICE_SPHERE',
+    desc:     'Geodesic lattice sphere with organic vertex displacement. IcosahedronGeometry + barycentric shader for open-hole struts + UnrealBloomPass. Camera orbits and dips below the sphere over time.',
+    category: 'WEBGL',
+    icon:     'blur_circular',
+    accent:   '#4aff8a',
+    bg:       'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(74,255,138,.14) 0%, rgba(16,80,40,.08) 55%, transparent 85%)',
+    variants: [
+      { key: 'LatticeSphere', label: 'Lattice Sphere', subtitle: 'Geodesic shell · noise deformation · bloom glow', status: 'experimental' },
+    ],
+  },
+  {
     slug:     'ai-workflow',
     title:    'AI_WORKFLOW',
     desc:     'Terminal-style and graph-based AI pipeline visualizations.',
