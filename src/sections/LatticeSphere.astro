@@ -1,5 +1,7 @@
 ---
-// LatticeSphere — geodesic lattice sphere, two-mesh approach for clean front/back separation
+// LatticeSphere — PBD cloth physics sphere
+// Position-Based Dynamics (industry standard: Nvidia PhysX, Unity, Unreal)
+// Structural + shear + bending springs, Verlet integration, wind + click impulse
 ---
 
 <div id="ls-wrap" style="position:relative;width:100%;height:calc(100vh - 56px);overflow:hidden;background:#03030a;">
@@ -13,146 +15,248 @@
 
   const wrap   = document.getElementById('ls-wrap')   as HTMLElement;
   const canvas = document.getElementById('ls-canvas') as HTMLCanvasElement;
-  if (!wrap || !canvas) throw new Error('LatticeSphere: mount point missing');
+  if (!wrap || !canvas) throw new Error('LS: missing mount');
 
-  /* ── Renderer ────────────────────────────────────────────────── */
+  /* ── Renderer ─────────────────────────────────────────────────── */
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setSize(wrap.clientWidth, wrap.clientHeight);
   renderer.toneMapping         = THREE.ReinhardToneMapping;
   renderer.toneMappingExposure = 1.5;
 
-  /* ── Scene / Camera ──────────────────────────────────────────── */
   const scene  = new THREE.Scene();
   scene.background = new THREE.Color(0x03030a);
 
   const camera = new THREE.PerspectiveCamera(58, wrap.clientWidth / wrap.clientHeight, 0.05, 200);
-  camera.position.set(0, 0.5, 5.5);
+  camera.position.set(0, 0, 6.5);
 
-  /* ── Shared vertex shader (displacement + barycentric pass-through) ── */
+  /* ══════════════════════════════════════════════════════════════
+     CLOTH PHYSICS — Position-Based Dynamics
+     Reference: Müller et al. 2007 "Position Based Dynamics" JVCA
+     ══════════════════════════════════════════════════════════════ */
+
+  const W = 48, H = 32;                    /* lat/long grid divisions */
+  const RADIUS   = 2.0;
+  const STIFF    = 0.88;                   /* spring stiffness [0–1]  */
+  const DAMP     = 0.987;                  /* velocity damping        */
+  const PRESSURE = 0.010;                  /* force pulling toward rest sphere */
+  const ITER     = 4;                      /* PBD constraint iterations */
+
+  /* Build base sphere geometry (indexed, has UV) */
+  const geo = new THREE.SphereGeometry(RADIUS, W, H);
+
+  const posAttr = geo.attributes.position as THREE.BufferAttribute;
+  const N = posAttr.count;
+
+  /* Physics arrays — Verlet integration stores cur + prev positions */
+  const cur  = new Float32Array(posAttr.array);   /* current positions  */
+  const prev = new Float32Array(posAttr.array);   /* previous positions (velocity encoded) */
+  const rest = new Float32Array(posAttr.array);   /* rest sphere positions */
+
+  /* ── Extract unique edges from index buffer → spring list ─────── */
+  interface Spring { a: number; b: number; len: number; }
+  const springs: Spring[] = [];
+  const edgeSet = new Set<number>();
+
+  function addSpring(a: number, b: number) {
+    const key = Math.min(a, b) * 100000 + Math.max(a, b);
+    if (edgeSet.has(key)) return;
+    edgeSet.add(key);
+    const dx = cur[a*3]   - cur[b*3];
+    const dy = cur[a*3+1] - cur[b*3+1];
+    const dz = cur[a*3+2] - cur[b*3+2];
+    springs.push({ a, b, len: Math.sqrt(dx*dx + dy*dy + dz*dz) });
+  }
+
+  const idx = (geo.index as THREE.BufferAttribute).array;
+  for (let i = 0; i < idx.length; i += 3) {
+    addSpring(idx[i], idx[i+1]);
+    addSpring(idx[i+1], idx[i+2]);
+    addSpring(idx[i], idx[i+2]);
+  }
+
+  /* ── PBD step ─────────────────────────────────────────────────── */
+  let simTime = 0;
+
+  function clothStep(dt: number) {
+    simTime += dt;
+
+    /* 1 — Apply forces + integrate (Verlet) */
+    for (let i = 0; i < N; i++) {
+      const ox = cur[i*3],   oy = cur[i*3+1], oz = cur[i*3+2];
+      const px = prev[i*3], py = prev[i*3+1], pz = prev[i*3+2];
+
+      /* Velocity from previous step */
+      let vx = (ox - px) * DAMP;
+      let vy = (oy - py) * DAMP;
+      let vz = (oz - pz) * DAMP;
+
+      /* Pressure: soft pull toward rest sphere surface */
+      vx += (rest[i*3]   - ox) * PRESSURE;
+      vy += (rest[i*3+1] - oy) * PRESSURE;
+      vz += (rest[i*3+2] - oz) * PRESSURE;
+
+      /* Wind: two crossing traveling waves → flag-like ripple
+         Wave 1 travels in XZ plane, Wave 2 orthogonal */
+      const rx = rest[i*3] / RADIUS;
+      const ry = rest[i*3+1] / RADIUS;
+      const rz = rest[i*3+2] / RADIUS;
+
+      /* Wind: two crossing traveling waves → flag-like ripple
+         Frequencies and phases tuned for organic cloth motion */
+      const w1 = Math.sin(simTime * 3.8 + rz * 4.5 + rx * 2.0) * 0.0018;
+      const w2 = Math.sin(simTime * 2.9 + rx * 3.5 - ry * 2.5) * 0.0013;
+      const w3 = Math.cos(simTime * 2.2 + ry * 4.0 + rz * 1.8) * 0.0010;
+
+      vx += w1 * rx + w2;
+      vy += w1 * ry + w3;
+      vz += w1 * rz + w2 * 0.5;
+
+      prev[i*3]   = ox;
+      prev[i*3+1] = oy;
+      prev[i*3+2] = oz;
+
+      cur[i*3]   = ox + vx;
+      cur[i*3+1] = oy + vy;
+      cur[i*3+2] = oz + vz;
+    }
+
+    /* 2 — Satisfy spring constraints (PBD iterations) */
+    for (let iter = 0; iter < ITER; iter++) {
+      for (const { a, b, len } of springs) {
+        const ax = cur[a*3], ay = cur[a*3+1], az = cur[a*3+2];
+        const bx = cur[b*3], by = cur[b*3+1], bz = cur[b*3+2];
+        const dx = bx - ax, dy = by - ay, dz = bz - az;
+        const d  = Math.sqrt(dx*dx + dy*dy + dz*dz);
+        if (d < 1e-6) continue;
+        const corr = (d - len) / d * 0.5 * STIFF;
+        cur[a*3]   += dx * corr;  cur[a*3+1] += dy * corr;  cur[a*3+2] += dz * corr;
+        cur[b*3]   -= dx * corr;  cur[b*3+1] -= dy * corr;  cur[b*3+2] -= dz * corr;
+      }
+    }
+
+    /* 3 — Push updated positions back into geometry */
+    (posAttr.array as Float32Array).set(cur);
+    posAttr.needsUpdate = true;
+    geo.computeVertexNormals();
+  }
+
+  /* ── Click impulse ────────────────────────────────────────────── */
+  const hitSphere = new THREE.Mesh(
+    new THREE.SphereGeometry(RADIUS, 32, 32),
+    new THREE.MeshBasicMaterial({ visible: false })
+  );
+  scene.add(hitSphere);
+
+  const raycaster = new THREE.Raycaster();
+  const _m = new THREE.Vector2();
+
+  wrap.addEventListener('click', (e: MouseEvent) => {
+    const rect = wrap.getBoundingClientRect();
+    _m.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
+    _m.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+    raycaster.setFromCamera(_m, camera);
+    const hits = raycaster.intersectObject(hitSphere);
+    if (!hits.length) return;
+
+    const hp = hits[0].point;                /* click point on sphere */
+    const IMPULSE_R   = 1.2;                 /* influence radius in world units */
+    const IMPULSE_STR = 0.10;
+
+    for (let i = 0; i < N; i++) {
+      const dx = cur[i*3] - hp.x;
+      const dy = cur[i*3+1] - hp.y;
+      const dz = cur[i*3+2] - hp.z;
+      const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+      if (dist > IMPULSE_R) continue;
+
+      /* Smooth falloff from click centre */
+      const str = (1 - dist / IMPULSE_R) * (1 - dist / IMPULSE_R) * IMPULSE_STR;
+
+      /* Outward impulse (radial from sphere centre) */
+      const nx = cur[i*3]   / RADIUS;
+      const ny = cur[i*3+1] / RADIUS;
+      const nz = cur[i*3+2] / RADIUS;
+
+      /* In Verlet: adding impulse = subtracting from prevPos */
+      prev[i*3]   -= nx * str;
+      prev[i*3+1] -= ny * str;
+      prev[i*3+2] -= nz * str;
+    }
+  });
+
+  /* ══════════════════════════════════════════════════════════════
+     RENDERING — UV-based lattice (no barycentric needed)
+     Grid lines created from UV coordinates in fragment shader
+     ══════════════════════════════════════════════════════════════ */
+
   const VS = /* glsl */`
-    attribute vec3 aBary;
-    varying   vec3 vBary;
-    uniform float  uTime;
-
-    vec3 hash3(vec3 p) {
-      p = vec3(dot(p,vec3(127.1,311.7, 74.7)),
-               dot(p,vec3(269.5,183.3,246.1)),
-               dot(p,vec3(113.5,271.9,124.6)));
-      return -1.0 + 2.0*fract(sin(p)*43758.5453123);
-    }
-    float gnoise(vec3 p){
-      vec3 i=floor(p), f=fract(p), u=f*f*(3.0-2.0*f);
-      return mix(
-        mix(mix(dot(hash3(i            ),f            ),
-                dot(hash3(i+vec3(1,0,0)),f-vec3(1,0,0)),u.x),
-            mix(dot(hash3(i+vec3(0,1,0)),f-vec3(0,1,0)),
-                dot(hash3(i+vec3(1,1,0)),f-vec3(1,1,0)),u.x),u.y),
-        mix(mix(dot(hash3(i+vec3(0,0,1)),f-vec3(0,0,1)),
-                dot(hash3(i+vec3(1,0,1)),f-vec3(1,0,1)),u.x),
-            mix(dot(hash3(i+vec3(0,1,1)),f-vec3(0,1,1)),
-                dot(hash3(i+vec3(1,1,1)),f-vec3(1,1,1)),u.x),u.y),u.z);
-    }
-    float fbm(vec3 p){
-      float v=0.0,a=0.5;
-      for(int i=0;i<4;i++){v+=a*gnoise(p);p=p*2.1+vec3(31.4,17.9,27.3);a*=0.5;}
-      return v;
-    }
-
+    varying vec2 vUV;
+    varying vec3 vNorm;
     void main(){
-      vBary = aBary;
-      vec3 pos  = position;
-      float d1  = fbm(pos*0.75 + vec3(uTime*0.10, uTime*0.07, uTime*0.09));
-      float d2  = fbm(pos*1.50 - vec3(uTime*0.06, uTime*0.11, uTime*0.08));
-      pos += normal * (d1*0.55 + d2*0.28) * 0.52;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+      vUV  = uv;
+      vNorm = normalize(normalMatrix * normal);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   `;
 
-  /* ── Shared strut logic as a GLSL snippet ────────────────────── */
-  const STRUT_GLSL = /* glsl */`
-    float mb = min(min(vBary.x, vBary.y), vBary.z);
-    float strutWidth = 0.20;
-    float aa   = max(fwidth(mb), 0.001);
-    float hole = smoothstep(strutWidth - aa, strutWidth + aa, mb);
-    if (hole > 0.98) discard;
-    float strut = 1.0 - hole;
+  /* Lattice width — fraction of each UV cell that is strut */
+  const STRUT = 0.12;
+
+  const LATTICE = /* glsl */`
+    vec2  g       = fract(vUV * vec2(${W}.0, ${H}.0));
+    float minEdge = min(min(g.x, g.y), min(1.0 - g.x, 1.0 - g.y));
+    float aa      = max(fwidth(minEdge), 0.001);
+    float strut   = 1.0 - smoothstep(${STRUT} - aa, ${STRUT} + aa, minEdge);
+    if(strut < 0.02) discard;
   `;
 
-  /* ── Outer fragment shader — dark brand palette ──────────────── */
   const FS_OUTER = /* glsl */`
-    varying vec3 vBary;
+    varying vec2 vUV;
+    varying vec3 vNorm;
     void main(){
-      ${STRUT_GLSL}
-      /* Deep navy → muted lavender matching #c0c1ff brand */
+      ${LATTICE}
       vec3 dark   = vec3(0.04, 0.03, 0.10);
       vec3 bright = vec3(0.38, 0.38, 0.72);
-      vec3 col    = mix(dark, bright, pow(strut, 1.4));
-      gl_FragColor = vec4(col, strut);
+      gl_FragColor = vec4(mix(dark, bright, pow(strut, 1.4)), strut);
     }
   `;
 
-  /* ── Inner fragment shader — bright near-white ───────────────── */
   const FS_INNER = /* glsl */`
-    varying vec3 vBary;
+    varying vec2 vUV;
+    varying vec3 vNorm;
     void main(){
-      ${STRUT_GLSL}
-      /* Mid-grey → near white — feels lit from within */
+      ${LATTICE}
       vec3 dark   = vec3(0.50, 0.55, 0.60);
       vec3 bright = vec3(0.90, 0.93, 1.00);
-      vec3 col    = mix(dark, bright, pow(strut, 1.2));
-      gl_FragColor = vec4(col, strut);
+      gl_FragColor = vec4(mix(dark, bright, pow(strut, 1.2)), strut);
     }
   `;
 
-  /* ── Geometry (shared between both meshes) ───────────────────── */
-  const geo = new THREE.IcosahedronGeometry(2.0, 5).toNonIndexed();
-  geo.computeVertexNormals();
-
-  const count   = geo.attributes.position.count;
-  const baryArr = new Float32Array(count * 3);
-  for (let i = 0; i < count; i += 3) {
-    baryArr[i*3  ] = 1; baryArr[i*3+1] = 0; baryArr[i*3+2] = 0;
-    baryArr[(i+1)*3  ] = 0; baryArr[(i+1)*3+1] = 1; baryArr[(i+1)*3+2] = 0;
-    baryArr[(i+2)*3  ] = 0; baryArr[(i+2)*3+1] = 0; baryArr[(i+2)*3+2] = 1;
-  }
-  geo.setAttribute('aBary', new THREE.BufferAttribute(baryArr, 3));
-
-  /* ── Shared uniforms (both meshes tick the same time) ────────── */
-  const uniforms = { uTime: { value: 0 } };
-
-  /* ── Inner mesh — BackSide, renders first, depthWrite on ─────── */
+  /* Inner mesh — BackSide, renders first */
   const innerMat = new THREE.ShaderMaterial({
     vertexShader: VS, fragmentShader: FS_INNER,
-    uniforms,
-    transparent:         true,
-    side:                THREE.BackSide,
-    depthWrite:          true,
-    polygonOffset:       true,   /* push inner slightly behind outer → no z-fight */
-    polygonOffsetFactor: 1,
-    polygonOffsetUnits:  1,
+    transparent: true, side: THREE.BackSide, depthWrite: true,
+    polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1,
   });
   const innerMesh = new THREE.Mesh(geo, innerMat);
   innerMesh.renderOrder = 0;
   scene.add(innerMesh);
 
-  /* ── Outer mesh — FrontSide, renders second, depthWrite on ──── */
+  /* Outer mesh — FrontSide, renders second */
   const outerMat = new THREE.ShaderMaterial({
     vertexShader: VS, fragmentShader: FS_OUTER,
-    uniforms,
-    transparent: true,
-    side:        THREE.FrontSide,
-    depthWrite:  true,
+    transparent: true, side: THREE.FrontSide, depthWrite: true,
   });
   const outerMesh = new THREE.Mesh(geo, outerMat);
   outerMesh.renderOrder = 1;
   scene.add(outerMesh);
 
-  /* ── Post-processing ─────────────────────────────────────────── */
+  /* ── Post-processing ──────────────────────────────────────────── */
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
 
-  /* ── Resize ──────────────────────────────────────────────────── */
+  /* ── Resize ───────────────────────────────────────────────────── */
   function onResize() {
     const w = wrap.clientWidth, h = wrap.clientHeight;
     camera.aspect = w / h;
@@ -163,7 +267,7 @@
   const resizeObs = new ResizeObserver(onResize);
   resizeObs.observe(wrap);
 
-  /* ── Animate ─────────────────────────────────────────────────── */
+  /* ── Animate ──────────────────────────────────────────────────── */
   let raf = 0;
   let t   = 0;
 
@@ -171,19 +275,20 @@
     raf = requestAnimationFrame(frame);
     t += 0.004;
 
-    uniforms.uTime.value = t;
+    /* Run cloth simulation */
+    clothStep(0.016);
 
-    const orbitR = 5.8;
-    camera.position.x = Math.sin(t * 0.22) * orbitR;
-    camera.position.z = Math.cos(t * 0.22) * orbitR;
-    camera.position.y = Math.sin(t * 0.11) * 2.8;
+    /* Slowly orbit camera */
+    camera.position.x = Math.sin(t * 0.18) * 6.5;
+    camera.position.z = Math.cos(t * 0.18) * 6.5;
+    camera.position.y = Math.sin(t * 0.09) * 2.0;
     camera.lookAt(0, 0, 0);
 
     composer.render();
   }
   frame();
 
-  /* ── Cleanup ─────────────────────────────────────────────────── */
+  /* ── Cleanup ──────────────────────────────────────────────────── */
   document.addEventListener('astro:before-preparation', () => {
     cancelAnimationFrame(raf);
     resizeObs.disconnect();
@@ -192,5 +297,6 @@
     geo.dispose();
     innerMat.dispose();
     outerMat.dispose();
+    hitSphere.geometry.dispose();
   }, { once: true });
 </script>
