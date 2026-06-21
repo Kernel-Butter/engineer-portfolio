@@ -147,14 +147,16 @@ import { experiments, statusMeta } from '../../data/experiments.js';
               </p>
 
               <!-- Footer -->
-              <div class="flex items-center justify-between pt-3 border-t border-outline-variant/10">
-                <span class="font-code-snippet text-[9px] text-on-surface-variant/30 uppercase tracking-widest">
-                  {isMulti ? 'Compare variants' : 'View experiment'}
-                </span>
-                <span
-                  class="material-symbols-outlined text-[14px] opacity-30 group-hover:opacity-90 group-hover:translate-x-0.5 transition-all duration-200"
-                  style={`color:${exp.accent}`}
-                >arrow_forward</span>
+              <div class="pt-3 border-t border-outline-variant/10">
+                <div
+                  class="go-btn w-full flex items-center justify-between px-4 py-2.5 rounded-lg border transition-all duration-200"
+                  style={`border-color:${exp.accent}25;background:${exp.accent}08`}
+                >
+                  <span class="font-code-snippet text-[10px] uppercase tracking-widest" style={`color:${exp.accent};opacity:.7`}>
+                    {isMulti ? 'Compare variants' : 'Open experiment'}
+                  </span>
+                  <span class="material-symbols-outlined text-[15px] go-arrow transition-transform duration-200" style={`color:${exp.accent}`}>arrow_forward</span>
+                </div>
               </div>
             </div>
           </a>
@@ -167,4 +169,6 @@ import { experiments, statusMeta } from '../../data/experiments.js';
 
 <style>
   .exp-card:hover .exp-title { color: var(--accent); transition: color .2s; }
+  .exp-card:hover .go-btn { background: color-mix(in srgb, var(--accent-raw, #c0c1ff) 14%, transparent); border-color: color-mix(in srgb, var(--accent-raw, #c0c1ff) 45%, transparent); }
+  .exp-card:hover .go-arrow { transform: translateX(3px); }
 </style>

@@ -35,24 +35,17 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
-  initPreloader((instant = false) => {
-    if (instant) {
-      // Subsequent navigation — reveal immediately, no animation
-      gsap.set('#main-content', { opacity: 1, autoAlpha: 1 });
-      ScrollTrigger.refresh();
-      document.dispatchEvent(new CustomEvent('portfolio:ready'));
-    } else {
-      // First load — fade content in after preloader exits
-      gsap.to('#main-content', {
-        opacity: 1,
-        autoAlpha: 1,
-        duration: 1,
-        ease: 'power2.out',
-        onComplete() {
-          ScrollTrigger.refresh();
-          document.dispatchEvent(new CustomEvent('portfolio:ready'));
-        },
-      });
-    }
+  initPreloader(() => {
+    // Preloader done — brief pause lets the fade-out finish before Hero animates in.
+    gsap.to('#main-content', {
+      opacity: 1,
+      autoAlpha: 1,
+      duration: 0.6,
+      ease: 'power2.out',
+      onComplete() {
+        ScrollTrigger.refresh();
+        document.dispatchEvent(new CustomEvent('portfolio:ready'));
+      },
+    });
   });
 </script>

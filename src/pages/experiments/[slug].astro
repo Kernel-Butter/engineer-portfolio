@@ -46,9 +46,9 @@ const componentMap: Record<string, any> = {
     <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex items-center justify-between h-14">
 
       <a href="/experiments"
-        class="flex items-center gap-2 font-code-snippet text-[11px] uppercase tracking-widest text-on-surface-variant/50 hover:text-on-surface transition-colors">
-        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
-        Experiments
+        class="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-outline-variant/20 hover:border-outline-variant/50 bg-surface-container/50 hover:bg-surface-container font-code-snippet text-[10px] uppercase tracking-widest text-on-surface-variant/60 hover:text-on-surface transition-all duration-150">
+        <span class="material-symbols-outlined text-[14px] group-hover:-translate-x-0.5 transition-transform duration-150">arrow_back</span>
+        Back
       </a>
 
       <div class="flex items-center gap-3">
@@ -128,6 +128,7 @@ const componentMap: Record<string, any> = {
   <div id="exp-panels">
     {exp.variants.map((variant, i) => {
       const Component = componentMap[variant.key];
+      const vs = statusMeta[variant.status as keyof typeof statusMeta];
       return (
         <div
           class="exp-panel"
@@ -135,6 +136,37 @@ const componentMap: Record<string, any> = {
           style={i === 0 ? '' : 'display:none'}
         >
           <Component />
+
+          <!-- Go to / Back bar below each section -->
+          <div class="border-t border-outline-variant/10" style="background:#080808">
+            <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-5 flex items-center justify-between gap-4">
+
+              <!-- Back -->
+              <a href="/experiments"
+                class="group inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-outline-variant/20 hover:border-outline-variant/50 font-code-snippet text-[10px] uppercase tracking-widest text-on-surface-variant/50 hover:text-on-surface transition-all duration-150"
+                style="background:rgba(255,255,255,.03)">
+                <span class="material-symbols-outlined text-[14px] group-hover:-translate-x-0.5 transition-transform duration-150">arrow_back</span>
+                All experiments
+              </a>
+
+              <div class="flex items-center gap-3">
+                <!-- Status chip -->
+                <span class="hidden sm:inline font-code-snippet text-[9px] uppercase tracking-widest px-2.5 py-1 rounded border"
+                  style={`color:${vs.color};background:${vs.bg};border-color:${vs.border}`}>
+                  {vs.label}
+                </span>
+
+                <!-- Go to main page (home) -->
+                <a href="/"
+                  class="group inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border font-code-snippet text-[10px] uppercase tracking-widest transition-all duration-150"
+                  style={`border-color:${exp.accent}30;background:${exp.accent}10;color:${exp.accent}`}>
+                  Go to main site
+                  <span class="material-symbols-outlined text-[14px] group-hover:translate-x-0.5 transition-transform duration-150">arrow_forward</span>
+                </a>
+              </div>
+
+            </div>
+          </div>
         </div>
       );
     })}

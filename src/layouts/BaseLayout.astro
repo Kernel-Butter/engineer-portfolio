@@ -15,6 +15,12 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
   <ClientRouter />
+  <!-- Kill Astro's built-in page crossfade — GSAP overlay handles all transitions -->
+  <style>
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+    /* Hidden until preloader exits on first load; page-transition overlay reveals on SPA nav */
+    #main-content { opacity: 0; }
+  </style>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -25,15 +31,13 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
   <Preloader />
   <SmoothScroll />
 
-  <!-- Page transition overlay — survives every DOM swap via transition:persist -->
-  <div
-    id="pt-overlay"
-    transition:persist
-    aria-hidden="true"
-    style="position:fixed;inset:0;z-index:500;pointer-events:none;transform:translateY(100%);background:#0a0a0a;display:flex;align-items:center;justify-content:center;"
-  >
-    <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(192,193,255,0.012) 3px,rgba(192,193,255,0.012) 4px);pointer-events:none"></div>
-    <span style="position:relative;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(192,193,255,0.3)">SYS.NAVIGATING</span>
+  <!-- Page transition overlay — fade to black + terminal blink -->
+  <div id="pt-overlay" transition:persist aria-hidden="true"
+       style="position:fixed;inset:0;z-index:500;pointer-events:none;visibility:hidden;background:#03030a;display:flex;align-items:center;justify-content:center;">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <span id="pt-line1" style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.10em;color:rgba(192,193,255,.85);opacity:0;white-space:nowrap;">&gt; NAVIGATING...</span>
+      <span id="pt-line2" style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.10em;color:rgba(78,222,163,.9);opacity:0;white-space:nowrap;">&gt; DONE ✓</span>
+    </div>
   </div>
 
   <div id="main-content">
@@ -72,19 +76,77 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
   </script>
 
   <script>
-    // After the very first load the preloader is persisted (hidden via transition:persist).
-    // On every subsequent ClientRouter navigation, #main-content is re-inserted
-    // with opacity:0/visibility:hidden from CSS — we reveal it here.
-    document.addEventListener('astro:page-load', () => {
+    import { gsap } from 'gsap';
+
+    let _active     = false;
+    let _inDone     = false;
+    let _pendingOut: (() => void) | null = null;
+
+    function markInDone() {
+      _inDone = true;
+      if (_pendingOut) { _pendingOut(); _pendingOut = null; }
+    }
+
+    /* PHASE 1 — fade to black + "NAVIGATING" line */
+    document.addEventListener('astro:before-preparation', () => {
+      /* Skip if the preloader hasn't completed its first run yet — avoids a black
+         flash over the preloader if Astro fires this event during initialisation. */
       if (sessionStorage.getItem('preloader_done') !== '1') return;
 
-      const main = document.getElementById('main-content');
-      if (main) {
-        main.style.opacity    = '1';
-        main.style.visibility = 'visible';
+      _active     = true;
+      _inDone     = false;
+      _pendingOut = null;
+
+      const overlay = document.getElementById('pt-overlay')!;
+      const line1   = document.getElementById('pt-line1')!;
+      const line2   = document.getElementById('pt-line2')!;
+
+      gsap.set([line1, line2], { opacity: 0 });
+      gsap.set(overlay, { opacity: 0, visibility: 'visible' });
+
+      gsap.timeline({ onComplete: markInDone })
+        .to(overlay, { opacity: 1, duration: 0.22, ease: 'power2.in' })
+        .to(line1,   { opacity: 1, duration: 0.12, ease: 'none' }, '+=0.04')
+        .to({},      { duration: 0.18 });
+    });
+
+    /* PHASE 2 — "DONE" line + fade out overlay, slide new page up */
+    document.addEventListener('astro:page-load', () => {
+      const main    = document.getElementById('main-content');
+      const overlay = document.getElementById('pt-overlay')!;
+      const line2   = document.getElementById('pt-line2')!;
+
+      if (!_active) {
+        // Full page load — preloader's onComplete handles reveal and portfolio:ready.
+        // Never interfere here; firing portfolio:ready early would burn Hero's { once:true }
+        // listener before the preloader exits.
+        return;
       }
+
       document.body.style.overflow = 'auto';
-      document.dispatchEvent(new CustomEvent('portfolio:ready'));
+
+      if (main) gsap.set(main, { visibility: 'visible', opacity: 1 });
+
+      function runOut() {
+        const tl = gsap.timeline({
+          onComplete() {
+            _active = false;
+            gsap.set(overlay, { visibility: 'hidden' });
+            document.dispatchEvent(new CustomEvent('portfolio:ready'));
+          }
+        });
+
+        tl.to(line2,   { opacity: 1, duration: 0.12, ease: 'none' })
+          .to({},      { duration: 0.28 })
+          .to(overlay, { opacity: 0, duration: 0.30, ease: 'power2.out' });
+
+        /* fromTo only sets y:32 at tween-start — overlay is still opaque then */
+        if (main) {
+          tl.fromTo(main, { y: 32 }, { y: 0, duration: 0.36, ease: 'power3.out' }, '<+=0.06');
+        }
+      }
+
+      if (_inDone) { runOut(); } else { _pendingOut = runOut; }
     });
   </script>
 
