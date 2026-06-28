@@ -1,5 +1,17 @@
 export const experiments = [
   {
+    slug:     'think-ring',
+    title:    'THINK_RING',
+    desc:     'Rain World Guardian halo — 6 concentric ring bands of Thai-abugida glyphs rotating in alternating directions, with oval magnifying lenses orbiting on inclined 3D paths and bloom glow.',
+    category: 'WEBGL',
+    icon:     'blur_on',
+    accent:   '#c0c1ff',
+    bg:       'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(140,140,255,.15) 0%, rgba(60,50,120,.08) 55%, transparent 85%)',
+    variants: [
+      { key: 'ThinkRing', label: 'Think Ring', subtitle: 'Guardian halo · sector glyphs · magnifier lenses · bloom', status: 'experimental' },
+    ],
+  },
+  {
     slug:     'lattice-sphere',
     title:    'LATTICE_SPHERE',
     desc:     'Geodesic lattice sphere with organic vertex displacement. IcosahedronGeometry + barycentric shader for open-hole struts + UnrealBloomPass. Camera orbits and dips below the sphere over time.',

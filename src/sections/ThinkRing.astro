@@ -1,0 +1,261 @@
+---
+// ThinkRing — Rain World Guardian Halo
+// Pure 2D Canvas · warm amber/gold · 7 concentric ring bands
+// Each band: inner/outer border, radial sector dividers, glyph per sector
+// Magnifier ovals orbit across the stack · flower-of-life center
+---
+
+<div id="tr-wrap" style="position:relative;width:100%;height:calc(100vh - 56px);overflow:hidden;background:#03030a;">
+  <canvas id="tr-canvas" style="display:block;width:100%;height:100%;"></canvas>
+</div>
+
+<script>
+  const wrap   = document.getElementById('tr-wrap')   as HTMLElement;
+  const canvas = document.getElementById('tr-canvas') as HTMLCanvasElement;
+  if (!wrap || !canvas) throw new Error('TR: missing mount');
+  const ctx = canvas.getContext('2d')!;
+
+  /* ── HiDPI ───────────────────────────────────────────────────── */
+  function resize() {
+    const dpr = Math.min(devicePixelRatio, 2);
+    canvas.width  = wrap.clientWidth  * dpr;
+    canvas.height = wrap.clientHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  const resizeObs = new ResizeObserver(resize);
+  resizeObs.observe(wrap);
+
+  /* ── 8 glyph shapes drawn in local space (sz = radius in px) ── */
+  type GFn = (c: CanvasRenderingContext2D, sz: number) => void;
+
+  const GLYPHS: GFn[] = [
+    /* 0 dot */
+    (c, sz) => { c.beginPath(); c.arc(0,0,sz*.16,0,Math.PI*2); c.fill(); },
+    /* 1 open spiral */
+    (c, sz) => {
+      c.beginPath(); c.arc(0,-sz*.08,sz*.43,.25,Math.PI*2.1); c.stroke();
+      c.beginPath(); c.arc(sz*.13,sz*.05,sz*.20,0,Math.PI*1.65); c.stroke();
+    },
+    /* 2 hook + loop */
+    (c, sz) => {
+      c.beginPath();
+      c.moveTo(-sz*.42, sz*.08);
+      c.bezierCurveTo(-sz*.35,-sz*.65, sz*.35,-sz*.65, sz*.42,sz*.08);
+      c.stroke();
+      c.beginPath(); c.arc(sz*.24,sz*.22,sz*.18,0,Math.PI*2); c.stroke();
+    },
+    /* 3 twin loops */
+    (c, sz) => {
+      c.beginPath(); c.arc(-sz*.22,0,sz*.22,0,Math.PI*2); c.stroke();
+      c.beginPath(); c.arc( sz*.22,0,sz*.22,0,Math.PI*2); c.stroke();
+    },
+    /* 4 vertical + curling tail */
+    (c, sz) => {
+      c.beginPath();
+      c.moveTo(sz*.04,-sz*.52); c.lineTo(sz*.04,sz*.12);
+      c.bezierCurveTo(sz*.04,sz*.44, sz*.50,sz*.48, sz*.52,sz*.15);
+      c.stroke();
+    },
+    /* 5 Thai loop top */
+    (c, sz) => {
+      c.beginPath();
+      c.moveTo(-sz*.42,sz*.38);
+      c.bezierCurveTo(-sz*.44,-sz*.42, -sz*.08,-sz*.52, sz*.04,-sz*.47);
+      c.arc(sz*.14,-sz*.18,sz*.30,-Math.PI*.92,Math.PI*.55);
+      c.stroke();
+    },
+    /* 6 concentric open arcs */
+    (c, sz) => {
+      c.beginPath(); c.arc(0,0,sz*.50,-.15,Math.PI*1.15); c.stroke();
+      c.beginPath(); c.arc(0,0,sz*.30,-.38,Math.PI*.92);  c.stroke();
+      c.beginPath(); c.arc(0,0,sz*.12,-.60,Math.PI*.70);  c.stroke();
+    },
+    /* 7 wave cross */
+    (c, sz) => {
+      c.beginPath(); c.moveTo(-sz*.48,0); c.lineTo(sz*.48,0); c.stroke();
+      c.beginPath(); c.arc(-sz*.12,-sz*.15,sz*.26,0,Math.PI); c.stroke();
+      c.beginPath(); c.arc( sz*.12, sz*.15,sz*.26,-Math.PI,0); c.stroke();
+    },
+  ];
+
+  /* ── Rings — mixed properties generated randomly at startup ──── */
+  const _rf = (a: number, b: number) => a + Math.random() * (b - a);
+  const _ri = (a: number, b: number) => a + Math.floor(Math.random() * (b - a + 1));
+
+  const RINGS = [
+    { iF:0.05, oF:0.12, speed:  0.0080 },
+    { iF:0.17, oF:0.27, speed: -0.0052 },
+    { iF:0.28, oF:0.39, speed:  0.0040 },
+    { iF:0.43, oF:0.54, speed: -0.0030 },
+    { iF:0.56, oF:0.68, speed:  0.0022 },
+    { iF:0.74, oF:0.84, speed: -0.0015 },
+    { iF:0.87, oF:0.96, speed:  0.0010 },
+  ].map(b => {
+    const sectors    = _ri(5, 20);
+    const emptyCount = Math.floor(sectors * _rf(0.1, 0.40));
+    const emptySet   = new Set<number>();
+    while (emptySet.size < emptyCount) emptySet.add(_ri(0, sectors - 1));
+    return {
+      ...b, sectors, emptySet,
+      outerBorder: Math.random() > 0.42,     // ~58% have outer border
+      pulses:      Math.random() > 0.52,     // ~48% pulse radius
+      pSpeed:      _rf(0.015, 0.055),
+      pAmp:        _rf(0.015, 0.042),
+    };
+  });
+
+  const OUTER_GLYPH_COUNT = 3 + Math.floor(Math.random() * 2); // 3 or 4, fixed at load
+  const angles = new Float32Array(RINGS.length + 1); // +1 slot for outer glyph ring
+
+  /* ── Grazing circles ─────────────────────────────────────────────
+     Each circle's circumference passes through the origin.
+     Center orbits at distance = its own radius, so near edge always
+     grazes the center while far edge reaches 2r outward into the rings. */
+  /* r = base orbit radius, speed = orbit speed, ps = pulse speed, pa = pulse amplitude */
+  /* Grazing circles — orbit slowed, size pulses in opposite phases (0 vs π) */
+  const GRAZERS = [
+    { r: 0.19, speed:  0.008, ps: 0.022, pa: 0.06, phase: 0          },
+    { r: 0.25, speed: -0.003, ps: 0.018, pa: 0.07, phase: Math.PI    },
+    { r: 0.32, speed:  0.005, ps: 0.022, pa: 0.06, phase: Math.PI    },
+    { r: 0.39, speed: -0.007, ps: 0.018, pa: 0.08, phase: 0          },
+  ];
+  const grazerA = [0.4, Math.PI * 0.85, Math.PI * 0.2, Math.PI * 1.6];
+
+  /* ── Palette ─────────────────────────────────────────────────── */
+  const C_RING    = 'rgba(210,150,26, 0.50)';
+  const C_RING_HI = 'rgba(248,200,55, 0.72)';
+  const C_GLYPH   = 'rgba(240,185,42, 0.86)';
+  const C_MAG     = 'rgba(255,215,65, 0.72)';
+  const C_PETAL   = 'rgba(212,162,36, 0.48)';
+
+  /* ── Render ───────────────────────────────────────────────────── */
+  function draw() { // uses outer `time`
+    const W = wrap.clientWidth, H = wrap.clientHeight;
+    const cx = W * .5, cy = H * .5;
+    const R  = Math.min(W, H) * .42;
+
+    ctx.clearRect(0, 0, W, H);
+
+    /* Soft ambient glow */
+    const grd = ctx.createRadialGradient(cx,cy,R*.06, cx,cy,R*1.05);
+    grd.addColorStop(0,   'rgba(175,112,14, 0.16)');
+    grd.addColorStop(0.65,'rgba(140,85, 10, 0.06)');
+    grd.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.arc(cx,cy,R*1.05,0,Math.PI*2); ctx.fill();
+
+    /* ── Rings ──────────────────────────────────────────────── */
+    for (let ri = 0; ri < RINGS.length; ri++) {
+      const rd    = RINGS[ri];
+      const rot   = angles[ri];
+      const pulse = rd.pulses ? Math.sin(time * rd.pSpeed) * rd.pAmp : 0;
+      const iR    = Math.max(2, (rd.iF + pulse) * R);
+      const oR    = Math.max(iR + 4, (rd.oF + pulse) * R);
+      const mR    = (iR + oR) * .5;
+      const bw    = oR - iR;
+
+      /* Outer border — per-ring decision */
+      if (rd.outerBorder) {
+        ctx.beginPath(); ctx.arc(cx,cy,oR,0,Math.PI*2);
+        ctx.strokeStyle = C_RING_HI; ctx.lineWidth = 1.3; ctx.stroke();
+      }
+
+      /* Inner border */
+      ctx.beginPath(); ctx.arc(cx,cy,iR,0,Math.PI*2);
+      ctx.strokeStyle = C_RING; ctx.lineWidth = 0.9; ctx.stroke();
+
+      /* Sectors */
+      const arcLen = (2*Math.PI*mR) / rd.sectors;
+      const sz     = Math.min(bw*.76, arcLen*.56);
+      const lw     = Math.max(0.7, Math.min(1.8, sz*.074));
+
+      for (let s = 0; s < rd.sectors; s++) {
+        if (rd.emptySet.has(s)) continue;
+
+        const divA = rot + (s / rd.sectors) * Math.PI*2;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(divA)*iR, cy + Math.sin(divA)*iR);
+        ctx.lineTo(cx + Math.cos(divA)*oR, cy + Math.sin(divA)*oR);
+        ctx.strokeStyle = C_RING; ctx.lineWidth = 0.7; ctx.stroke();
+
+        const midA = rot + ((s + .5) / rd.sectors) * Math.PI*2;
+        ctx.save();
+        ctx.translate(cx + Math.cos(midA)*mR, cy + Math.sin(midA)*mR);
+        ctx.rotate(midA + Math.PI*.5);
+        ctx.strokeStyle = C_GLYPH; ctx.fillStyle = C_GLYPH;
+        ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        GLYPHS[s % 8](ctx, sz);
+        ctx.restore();
+      }
+    }
+
+    /* ── Outer glyph ring — 3-4 bare characters, no borders or lines ── */
+    {
+      const count  = 3 + Math.floor(Math.random() * 2); // won't re-randomize, see below
+      const rot    = angles[RINGS.length];
+      const mR     = R * 1.04;
+      const sz     = R * 0.055;
+      const lw     = Math.max(0.7, sz * 0.08);
+      for (let s = 0; s < OUTER_GLYPH_COUNT; s++) {
+        const midA = rot + (s / OUTER_GLYPH_COUNT) * Math.PI * 2;
+        ctx.save();
+        ctx.translate(cx + Math.cos(midA)*mR, cy + Math.sin(midA)*mR);
+        ctx.rotate(midA + Math.PI*.5);
+        ctx.strokeStyle = C_GLYPH; ctx.fillStyle = C_GLYPH;
+        ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        GLYPHS[(s + 3) % 8](ctx, sz);
+        ctx.restore();
+      }
+    }
+
+    /* ── Grazing circles — radius pulses independently per circle ── */
+    for (let gi = 0; gi < GRAZERS.length; gi++) {
+      const g  = GRAZERS[gi];
+      const a  = grazerA[gi];
+      const pr = (g.r + Math.sin(time * g.ps + g.phase) * g.pa) * R;
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(a)*pr, cy + Math.sin(a)*pr, pr, 0, Math.PI*2);
+      ctx.strokeStyle = C_MAG;
+      ctx.lineWidth   = 1.4;
+      ctx.stroke();
+    }
+
+    /* ── Central flower-of-life ──────────────────────────────── */
+    const pR = R * .040;
+    ctx.strokeStyle = C_PETAL; ctx.lineWidth = 0.9;
+    for (let i = 0; i < 6; i++) {
+      const a = (i/6) * Math.PI*2;
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(a)*pR, cy + Math.sin(a)*pR, pR, 0, Math.PI*2);
+      ctx.stroke();
+    }
+    ctx.beginPath(); ctx.arc(cx,cy,pR*2,0,Math.PI*2);
+    ctx.strokeStyle = 'rgba(200,150,32,0.42)'; ctx.stroke();
+
+    /* Center glow dot */
+    const dg = ctx.createRadialGradient(cx,cy,0, cx,cy,pR*.65);
+    dg.addColorStop(0, 'rgba(255,235,100,0.95)');
+    dg.addColorStop(1, 'rgba(255,215,70,0)');
+    ctx.fillStyle = dg;
+    ctx.beginPath(); ctx.arc(cx,cy,pR*.65,0,Math.PI*2); ctx.fill();
+  }
+
+  /* ── Animation loop ──────────────────────────────────────────── */
+  let raf = 0, time = 0;
+  function frame() {
+    raf = requestAnimationFrame(frame);
+    time += 0.016;
+    for (let i = 0; i < RINGS.length;   i++) angles[i]  += RINGS[i].speed;
+    angles[RINGS.length] += 0.0018; // outer glyph ring slow drift
+    for (let i = 0; i < GRAZERS.length; i++) grazerA[i] += GRAZERS[i].speed;
+    draw();
+  }
+  frame();
+
+  /* ── Cleanup ─────────────────────────────────────────────────── */
+  document.addEventListener('astro:before-preparation', () => {
+    cancelAnimationFrame(raf);
+    resizeObs.disconnect();
+  }, { once: true });
+</script>

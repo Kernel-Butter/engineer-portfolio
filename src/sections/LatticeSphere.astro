@@ -34,22 +34,35 @@
      CLOTH PHYSICS — Position-Based Dynamics
      ══════════════════════════════════════════════════════════════ */
 
-  const W = 48, H = 32;
+  const DETAIL   = 3;     // icosahedron subdivision → ~642 verts, 1280 triangles
   const RADIUS   = 2.0;
-  /* Back-cap clip: z = 0.4 → visible cap height 1.6 → 40% visible (60% cut) */
-  const CLIP_Z   = 0.4;
-  const STIFF    = 0.30;   /* spring stiffness per constraint iteration */
-  const DAMP     = 0.993;  /* per-frame velocity damping                */
-  const PRESSURE = 0.0008; /* gentle pull back toward rest sphere       */
-  const ITER     = 8;      /* constraint iterations per step            */
-  /* DT: fraction of velocity applied to position each frame.
-     Slows wave travel without killing wave energy (unlike the old SPEED_SCALE).
-     0.20 ≈ 5× slow-motion  |  0.40 ≈ 2.5× slow-motion  |  1.0 = real-time */
+  const CLIP_Z   = -0.3;  // show front ~65 % of sphere; back cap hidden
+  const STIFF    = 0.30;
+  const DAMP     = 0.993;
+  const PRESSURE = 0.0008;
+  const ITER     = 8;
   const DT       = 0.22;
 
-  const geo     = new THREE.SphereGeometry(RADIUS, W, H);
+  /* Physics geometry — compact indexed icosphere; all spring constraints run here */
+  const geo     = new THREE.IcosahedronGeometry(RADIUS, DETAIL);
   const posAttr = geo.attributes.position as THREE.BufferAttribute;
   const N       = posAttr.count;
+  const physIdx = (geo.index as THREE.BufferAttribute).array;
+
+  /* Render geometry — non-indexed copy so each triangle corner gets a unique
+     vertex and we can stamp barycentric coords (1,0,0)/(0,1,0)/(0,0,1). */
+  const renderGeo    = geo.toNonIndexed();
+  const renderPosArr = renderGeo.attributes.position as THREE.BufferAttribute;
+  const M            = renderPosArr.count;
+
+  const baryArr = new Float32Array(M * 3);
+  for (let f = 0; f < M; f += 3) {
+    baryArr[(f+0)*3+0] = 1;
+    baryArr[(f+1)*3+1] = 1;
+    baryArr[(f+2)*3+2] = 1;
+  }
+  renderGeo.setAttribute('bary', new THREE.BufferAttribute(baryArr, 3));
+
 
   /* Explicit velocity array — key to proper slow-motion.
      Velocity persists frame-to-frame (only DAMP removes it),
@@ -77,11 +90,10 @@
     springs.push({ a, b, len: Math.sqrt(dx*dx + dy*dy + dz*dz) });
   }
 
-  const idx = (geo.index as THREE.BufferAttribute).array;
-  for (let i = 0; i < idx.length; i += 3) {
-    addSpring(idx[i], idx[i+1]);
-    addSpring(idx[i+1], idx[i+2]);
-    addSpring(idx[i], idx[i+2]);
+  for (let i = 0; i < physIdx.length; i += 3) {
+    addSpring(physIdx[i], physIdx[i+1]);
+    addSpring(physIdx[i+1], physIdx[i+2]);
+    addSpring(physIdx[i], physIdx[i+2]);
   }
 
   /* ── PBD step (explicit velocity + DT slow-motion) ──────────────
@@ -134,9 +146,16 @@
       vel[i*3+2] = (pos[i*3+2] - posOld[i*3+2]) / DT;
     }
 
-    (posAttr.array as Float32Array).set(pos);
-    posAttr.needsUpdate = true;
-    geo.computeVertexNormals();
+    /* Sync indexed physics positions → non-indexed render geometry */
+    const rArr = renderPosArr.array as Float32Array;
+    for (let j = 0; j < M; j++) {
+      const k   = physIdx[j];
+      rArr[j*3]   = pos[k*3];
+      rArr[j*3+1] = pos[k*3+1];
+      rArr[j*3+2] = pos[k*3+2];
+    }
+    renderPosArr.needsUpdate = true;
+    renderGeo.computeVertexNormals();
   }
 
   /* ── Click impulse — big INWARD dent ─────────────────────────── */
@@ -184,53 +203,56 @@
   });
 
   /* ══════════════════════════════════════════════════════════════
-     RENDERING — UV-based rectangular lattice
-     Back cap clipped in fragment shader using rest-position Z
-     reconstructed from UV coordinates (no extra attribute needed).
+     RENDERING — geodesic triangular lattice
+     Barycentric coords detect triangle edges; restPos attribute
+     keeps the hemisphere clip fixed while the mesh deforms.
      ══════════════════════════════════════════════════════════════ */
 
+  /* Vertex shader — passes bary coord and local-space z for hemisphere clip.
+     Using position.z (built-in Three.js attribute) avoids a custom restPos
+     attribute that may not bind on all drivers. Clip boundary shifts slightly
+     with physics deformation but is imperceptible at the equator. */
   const VS = /* glsl */`
-    varying vec2 vUV;
+    attribute vec3 bary;
+    varying   vec3 vBary;
+    varying   float vZ;
     void main(){
-      vUV = uv;
+      vBary = bary;
+      vZ    = position.z;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   `;
 
-  const W_F = W.toFixed(1), H_F = H.toFixed(1);
-  const STRUT = 0.13;
-
-  /* Back-cap clip: reconstruct rest Z from UV.
-     Three.js SphereGeometry: z = R·sin(u·2π)·sin(v·π)
-     (y is vertical; phi=u·2π is azimuth around Y; theta=v·π is polar from top)
-     Discard anything below CLIP_Z = -1.2 → removes back 20%. */
+  /* Show front ~65 % of the sphere; back cap is invisible. */
   const CLIP_GLSL = /* glsl */`
-    const float PI   = 3.14159265;
-    float restZ = ${RADIUS.toFixed(1)} * sin(vUV.x * 2.0 * PI) * sin(vUV.y * PI);
-    if (restZ < ${CLIP_Z.toFixed(2)}) discard;
+    if (vZ < ${CLIP_Z.toFixed(1)}) discard;
   `;
 
+  /* min(bary.x, bary.y, bary.z) == 0 on every triangle edge, ~0.33 at centroid.
+     Strut width = STRUT in barycentric space (~10 % of triangle per edge). */
+  const STRUT = 0.10;
   const LATTICE = /* glsl */`
-    vec2  g       = fract(vUV * vec2(${W_F}, ${H_F}));
-    float minEdge = min(min(g.x, g.y), min(1.0 - g.x, 1.0 - g.y));
-    float aa      = max(fwidth(minEdge), 0.001);
-    float strut   = 1.0 - smoothstep(${STRUT} - aa, ${STRUT} + aa, minEdge);
+    float edge  = min(vBary.x, min(vBary.y, vBary.z));
+    float aa    = max(fwidth(edge), 0.002);
+    float strut = 1.0 - smoothstep(${STRUT} - aa, ${STRUT} + aa, edge);
     if (strut < 0.02) discard;
   `;
 
   const FS_OUTER = /* glsl */`
-    varying vec2 vUV;
+    varying vec3  vBary;
+    varying float vZ;
     void main(){
       ${CLIP_GLSL}
       ${LATTICE}
       vec3 dark   = vec3(0.04, 0.03, 0.10);
-      vec3 bright = vec3(0.38, 0.38, 0.72);
+      vec3 bright = vec3(0.45, 0.45, 0.80);
       gl_FragColor = vec4(mix(dark, bright, pow(strut, 1.4)), strut);
     }
   `;
 
   const FS_INNER = /* glsl */`
-    varying vec2 vUV;
+    varying vec3  vBary;
+    varying float vZ;
     void main(){
       ${CLIP_GLSL}
       ${LATTICE}
@@ -245,7 +267,7 @@
     transparent: true, side: THREE.BackSide, depthWrite: true,
     polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1,
   });
-  const innerMesh = new THREE.Mesh(geo, innerMat);
+  const innerMesh = new THREE.Mesh(renderGeo, innerMat);
   innerMesh.renderOrder = 0;
   scene.add(innerMesh);
 
@@ -253,7 +275,7 @@
     vertexShader: VS, fragmentShader: FS_OUTER,
     transparent: true, side: THREE.FrontSide, depthWrite: true,
   });
-  const outerMesh = new THREE.Mesh(geo, outerMat);
+  const outerMesh = new THREE.Mesh(renderGeo, outerMat);
   outerMesh.renderOrder = 1;
   scene.add(outerMesh);
 
@@ -286,6 +308,7 @@
     composer.dispose();
     renderer.dispose();
     geo.dispose();
+    renderGeo.dispose();
     innerMat.dispose();
     outerMat.dispose();
     (hitSphere.material as THREE.Material).dispose();
