@@ -79,9 +79,30 @@
     },
   ];
 
+  /* ── Rough arc — deterministic sine noise gives hand-drawn ink feel ─ */
+  function roughArc(cx: number, cy: number, r: number, seed: number, rough: number) {
+    const steps = Math.max(72, Math.ceil(r * 0.7));
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const a  = (i / steps) * Math.PI * 2;
+      const n  = Math.sin(a * 5.1  + seed) * 0.50
+               + Math.sin(a * 11.3 + seed * 1.7) * 0.30
+               + Math.sin(a * 23.7 + seed * 3.1) * 0.20;
+      const rr = r + n * rough;
+      const x  = cx + Math.cos(a) * rr;
+      const y  = cy + Math.sin(a) * rr;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+  }
+
   /* ── Rings — mixed properties generated randomly at startup ──── */
   const _rf = (a: number, b: number) => a + Math.random() * (b - a);
   const _ri = (a: number, b: number) => a + Math.floor(Math.random() * (b - a + 1));
+
+  // pick exactly 1–2 rings to have a drifting center
+  const wobbleIndices = new Set<number>();
+  while (wobbleIndices.size < 2) wobbleIndices.add(_ri(1, 5));
 
   const RINGS = [
     { iF:0.05, oF:0.12, speed:  0.0080 },
@@ -91,22 +112,28 @@
     { iF:0.56, oF:0.68, speed:  0.0022 },
     { iF:0.74, oF:0.84, speed: -0.0015 },
     { iF:0.87, oF:0.96, speed:  0.0010 },
-  ].map(b => {
+  ].map((b, i) => {
     const sectors    = _ri(5, 20);
     const emptyCount = Math.floor(sectors * _rf(0.1, 0.40));
     const emptySet   = new Set<number>();
     while (emptySet.size < emptyCount) emptySet.add(_ri(0, sectors - 1));
     return {
       ...b, sectors, emptySet,
-      outerBorder: Math.random() > 0.42,     // ~58% have outer border
-      pulses:      Math.random() > 0.52,     // ~48% pulse radius
+      outerBorder: Math.random() > 0.42,
+      pulses:      Math.random() > 0.52,
       pSpeed:      _rf(0.015, 0.055),
       pAmp:        _rf(0.015, 0.042),
+      rough:       _rf(1.2, 2.8),              // roughness amount per ring
+      seed:        _rf(0, 100),                // unique noise seed
+      wobble:      wobbleIndices.has(i),       // drifting center?
+      wobbleR:     _rf(0.010, 0.022),          // drift radius (fraction of R)
+      wobbleSpd:   _rf(0.00025, 0.00055),      // very slow drift speed
+      wobbleA:     _rf(0, Math.PI * 2),        // starting drift angle
     };
   });
 
-  const OUTER_GLYPH_COUNT = 3 + Math.floor(Math.random() * 2); // 3 or 4, fixed at load
-  const angles = new Float32Array(RINGS.length + 1); // +1 slot for outer glyph ring
+  const OUTER_GLYPH_COUNT = 3 + Math.floor(Math.random() * 2);
+  const angles = new Float32Array(RINGS.length + 1);
 
   /* ── Grazing circles ─────────────────────────────────────────────
      Each circle's circumference passes through the origin.
@@ -115,10 +142,10 @@
   /* r = base orbit radius, speed = orbit speed, ps = pulse speed, pa = pulse amplitude */
   /* Grazing circles — orbit slowed, size pulses in opposite phases (0 vs π) */
   const GRAZERS = [
-    { r: 0.19, speed:  0.008, ps: 0.022, pa: 0.06, phase: 0          },
-    { r: 0.25, speed: -0.003, ps: 0.018, pa: 0.07, phase: Math.PI    },
-    { r: 0.32, speed:  0.005, ps: 0.022, pa: 0.06, phase: Math.PI    },
-    { r: 0.39, speed: -0.007, ps: 0.018, pa: 0.08, phase: 0          },
+    { r: 0.19, speed:  0.008, ps: 0.45, pa: 0.06, phase: 0          }, // ~14s cycle
+    { r: 0.25, speed: -0.003, ps: 0.28, pa: 0.07, phase: Math.PI    }, // ~22s cycle
+    { r: 0.32, speed:  0.005, ps: 0.45, pa: 0.06, phase: Math.PI    }, // opposite to #1
+    { r: 0.39, speed: -0.007, ps: 0.28, pa: 0.09, phase: 0          }, // opposite to #2
   ];
   const grazerA = [0.4, Math.PI * 0.85, Math.PI * 0.2, Math.PI * 1.6];
 
@@ -155,14 +182,18 @@
       const mR    = (iR + oR) * .5;
       const bw    = oR - iR;
 
-      /* Outer border — per-ring decision */
+      /* Wobbling center — 1-2 rings drift very slowly off-axis */
+      const wcx = rd.wobble ? cx + Math.cos(rd.wobbleA) * rd.wobbleR * R : cx;
+      const wcy = rd.wobble ? cy + Math.sin(rd.wobbleA) * rd.wobbleR * R : cy;
+
+      /* Outer border — per-ring decision, rough stroke */
       if (rd.outerBorder) {
-        ctx.beginPath(); ctx.arc(cx,cy,oR,0,Math.PI*2);
+        roughArc(wcx, wcy, oR, rd.seed + 10, rd.rough * 0.7);
         ctx.strokeStyle = C_RING_HI; ctx.lineWidth = 1.3; ctx.stroke();
       }
 
-      /* Inner border */
-      ctx.beginPath(); ctx.arc(cx,cy,iR,0,Math.PI*2);
+      /* Inner border — rough stroke */
+      roughArc(wcx, wcy, iR, rd.seed, rd.rough);
       ctx.strokeStyle = C_RING; ctx.lineWidth = 0.9; ctx.stroke();
 
       /* Sectors */
@@ -175,13 +206,13 @@
 
         const divA = rot + (s / rd.sectors) * Math.PI*2;
         ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(divA)*iR, cy + Math.sin(divA)*iR);
-        ctx.lineTo(cx + Math.cos(divA)*oR, cy + Math.sin(divA)*oR);
+        ctx.moveTo(wcx + Math.cos(divA)*iR, wcy + Math.sin(divA)*iR);
+        ctx.lineTo(wcx + Math.cos(divA)*oR, wcy + Math.sin(divA)*oR);
         ctx.strokeStyle = C_RING; ctx.lineWidth = 0.7; ctx.stroke();
 
         const midA = rot + ((s + .5) / rd.sectors) * Math.PI*2;
         ctx.save();
-        ctx.translate(cx + Math.cos(midA)*mR, cy + Math.sin(midA)*mR);
+        ctx.translate(wcx + Math.cos(midA)*mR, wcy + Math.sin(midA)*mR);
         ctx.rotate(midA + Math.PI*.5);
         ctx.strokeStyle = C_GLYPH; ctx.fillStyle = C_GLYPH;
         ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
@@ -246,8 +277,11 @@
   function frame() {
     raf = requestAnimationFrame(frame);
     time += 0.016;
-    for (let i = 0; i < RINGS.length;   i++) angles[i]  += RINGS[i].speed;
-    angles[RINGS.length] += 0.0018; // outer glyph ring slow drift
+    for (let i = 0; i < RINGS.length; i++) {
+      angles[i] += RINGS[i].speed;
+      if (RINGS[i].wobble) RINGS[i].wobbleA += RINGS[i].wobbleSpd;
+    }
+    angles[RINGS.length] += 0.0018;
     for (let i = 0; i < GRAZERS.length; i++) grazerA[i] += GRAZERS[i].speed;
     draw();
   }
