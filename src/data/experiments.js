@@ -2,13 +2,25 @@ export const experiments = [
   {
     slug:     'think-ring',
     title:    'THINK_RING',
-    desc:     'Rain World Guardian halo — 6 concentric ring bands of Thai-abugida glyphs rotating in alternating directions, with oval magnifying lenses orbiting on inclined 3D paths and bloom glow.',
+    desc:     'Rain World Guardian halo — 7 concentric ring bands of Thai-abugida glyphs rotating in alternating directions, grazing circles with opposite-phase size pulsing, rough ink strokes.',
     category: 'WEBGL',
     icon:     'blur_on',
     accent:   '#c0c1ff',
     bg:       'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(140,140,255,.15) 0%, rgba(60,50,120,.08) 55%, transparent 85%)',
     variants: [
       { key: 'ThinkRing', label: 'Think Ring', subtitle: 'Guardian halo · sector glyphs · magnifier lenses · bloom', status: 'experimental' },
+    ],
+  },
+  {
+    slug:     'think-ring-ii',
+    title:    'THINK_RING_II',
+    desc:     'Rain World Guardian halo — duplicate canvas with fresh random seed. Each load generates a new layout of ring bands, empty sectors, wobble offsets and glyph counts.',
+    category: 'WEBGL',
+    icon:     'blur_circular',
+    accent:   '#d4a820',
+    bg:       'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(212,168,32,.14) 0%, rgba(100,70,10,.08) 55%, transparent 85%)',
+    variants: [
+      { key: 'ThinkRingV2', label: 'Think Ring II', subtitle: 'Portfolio version · same system · evolving', status: 'experimental' },
     ],
   },
   {

@@ -11,6 +11,7 @@ import ButtonAnimations from '../../sections/ButtonAnimations.astro';
 import TransitionShowcase from '../../sections/TransitionShowcase.astro';
 import LatticeSphere from '../../sections/LatticeSphere.astro';
 import ThinkRing    from '../../sections/ThinkRing.astro';
+import ThinkRingV2  from '../../sections/ThinkRingV2.astro';
 import { experiments, statusMeta } from '../../data/experiments.js';
 
 export function getStaticPaths() {
@@ -27,6 +28,7 @@ const next = experiments[idx + 1] ?? null;
 
 const componentMap: Record<string, any> = {
   ThinkRing,
+  ThinkRingV2,
   LatticeSphere,
   AiWorkflow,
   AiWorkflowPipeline,
