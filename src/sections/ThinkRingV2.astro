@@ -30,8 +30,18 @@
   type GFn = (c: CanvasRenderingContext2D, sz: number) => void;
 
   const GLYPHS: GFn[] = [
-    /* 0 dot */
-    (c, sz) => { c.beginPath(); c.arc(0,0,sz*.16,0,Math.PI*2); c.fill(); },
+    /* 0  {} curly braces */
+    (c, sz) => {
+      const d = sz * .44, m = sz * .14, b = sz * .11;
+      [[-1,1],[1,-1]].forEach(([s]) => {
+        c.beginPath();
+        c.moveTo(s*m, -d); c.bezierCurveTo(s*d,-d, s*d,-b, s*d,0);
+        c.bezierCurveTo(s*d,b, s*(d+b),b, s*(d+b),0);
+        c.bezierCurveTo(s*(d+b),-b, s*d,-b, s*d,0);
+        c.bezierCurveTo(s*d,b, s*d,d, s*m,d);
+        c.stroke();
+      });
+    },
     /* 1 open spiral */
     (c, sz) => {
       c.beginPath(); c.arc(0,-sz*.08,sz*.43,.25,Math.PI*2.1); c.stroke();
@@ -45,10 +55,15 @@
       c.stroke();
       c.beginPath(); c.arc(sz*.24,sz*.22,sz*.18,0,Math.PI*2); c.stroke();
     },
-    /* 3 twin loops */
+    /* 3  => fat arrow */
     (c, sz) => {
-      c.beginPath(); c.arc(-sz*.22,0,sz*.22,0,Math.PI*2); c.stroke();
-      c.beginPath(); c.arc( sz*.22,0,sz*.22,0,Math.PI*2); c.stroke();
+      c.beginPath();
+      c.moveTo(-sz*.48,-sz*.12); c.lineTo(-sz*.12,-sz*.12);
+      c.moveTo(-sz*.48, sz*.12); c.lineTo(-sz*.12, sz*.12);
+      c.stroke();
+      c.beginPath();
+      c.moveTo(-sz*.08,-sz*.38); c.lineTo(sz*.46,0); c.lineTo(-sz*.08,sz*.38);
+      c.stroke();
     },
     /* 4 vertical + curling tail */
     (c, sz) => {
@@ -57,12 +72,16 @@
       c.bezierCurveTo(sz*.04,sz*.44, sz*.50,sz*.48, sz*.52,sz*.15);
       c.stroke();
     },
-    /* 5 Thai loop top */
+    /* 5  </> JSX tag */
     (c, sz) => {
       c.beginPath();
-      c.moveTo(-sz*.42,sz*.38);
-      c.bezierCurveTo(-sz*.44,-sz*.42, -sz*.08,-sz*.52, sz*.04,-sz*.47);
-      c.arc(sz*.14,-sz*.18,sz*.30,-Math.PI*.92,Math.PI*.55);
+      c.moveTo(-sz*.18,-sz*.38); c.lineTo(-sz*.46,0); c.lineTo(-sz*.18,sz*.38);
+      c.stroke();
+      c.beginPath();
+      c.moveTo(sz*.18,-sz*.38); c.lineTo(sz*.46,0); c.lineTo(sz*.18,sz*.38);
+      c.stroke();
+      c.beginPath();
+      c.moveTo(sz*.07,-sz*.28); c.lineTo(-sz*.07,sz*.28);
       c.stroke();
     },
     /* 6 concentric open arcs */
@@ -71,26 +90,29 @@
       c.beginPath(); c.arc(0,0,sz*.30,-.38,Math.PI*.92);  c.stroke();
       c.beginPath(); c.arc(0,0,sz*.12,-.60,Math.PI*.70);  c.stroke();
     },
-    /* 7 wave cross */
+    /* 7  // double slash */
     (c, sz) => {
-      c.beginPath(); c.moveTo(-sz*.48,0); c.lineTo(sz*.48,0); c.stroke();
-      c.beginPath(); c.arc(-sz*.12,-sz*.15,sz*.26,0,Math.PI); c.stroke();
-      c.beginPath(); c.arc( sz*.12, sz*.15,sz*.26,-Math.PI,0); c.stroke();
+      c.beginPath();
+      c.moveTo(-sz*.24,-sz*.48); c.lineTo(-sz*.02, sz*.48);
+      c.moveTo( sz*.02,-sz*.48); c.lineTo( sz*.24, sz*.48);
+      c.stroke();
     },
   ];
 
-  /* ── Rough arc — deterministic sine noise gives hand-drawn ink feel ─ */
-  function roughArc(cx: number, cy: number, r: number, seed: number, rough: number) {
+  /* ── Deform arc — ink roughness + smooth mouse pull ─────────── */
+  function deformArc(cx: number, cy: number, r: number, seed: number, rough: number, pullStr: number, mouseA: number) {
     const steps = Math.max(72, Math.ceil(r * 0.7));
     ctx.beginPath();
     for (let i = 0; i <= steps; i++) {
-      const a  = (i / steps) * Math.PI * 2;
-      const n  = Math.sin(a * 5.1  + seed) * 0.50
-               + Math.sin(a * 11.3 + seed * 1.7) * 0.30
-               + Math.sin(a * 23.7 + seed * 3.1) * 0.20;
-      const rr = r + n * rough;
-      const x  = cx + Math.cos(a) * rr;
-      const y  = cy + Math.sin(a) * rr;
+      const a   = (i / steps) * Math.PI * 2;
+      const n   = Math.sin(a * 5.1  + seed) * 0.50
+                + Math.sin(a * 11.3 + seed * 1.7) * 0.30
+                + Math.sin(a * 23.7 + seed * 3.1) * 0.20;
+      const ang = ((a - mouseA + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+      const pull = pullStr * Math.max(0, Math.cos(ang)) ** 2;
+      const rr  = r + n * rough + pull;
+      const x   = cx + Math.cos(a) * rr;
+      const y   = cy + Math.sin(a) * rr;
       i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     }
     ctx.closePath();
@@ -100,7 +122,7 @@
   const _rf = (a: number, b: number) => a + Math.random() * (b - a);
   const _ri = (a: number, b: number) => a + Math.floor(Math.random() * (b - a + 1));
 
-  /* ── Mouse tracking for eye pupils ─────────────────────────── */
+  /* ── Mouse state ─────────────────────────────────────────────── */
   let mouseX = wrap.clientWidth  * 0.5;
   let mouseY = wrap.clientHeight * 0.5;
   wrap.addEventListener('mousemove', (e: MouseEvent) => {
@@ -109,13 +131,79 @@
     mouseY = e.clientY - r.top;
   });
 
+  // Smoothly lerped values updated each frame
+  let mPullNorm = 0;  // -1 repel … 0 idle … +1 attract
+  let colorT    = 0;  // 0 = amber, 1 = lavender
+
+  // Color interpolation
+  const AMB: [number,number,number] = [210, 150,  26];
+  const LAV: [number,number,number] = [180, 182, 255];
+  function iRGB(a: [number,number,number], b: [number,number,number], t: number, alpha: number) {
+    return `rgba(${a[0]+(b[0]-a[0])*t|0},${a[1]+(b[1]-a[1])*t|0},${a[2]+(b[2]-a[2])*t|0},${alpha})`;
+  }
+
+  // Impact — hot glow + falling particles at cursor hit point
+  interface Particle { x:number; y:number; vx:number; vy:number; }
+  interface Impact   { x:number; y:number; life:number; particles:Particle[]; }
+  const impacts: Impact[] = [];
+  function addImpact(x: number, y: number) {
+    impacts.push({
+      x, y, life: 1,
+      particles: Array.from({ length: 7 }, () => {
+        const a   = Math.PI * (0.2 + Math.random() * 1.6);
+        const spd = 0.6 + Math.random() * 2.8;
+        return { x, y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd - 0.5 };
+      }),
+    });
+  }
+
+  // Spark system — thunder from center to cursor, with branches
+  interface Spark { pts: {x:number;y:number}[]; branches: {x:number;y:number}[][]; life: number; }
+  const sparks: Spark[] = [];
+  let sparkTimer = 0;   // frames until next burst
+  let sparkBurst = 0;   // sparks remaining in current burst
+
+  function addSpark(cx: number, cy: number, tx: number, ty: number) {
+    const dx = tx - cx, dy = ty - cy;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    const steps = 9 + Math.floor(Math.random() * 5);
+    const pts: {x:number;y:number}[] = [{x: cx, y: cy}];
+    for (let i = 1; i < steps; i++) {
+      const t  = i / steps;
+      const jitter = Math.sin(t * Math.PI) * dist * 0.12; // bulge in middle
+      pts.push({
+        x: cx + dx * t + (Math.random() - 0.5) * jitter,
+        y: cy + dy * t + (Math.random() - 0.5) * jitter,
+      });
+    }
+    pts.push({ x: tx, y: ty }); // always reach cursor tip
+
+    // 0–2 side branches off a random trunk segment
+    const branches: {x:number;y:number}[][] = [];
+    const numBranches = Math.random() > 0.4 ? (Math.random() > 0.6 ? 2 : 1) : 0;
+    for (let b = 0; b < numBranches; b++) {
+      const bi   = Math.floor(pts.length * (0.25 + Math.random() * 0.5));
+      const bp   = pts[bi];
+      const bLen = dist * (0.12 + Math.random() * 0.18);
+      const bAng = Math.atan2(dy, dx) + (Math.random() < 0.5 ? 1 : -1) * (0.5 + Math.random() * 0.8);
+      const bPts: {x:number;y:number}[] = [{ x: bp.x, y: bp.y }];
+      const bs   = 3 + Math.floor(Math.random() * 3);
+      for (let j = 1; j <= bs; j++) {
+        const t = j / bs;
+        bPts.push({
+          x: bp.x + Math.cos(bAng) * bLen * t + (Math.random() - 0.5) * 7,
+          y: bp.y + Math.sin(bAng) * bLen * t + (Math.random() - 0.5) * 7,
+        });
+      }
+      branches.push(bPts);
+    }
+    sparks.push({ pts, branches, life: 1 });
+    if (Math.random() < 0.30) addImpact(tx, ty); // ~1 in 3 strikes triggers impact
+  }
+
   /* ── Belt eye — almond in sector, pupil follows mouse ─────── */
-  function drawEye(ex: number, ey: number, eyeW: number, eyeH: number, eyeRot: number) {
-    // Mouse direction in the eye's local rotated space
-    const gx  = mouseX - ex;
-    const gy  = mouseY - ey;
-    const gd  = Math.sqrt(gx * gx + gy * gy) || 1;
-    const ga  = Math.atan2(gy, gx);
+  function drawEye(ex: number, ey: number, eyeW: number, eyeH: number, eyeRot: number, col: string) {
+    const ga  = Math.atan2(mouseY - ey, mouseX - ex);
     const la  = ga - eyeRot;
     const off = eyeH * 0.22;
     const px  = Math.cos(la) * off;
@@ -125,21 +213,17 @@
     ctx.translate(ex, ey);
     ctx.rotate(eyeRot);
 
-    // Almond outline
     ctx.beginPath();
     ctx.moveTo(-eyeW * 0.5, 0);
     ctx.bezierCurveTo(-eyeW * 0.2, -eyeH * 0.5,  eyeW * 0.2, -eyeH * 0.5,  eyeW * 0.5, 0);
     ctx.bezierCurveTo( eyeW * 0.2,  eyeH * 0.5, -eyeW * 0.2,  eyeH * 0.5, -eyeW * 0.5, 0);
-    ctx.strokeStyle = C_GLYPH; ctx.lineWidth = 1.4; ctx.stroke();
+    ctx.strokeStyle = col; ctx.lineWidth = 1.4; ctx.stroke();
 
-    // Iris
     const irisR = eyeH * 0.30;
     ctx.beginPath(); ctx.arc(px, py, irisR, 0, Math.PI * 2);
-    ctx.strokeStyle = C_GLYPH; ctx.lineWidth = 0.8; ctx.stroke();
-
-    // Pupil
+    ctx.strokeStyle = col; ctx.lineWidth = 0.8; ctx.stroke();
     ctx.beginPath(); ctx.arc(px, py, irisR * 0.46, 0, Math.PI * 2);
-    ctx.fillStyle = C_GLYPH; ctx.fill();
+    ctx.fillStyle = col; ctx.fill();
 
     ctx.restore();
   }
@@ -157,13 +241,17 @@
     { iF:0.56, oF:0.68, speed:  0.0022 },
     { iF:0.74, oF:0.84, speed: -0.0015 },
     { iF:0.87, oF:0.96, speed:  0.0010 },
-  ].map((b, i) => {
-    const sectors    = _ri(5, 20);
-    const emptyCount = Math.floor(sectors * _rf(0.1, 0.40));
+    { iF:1.06, oF:1.18, speed: -0.0006, ghost: true },
+    { iF:1.26, oF:1.40, speed:  0.0004, ghost: true },
+    { iF:1.58, oF:1.78, speed: -0.0003, ghost: true, brightens: true },
+  ].map((b: any, i) => {
+    const ghost      = b.ghost ?? false;
+    const sectors    = ghost ? _ri(5, 8)        : _ri(5, 20);
+    const emptyFrac  = ghost ? _rf(0.70, 0.85)  : _rf(0.10, 0.40);
+    const emptyCount = Math.floor(sectors * emptyFrac);
     const emptySet   = new Set<number>();
     while (emptySet.size < emptyCount) emptySet.add(_ri(0, sectors - 1));
 
-    // 2-3 non-empty sectors become eyes
     const available: number[] = [];
     for (let s = 0; s < sectors; s++) if (!emptySet.has(s)) available.push(s);
     for (let j = available.length - 1; j > 0; j--) {
@@ -172,17 +260,17 @@
     const eyeSet = new Set<number>(available.slice(0, Math.min(1, available.length)));
 
     return {
-      ...b, sectors, emptySet, eyeSet,
-      outerBorder: Math.random() > 0.42,
-      pulses:      Math.random() > 0.52,
+      ...b, ghost, sectors, emptySet, eyeSet,
+      outerBorder: ghost ? false       : Math.random() > 0.42,
+      pulses:      ghost ? false       : Math.random() > 0.52,
       pSpeed:      _rf(0.015, 0.055),
       pAmp:        _rf(0.015, 0.042),
-      rough:       _rf(1.2, 2.8),              // roughness amount per ring
-      seed:        _rf(0, 100),                // unique noise seed
-      wobble:      wobbleIndices.has(i),       // drifting center?
-      wobbleR:     _rf(0.010, 0.022),          // drift radius (fraction of R)
-      wobbleSpd:   _rf(0.00025, 0.00055),      // very slow drift speed
-      wobbleA:     _rf(0, Math.PI * 2),        // starting drift angle
+      rough:       ghost ? _rf(0.5, 1.0) : _rf(1.2, 2.8),
+      seed:        _rf(0, 100),
+      wobble:      ghost ? false       : wobbleIndices.has(i),
+      wobbleR:     _rf(0.010, 0.022),
+      wobbleSpd:   _rf(0.00025, 0.00055),
+      wobbleA:     _rf(0, Math.PI * 2),
     };
   });
 
@@ -203,18 +291,47 @@
   ];
   const grazerA = [0.4, Math.PI * 0.85, Math.PI * 0.2, Math.PI * 1.6];
 
-  /* ── Palette ─────────────────────────────────────────────────── */
-  const C_RING    = 'rgba(210,150,26, 0.50)';
-  const C_RING_HI = 'rgba(248,200,55, 0.72)';
-  const C_GLYPH   = 'rgba(240,185,42, 0.86)';
-  const C_MAG     = 'rgba(255,215,65, 0.72)';
-  const C_PETAL   = 'rgba(212,162,36, 0.48)';
+  /* ── Static palette (petal only — others computed per frame) ── */
+  const C_PETAL = 'rgba(212,162,36, 0.48)';
 
   /* ── Render ───────────────────────────────────────────────────── */
-  function draw() { // uses outer `time`
+  function draw() {
     const W = wrap.clientWidth, H = wrap.clientHeight;
     const cx = W * .5, cy = H * .5;
     const R  = Math.min(W, H) * .42;
+
+    // Mouse metrics
+    const mdx = mouseX - cx, mdy = mouseY - cy;
+    const mDist  = Math.sqrt(mdx * mdx + mdy * mdy);
+    const mouseA = Math.atan2(mdy, mdx);
+    const norm   = mDist / R;
+    const targetPull = norm > 1.2 ? 0 : norm < 0.65 ? -(1 - norm / 0.65) : (1 - norm / 1.2);
+    mPullNorm += (targetPull - mPullNorm) * 0.055;
+    const pullStr  = mPullNorm * R * 0.045;
+    const targetCT = Math.max(0, 1 - norm / 3.5);
+    colorT += (targetCT - colorT) * 0.04;
+
+    // Dynamic palette
+    const C_RING    = iRGB(AMB, LAV, colorT, 0.50);
+    const C_RING_HI = iRGB(AMB, LAV, colorT, 0.72);
+    const C_GLYPH   = iRGB(AMB, LAV, colorT, 0.86);
+    const C_MAG     = iRGB([255,215,65], [200,210,255], colorT, 0.72);
+
+    // Thunder burst — infrequent, cursor must be on canvas (norm < 3)
+    sparkTimer = Math.max(0, sparkTimer - 1);
+    if (sparkTimer === 0 && norm < 3.0) {
+      const proximity = Math.max(0, 1 - norm / 3.0);
+      // Squaring one random skews toward short gaps with occasional long silences
+      const r1 = Math.random(), r2 = Math.random() * Math.random();
+      const base = 30 + proximity * 20 | 0;
+      const ceiling = 60 + (1 - proximity) * 360 | 0;
+      sparkTimer = base + Math.floor(r2 * ceiling) + (r1 > 0.85 ? Math.floor(Math.random() * 200) : 0);
+      sparkBurst = 1 + Math.floor(Math.random() * (proximity > 0.6 ? 4 : 3));
+    }
+    if (sparkBurst > 0 && Math.random() < 0.35) {
+      addSpark(cx, cy, mouseX, mouseY);
+      sparkBurst--;
+    }
 
     ctx.clearRect(0, 0, W, H);
 
@@ -236,18 +353,22 @@
       const mR    = (iR + oR) * .5;
       const bw    = oR - iR;
 
+      if (rd.ghost) ctx.globalAlpha = rd.brightens
+        ? 0.05 + Math.max(0, 1 - norm / 1.6) * 0.60   // dim at rest, lights up as cursor nears center
+        : 0.16;
+
       /* Wobbling center — 1-2 rings drift very slowly off-axis */
       const wcx = rd.wobble ? cx + Math.cos(rd.wobbleA) * rd.wobbleR * R : cx;
       const wcy = rd.wobble ? cy + Math.sin(rd.wobbleA) * rd.wobbleR * R : cy;
 
-      /* Outer border — per-ring decision, rough stroke */
+      /* Outer border — per-ring decision, deformed stroke */
       if (rd.outerBorder) {
-        roughArc(wcx, wcy, oR, rd.seed + 10, rd.rough * 0.7);
+        deformArc(wcx, wcy, oR, rd.seed + 10, rd.rough * 0.7, pullStr, mouseA);
         ctx.strokeStyle = C_RING_HI; ctx.lineWidth = 1.3; ctx.stroke();
       }
 
-      /* Inner border — rough stroke */
-      roughArc(wcx, wcy, iR, rd.seed, rd.rough);
+      /* Inner border — deformed stroke */
+      deformArc(wcx, wcy, iR, rd.seed, rd.rough, pullStr, mouseA);
       ctx.strokeStyle = C_RING; ctx.lineWidth = 0.9; ctx.stroke();
 
       /* Sectors */
@@ -269,7 +390,7 @@
         const ey   = wcy + Math.sin(midA) * mR;
 
         if (rd.eyeSet.has(s)) {
-          drawEye(ex, ey, Math.min(arcLen * 0.75, bw * 1.4), bw * 0.55, midA + Math.PI * 0.5);
+          drawEye(ex, ey, Math.min(arcLen * 0.75, bw * 1.4), bw * 0.55, midA + Math.PI * 0.5, C_GLYPH);
         } else {
           ctx.save();
           ctx.translate(ex, ey);
@@ -280,6 +401,7 @@
           ctx.restore();
         }
       }
+      if (rd.ghost) ctx.globalAlpha = 1.0;
     }
 
     /* ── Outer glyph ring — 3-4 bare characters + 1 eye ─────────── */
@@ -293,7 +415,7 @@
         const ex   = cx + Math.cos(midA) * mR;
         const ey   = cy + Math.sin(midA) * mR;
         if (s === 0) {
-          drawEye(ex, ey, sz * 1.8, sz * 0.9, midA + Math.PI * 0.5);
+          drawEye(ex, ey, sz * 1.8, sz * 0.9, midA + Math.PI * 0.5, C_GLYPH);
         } else {
           ctx.save();
           ctx.translate(ex, ey);
@@ -316,6 +438,58 @@
       ctx.strokeStyle = C_MAG;
       ctx.lineWidth   = 1.4;
       ctx.stroke();
+    }
+
+    /* ── Sparks ─────────────────────────────────────────────────── */
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const sp = sparks[i];
+      sp.life -= 0.07;
+      if (sp.life <= 0) { sparks.splice(i, 1); continue; }
+      const sr = (180 + colorT * 75) | 0, sg = (210 + colorT * 45) | 0;
+      ctx.lineCap = 'round';
+      // Main trunk
+      ctx.beginPath();
+      ctx.moveTo(sp.pts[0].x, sp.pts[0].y);
+      for (let j = 1; j < sp.pts.length; j++) ctx.lineTo(sp.pts[j].x, sp.pts[j].y);
+      ctx.strokeStyle = `rgba(${sr},${sg},255,${sp.life * 0.88})`;
+      ctx.lineWidth   = 1.2 + sp.life;
+      ctx.stroke();
+      // Branches — thinner, dimmer
+      for (const bPts of sp.branches) {
+        ctx.beginPath();
+        ctx.moveTo(bPts[0].x, bPts[0].y);
+        for (let j = 1; j < bPts.length; j++) ctx.lineTo(bPts[j].x, bPts[j].y);
+        ctx.strokeStyle = `rgba(${sr},${sg},255,${sp.life * 0.45})`;
+        ctx.lineWidth   = 0.6 + sp.life * 0.3;
+        ctx.stroke();
+      }
+    }
+
+    /* ── Impact glow + falling sparks at cursor hit ─────────── */
+    for (let i = impacts.length - 1; i >= 0; i--) {
+      const imp = impacts[i];
+      imp.life -= 0.055;
+      if (imp.life <= 0) { impacts.splice(i, 1); continue; }
+
+      // Hot radial glow
+      const glowR = 6 + (1 - imp.life) * 10;
+      const glow  = ctx.createRadialGradient(imp.x, imp.y, 0, imp.x, imp.y, glowR);
+      glow.addColorStop(0,   `rgba(255,220,100,${imp.life * 0.95})`);
+      glow.addColorStop(0.4, `rgba(255,80,20,${imp.life * 0.60})`);
+      glow.addColorStop(1,   'rgba(180,0,0,0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(imp.x, imp.y, glowR, 0, Math.PI * 2); ctx.fill();
+
+      // Falling particles with gravity
+      for (const p of imp.particles) {
+        p.vy += 0.14;
+        p.vx *= 0.95;
+        p.x  += p.vx;
+        p.y  += p.vy;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 1.3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,${100 + Math.random() * 120 | 0},20,${imp.life * 0.85})`;
+        ctx.fill();
+      }
     }
 
     /* ── Central flower-of-life ──────────────────────────────── */
