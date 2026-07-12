@@ -5,11 +5,10 @@ import ValueProp from '../sections/ValuePropV2.astro';
 import Projects from '../sections/Projects.astro';
 import TechStack from '../sections/TechStackV2.astro';
 import Career from '../sections/Career.astro';
-import Github from '../sections/Github.astro';
+// import Github from '../sections/Github.astro'; // hidden for now — component untouched
 import AiWorkflow from '../sections/AiWorkflow.astro';
 import Writing from '../sections/Writing.astro';
 import Standards from '../sections/Standards.astro';
-import Testimonials from '../sections/Testimonials.astro';
 import Contact from '../sections/Contact.astro';
 ---
 <BaseLayout>
@@ -18,10 +17,9 @@ import Contact from '../sections/Contact.astro';
   <Projects />
   <TechStack />
   <Career />
-  <Github />
+  {/* <Github /> — hidden for now, component untouched */}
   <AiWorkflow />
   <Writing />
   <Standards />
-  <Testimonials />
   <Contact />
 </BaseLayout>

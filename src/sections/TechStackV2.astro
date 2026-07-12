@@ -1,9 +1,9 @@
 ---
 const categories = [
-  { icon: 'memory',          label: 'Core / Lang',  chips: ['HTML5','CSS3','JavaScript','TypeScript','JSX / TSX','WebAssembly'] },
-  { icon: 'developer_board', label: 'Frameworks',   chips: ['React','Next.js','Astro','Vue','Svelte','Nuxt'] },
-  { icon: 'brush',           label: 'Styling / FX', chips: ['Tailwind','SCSS','GSAP','Framer Motion','Three.js','WebGL'] },
-  { icon: 'cloud',           label: 'Build / Ship', chips: ['Vite','ESBuild','Docker','AWS','Vercel','GitHub Actions'] },
+  { icon: 'memory',          label: 'Core / Lang',      chips: ['HTML5','CSS3','JavaScript','TypeScript','JSX / TSX','Vue 3'] },
+  { icon: 'developer_board', label: 'Frameworks / State', chips: ['React','Next.js','Astro','Zustand','React Query','Redux','GraphQL','REST','Supabase','WebSockets'] },
+  { icon: 'brush',           label: 'Styling / FX',     chips: ['Tailwind CSS','SCSS','Radix UI','GSAP','Framer Motion','Three.js','Canvas API'] },
+  { icon: 'cloud',           label: 'Quality / Tooling', chips: ['Jest','Vitest','React Testing Library','Cypress','Lighthouse','Web Vitals','Git','Vite','Vercel','ESLint','Prettier','CI/CD'] },
 ];
 ---
 
@@ -38,7 +38,7 @@ const categories = [
 
         <!-- Legend -->
         <div class="absolute top-3 right-3 z-10 pointer-events-none flex flex-col gap-1.5">
-          {[['#c0c1ff','Core · Styling · Build'],['#44e2cd','Framework · Deploy'],['#4edea3','3D · State / Data']].map(([c,l]) => (
+          {[['#c0c1ff','Core · Styling · Build'],['#44e2cd','Frameworks · State / Data'],['#4edea3','3D/Motion · Quality']].map(([c,l]) => (
             <span class="flex items-center gap-1.5 font-code-snippet text-[9px]" style={`color:${c}`}>
               <span class="w-1.5 h-1.5 rounded-full inline-block" style={`background:${c}`}></span>{l}
             </span>
@@ -193,38 +193,38 @@ const categories = [
       { label:'JavaScript',     c:P, p:[-10*SP,  1*SP,  3*SP] },
       { label:'TypeScript',     c:P, p:[-11*SP,  4*SP, -2*SP] },
       { label:'JSX / TSX',      c:P, p:[ -9*SP, -1*SP,  2*SP] },
-      { label:'WebAssembly',    c:P, p:[-12*SP, -5*SP,  2*SP] },
+      { label:'Radix UI',       c:P, p:[-12*SP, -5*SP,  2*SP] },
+      { label:'Tailwind CSS',   c:P, p:[ -7*SP, -5*SP,  0*SP] },
+      { label:'SCSS',           c:P, p:[ -4*SP, -7*SP,  1*SP] },
+      { label:'Git',            c:P, p:[ -8*SP, -3*SP, -2*SP] },
+      { label:'Vite',           c:P, p:[ 10*SP,  4*SP,  1*SP] },
+      { label:'ESLint',         c:P, p:[ 12*SP,  2*SP,  2*SP] },
+      { label:'Prettier',       c:P, p:[ 11*SP, -1*SP, -2*SP] },
+      { label:'Vercel',         c:P, p:[  9*SP,  0*SP,  3*SP] },
+      { label:'GitHub Actions', c:P, p:[ 13*SP, -3*SP,  1*SP] },
+      { label:'CI/CD',          c:P, p:[ 10*SP, -4*SP,  3*SP] },
       { label:'React',          c:S, p:[ -4*SP,  6*SP,  1*SP] },
       { label:'Next.js',        c:S, p:[ -2*SP,  8*SP, -1*SP] },
       { label:'Astro',          c:S, p:[ -5*SP,  3*SP,  4*SP] },
-      { label:'Vue',            c:S, p:[ -1*SP,  5*SP,  3*SP] },
-      { label:'Svelte',         c:S, p:[ -3*SP,  2*SP, -3*SP] },
-      { label:'Nuxt',           c:S, p:[  0*SP,  7*SP,  2*SP] },
-      { label:'Tailwind',       c:P, p:[ -7*SP, -5*SP,  0*SP] },
-      { label:'SCSS / SASS',    c:P, p:[ -4*SP, -7*SP,  1*SP] },
+      { label:'Vue 3',          c:S, p:[ -1*SP,  5*SP,  3*SP] },
+      { label:'Zustand',        c:S, p:[ -3*SP,  2*SP, -3*SP] },
+      { label:'React Query',    c:S, p:[  0*SP,  7*SP,  2*SP] },
       { label:'GSAP',           c:S, p:[ -5*SP, -3*SP,  4*SP] },
       { label:'Framer Motion',  c:S, p:[ -3*SP, -5*SP, -3*SP] },
-      { label:'CSS-in-JS',      c:P, p:[ -8*SP, -3*SP, -2*SP] },
+      { label:'Redux',          c:S, p:[ 16*SP,  3*SP,  0*SP] },
+      { label:'REST',           c:S, p:[ 18*SP,  1*SP, -1*SP] },
+      { label:'GraphQL',        c:S, p:[ 15*SP, -2*SP,  2*SP] },
+      { label:'Supabase',       c:S, p:[ 17*SP, -4*SP,  0*SP] },
+      { label:'WebSockets',     c:S, p:[ 19*SP, -1*SP,  3*SP] },
       { label:'Three.js',       c:T, p:[  0*SP,  0*SP,  6*SP] },
-      { label:'WebGL',          c:T, p:[  2*SP,  2*SP,  5*SP] },
+      { label:'PostgreSQL',     c:T, p:[  2*SP,  2*SP,  5*SP] },
       { label:'Canvas API',     c:T, p:[ -2*SP, -2*SP,  7*SP] },
-      { label:'Redux',          c:T, p:[  3*SP,  4*SP,  2*SP] },
-      { label:'Zustand',        c:T, p:[  5*SP,  1*SP, -2*SP] },
-      { label:'React Query',    c:T, p:[  2*SP, -3*SP,  1*SP] },
-      { label:'GraphQL',        c:T, p:[  6*SP, -1*SP,  3*SP] },
-      { label:'WebSocket',      c:T, p:[  4*SP,  3*SP, -4*SP] },
-      { label:'tRPC',           c:T, p:[  7*SP,  4*SP,  0*SP] },
-      { label:'Vite',           c:P, p:[ 10*SP,  4*SP,  1*SP] },
-      { label:'ESBuild',        c:P, p:[ 12*SP,  2*SP,  2*SP] },
-      { label:'Webpack',        c:P, p:[ 11*SP, -1*SP, -2*SP] },
-      { label:'ESLint',         c:P, p:[  9*SP,  0*SP,  3*SP] },
-      { label:'Vitest',         c:P, p:[ 13*SP, -3*SP,  1*SP] },
-      { label:'Playwright',     c:P, p:[ 10*SP, -4*SP,  3*SP] },
-      { label:'Docker',         c:S, p:[ 16*SP,  3*SP,  0*SP] },
-      { label:'AWS',            c:S, p:[ 18*SP,  1*SP, -1*SP] },
-      { label:'Vercel',         c:S, p:[ 15*SP, -2*SP,  2*SP] },
-      { label:'GitHub Actions', c:S, p:[ 17*SP, -4*SP,  0*SP] },
-      { label:'Nginx',          c:S, p:[ 19*SP, -1*SP,  3*SP] },
+      { label:'Jest',           c:T, p:[  3*SP,  4*SP,  2*SP] },
+      { label:'Vitest',         c:T, p:[  5*SP,  1*SP, -2*SP] },
+      { label:'React Testing Library', c:T, p:[  2*SP, -3*SP,  1*SP] },
+      { label:'Cypress',        c:T, p:[  6*SP, -1*SP,  3*SP] },
+      { label:'Lighthouse',     c:T, p:[  4*SP,  3*SP, -4*SP] },
+      { label:'Web Vitals',     c:T, p:[  7*SP,  4*SP,  0*SP] },
     ];
 
     // ── Stars ──────────────────────────────────────────────────────────────

@@ -1,58 +1,72 @@
 ---
 import BlobCard from '../components/BlobCard.astro';
 
-const bars = Array.from({ length: 32 }, () => ({
-  height: Math.floor(Math.random() * 60 + 10),
-  opacity: (Math.random() * 0.6 + 0.2).toFixed(2),
-}));
-const dotColors = ['#c0c1ff', '#44e2cd', '#4edea3'];
-
 const projects = [
   {
-    id: 0,
-    name: 'Quantum Dashboard',
-    chips: ['Live', 'WebGL', 'Data Viz'],
-    problem: 'Severe rendering lag during real-time ingestion of complex node graphs.',
-    approach: 'Custom WebGL shaders offloading matrix calculations to GPU.',
-    resultMetric: '60fps',
-    resultContext: '@ 100k nodes',
-    resultMetricClass: 'font-headline-md text-headline-md text-on-surface font-bold',
-    colSpan: 'md:col-span-8',
-    vizType: 'bars',
-    blobs: [
-      { color: 'bg-indigo-500/25', position: '-top-20 -left-16', size: 'w-80 h-80', blur: 'blur-[90px]', anim: 'a', dur: '14s' },
-      { color: 'bg-indigo-400/15', position: 'bottom-0 right-4',  size: 'w-52 h-52', blur: 'blur-[65px]', anim: 'b', dur: '9s', delay: '-4s' },
-    ],
+    name: 'The White Boutique',
+    icon: 'shopping_cart',
+    chips: ['Live', 'Next.js', 'Checkout'],
+    problem: 'Needed a full checkout journey — cart, order creation, address/map selection, live inventory — built from scratch for a Dubai e-commerce launch.',
+    approach: 'Next.js + TypeScript with Zustand cart state and real-time Supabase inventory sync; SSR/ISR product pages serving 50,000+ monthly pages.',
+    resultMetric: '95%+',
+    resultContext: 'checkout completion rate',
+    href: 'https://twb.ae',
     pattern: 'grid',
-    icon: 'query_stats',
-    problemAccent: 'secondary',
-    approachAccent: 'tertiary',
-    resultAccent: 'primary',
+    blobs: [
+      { color: 'bg-indigo-500/25', position: '-top-20 -left-16', size: 'w-72 h-72', blur: 'blur-[80px]', anim: 'a', dur: '14s' },
+      { color: 'bg-indigo-400/15', position: 'bottom-0 right-4',  size: 'w-48 h-48', blur: 'blur-[60px]', anim: 'b', dur: '9s', delay: '-4s' },
+    ],
   },
   {
-    id: 1,
-    name: 'Aurelius Commerce',
-    chips: ['Next.js', 'Edge'],
-    problem: 'Poor SEO and slow TTFB on a high-end headless storefront.',
-    approach: 'Re-architected routing using Next.js App Router with globally distributed Edge caching.',
-    resultMetric: '98/100',
-    resultContext: 'Lighthouse Score',
-    colSpan: 'md:col-span-4',
+    name: 'TWB Catering',
+    icon: 'event',
+    chips: ['Next.js', 'Supabase'],
+    problem: 'Event catering orders needed abandoned-checkout recovery, live quantity sync, and delivery slot booking.',
+    approach: 'Order creation and resume flow with map-based address selection, built on Next.js and Supabase.',
+    resultMetric: 'Live',
+    resultContext: 'in production',
+    href: 'https://twb.ae/catering',
+    pattern: 'lines',
     blobs: [
       { color: 'bg-teal-500/25', position: '-top-10 -right-10', size: 'w-56 h-56', blur: 'blur-[70px]', anim: 'b', dur: '11s' },
       { color: 'bg-teal-400/15', position: 'bottom-0 left-0',   size: 'w-40 h-40', blur: 'blur-[50px]', anim: 'c', dur: '8s', delay: '-3s' },
     ],
-    pattern: 'lines',
-    icon: 'shopping_cart',
-    problemAccent: 'secondary',
-    approachAccent: 'tertiary',
-    resultAccent: 'primary',
+  },
+  {
+    name: 'Xpensly',
+    icon: 'payments',
+    chips: ['Offline-first', 'Dexie.js'],
+    problem: 'Field usage needed reliable offline entry with sync once connectivity returned, plus support for new business types without code changes.',
+    approach: 'Next.js + Supabase/Postgres with a Dexie.js/IndexedDB offline-first sync queue and config-driven business-type schema.',
+    resultMetric: 'Zero',
+    resultContext: 'code changes to add a business type',
+    href: 'https://xpensly.vercel.app',
+    pattern: 'dots',
+    blobs: [
+      { color: 'bg-violet-500/20', position: '-top-16 -left-16', size: 'w-64 h-64', blur: 'blur-[75px]', anim: 'c', dur: '15s' },
+      { color: 'bg-violet-400/15', position: 'bottom-0 right-0', size: 'w-48 h-48', blur: 'blur-[55px]', anim: 'a', dur: '11s', delay: '-7s' },
+    ],
+  },
+  {
+    name: 'TWB Admin Panel',
+    icon: 'admin_panel_settings',
+    chips: ['React', 'Internal'],
+    problem: 'Ops team needed to edit live orders — catering items, packages, flowers — without touching the database directly.',
+    approach: 'Tabbed modal workflow for in-place add/replace/delete on live orders, plus category search and filtering.',
+    resultMetric: 'Internal',
+    resultContext: 'NDA — no public link',
+    href: null,
+    pattern: 'brackets',
+    blobs: [
+      { color: 'bg-blue-500/20', position: '-top-16 right-0', size: 'w-64 h-64', blur: 'blur-[75px]', anim: 'a', dur: '13s' },
+      { color: 'bg-blue-400/15', position: 'bottom-0 -left-8', size: 'w-48 h-48', blur: 'blur-[55px]', anim: 'b', dur: '9s', delay: '-4s' },
+    ],
   },
 ];
 ---
 
-<section id="projects" class="py-section-padding px-margin-mobile md:px-margin-desktop">
-  <div class="w-full max-w-container-max mx-auto">
+<section id="projects" class="py-section-padding overflow-hidden">
+  <div class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
 
     <!-- Header -->
     <header class="proj-header mb-16">
@@ -64,181 +78,213 @@ const projects = [
         <span class="text-secondary">//</span> <span data-cms="projects.sectionTitle">Featured Projects</span>
       </h2>
       <p data-cms="projects.sectionSubtitle" class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-        High-performance architectural solutions and technical case studies. Focusing on rendering optimization, edge infrastructure, and complex data parsing.
+        Production e-commerce and internal tooling — checkout architecture, multi-gateway payments, and offline-first data sync.
+      </p>
+      <p class="font-code-snippet text-code-snippet text-outline mt-4 hidden md:block">
+        &gt; scroll to slide · click a card for full details
       </p>
     </header>
+  </div>
 
-    <!-- Bento grid -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+  <!-- Horizontal slider: pinned + scroll-driven on desktop, native swipe on mobile -->
+  <div class="proj-pin relative">
+    <div class="proj-viewport w-full overflow-x-auto md:overflow-x-hidden pb-4 md:pb-0" style="scrollbar-width:thin">
+      <div class="proj-track flex gap-8 px-margin-mobile md:px-margin-desktop items-stretch" style="width:max-content">
+        {projects.map(p => (
+          <BlobCard
+            tag="div"
+            class="proj-card bento-card rounded-xl shrink-0 w-[82vw] sm:w-[420px] flex flex-col p-8 group relative cursor-pointer"
+            pattern={p.pattern}
+            blobs={p.blobs}
+            role="button"
+            tabindex="0"
+            aria-haspopup="dialog"
+            aria-label={`View details for ${p.name}`}
+            data-project={JSON.stringify(p)}
+          >
+            <div class="flex justify-between items-start mb-6">
+              <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-3xl">{p.icon}</span>
+              {p.href && (
+                <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface rounded flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span> Live
+                </span>
+              )}
+            </div>
 
-      <!-- Project 1: Quantum Dashboard — 8 cols (indigo) -->
-      <BlobCard
-        tag="article"
-        class="proj-card bento-card rounded-xl md:col-span-8 flex flex-col p-8 group relative"
-        pattern="grid"
-        blobs={[
-          { color: 'bg-indigo-500/25', position: '-top-20 -left-16', size: 'w-80 h-80', blur: 'blur-[90px]', anim: 'a', dur: '14s' },
-          { color: 'bg-indigo-400/15', position: 'bottom-0 right-4',  size: 'w-52 h-52', blur: 'blur-[65px]', anim: 'b', dur: '9s', delay: '-4s' },
-        ]}
-      >
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <h3 data-cms="projects.items.0.name" class="font-headline-md text-headline-md text-primary mb-2">Quantum Dashboard</h3>
-            <div class="flex gap-2 flex-wrap">
-              <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface rounded flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span> Live
+            <h3 class="font-headline-md text-headline-md text-primary mb-2">{p.name}</h3>
+            <div class="flex gap-2 flex-wrap mb-6">
+              {p.chips.map(c => (
+                <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">{c}</span>
+              ))}
+            </div>
+
+            <p class="font-body-md text-body-md text-on-surface-variant line-clamp-4 mb-6">{p.problem}</p>
+
+            <div class="mt-auto pt-6 border-t border-outline-variant/20 flex items-end justify-between">
+              <div>
+                <p class="font-headline-md text-headline-md text-on-surface font-bold">{p.resultMetric}</p>
+                <p class="font-body-md text-body-md text-on-surface-variant text-sm">{p.resultContext}</p>
+              </div>
+              <span class="font-code-snippet text-code-snippet text-secondary group-hover:text-primary transition-colors flex items-center gap-1 whitespace-nowrap">
+                VIEW_DETAILS <span class="material-symbols-outlined text-sm">arrow_forward</span>
               </span>
-              <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">WebGL</span>
-              <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">Data Viz</span>
             </div>
-          </div>
-          <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-3xl">query_stats</span>
-        </div>
-
-        <!-- Decorative data-viz -->
-        <div class="relative w-full h-56 bg-[#050505] rounded-lg mb-6 overflow-hidden border border-white/5">
-          <div class="proj-viz absolute inset-0 opacity-60"></div>
-          <div class="absolute top-4 left-4 flex gap-2">
-            {dotColors.map(c => (
-              <div class="w-2 h-2 rounded-full animate-pulse" style={`background:${c}`}></div>
-            ))}
-          </div>
-          <div class="absolute inset-x-6 bottom-6 flex items-end gap-1">
-            {bars.map(b => (
-              <div
-                class="flex-1 rounded-sm bg-primary min-w-0"
-                style={`height:${b.height}px;opacity:${b.opacity}`}
-              ></div>
-            ))}
-          </div>
-          <div class="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-[#050505] to-transparent"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-auto">
-          <div>
-            <h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-2">Problem</h4>
-            <p data-cms="projects.items.0.problem" class="font-body-md text-body-md text-on-surface-variant">Severe rendering lag during real-time ingestion of complex node graphs.</p>
-          </div>
-          <div>
-            <h4 class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mb-2">Approach</h4>
-            <p data-cms="projects.items.0.approach" class="font-body-md text-body-md text-on-surface-variant">Custom WebGL shaders offloading matrix calculations to GPU.</p>
-          </div>
-          <div>
-            <h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2">Result</h4>
-            <p class="font-headline-md text-headline-md text-on-surface font-bold">
-              <span data-cms="projects.items.0.resultMetric">60fps</span>
-              <span data-cms="projects.items.0.resultContext" class="font-body-md text-body-md text-on-surface-variant font-normal"> @ 100k nodes</span>
-            </p>
-          </div>
-        </div>
-      </BlobCard>
-
-      <!-- Project 2: Aurelius Commerce — 4 cols (teal) -->
-      <BlobCard
-        tag="article"
-        class="proj-card bento-card rounded-xl md:col-span-4 flex flex-col p-8 group relative"
-        pattern="lines"
-        blobs={[
-          { color: 'bg-teal-500/25', position: '-top-10 -right-10', size: 'w-56 h-56', blur: 'blur-[70px]', anim: 'b', dur: '11s' },
-          { color: 'bg-teal-400/15', position: 'bottom-0 left-0',   size: 'w-40 h-40', blur: 'blur-[50px]', anim: 'c', dur: '8s', delay: '-3s' },
-        ]}
-      >
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <h3 data-cms="projects.items.1.name" class="font-headline-md text-headline-md text-primary mb-2">Aurelius Commerce</h3>
-            <div class="flex gap-2 flex-wrap">
-              <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">Next.js</span>
-              <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">Edge</span>
-            </div>
-          </div>
-          <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-3xl">shopping_cart</span>
-        </div>
-
-        <div class="flex-grow flex flex-col justify-center gap-6 py-4">
-          <div>
-            <h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-2">Problem</h4>
-            <p data-cms="projects.items.1.problem" class="font-body-md text-body-md text-on-surface-variant">Poor SEO and slow TTFB on a high-end headless storefront.</p>
-          </div>
-          <div>
-            <h4 class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mb-2">Approach</h4>
-            <p data-cms="projects.items.1.approach" class="font-body-md text-body-md text-on-surface-variant">Re-architected routing using Next.js App Router with globally distributed Edge caching.</p>
-          </div>
-        </div>
-
-        <div class="mt-auto pt-6 border-t border-outline-variant/20">
-          <h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2">
-            <span data-cms="projects.items.1.resultContext">Lighthouse Score</span>
-          </h4>
-          <span data-cms="projects.items.1.resultMetric" class="font-headline-lg-mobile text-headline-lg-mobile text-secondary font-bold">98/100</span>
-        </div>
-      </BlobCard>
-
-      <!-- Project 3: Synthetix AI — full width (violet) -->
-      <BlobCard
-        tag="article"
-        class="proj-card bento-card rounded-xl md:col-span-12 flex flex-col md:flex-row p-8 group gap-8 relative"
-        pattern="dots"
-        blobs={[
-          { color: 'bg-violet-500/20', position: '-top-16 left-8',  size: 'w-80 h-80', blur: 'blur-[90px]', anim: 'c', dur: '15s' },
-          { color: 'bg-violet-400/15', position: 'top-8 right-16', size: 'w-72 h-72', blur: 'blur-[80px]', anim: 'a', dur: '11s', delay: '-7s' },
-        ]}
-      >
-        <div class="w-full md:w-1/3 flex flex-col">
-          <div class="mb-4">
-            <h3 data-cms="projects.items.2.name" class="font-headline-md text-headline-md text-primary mb-2">Synthetix AI</h3>
-            <div class="flex gap-2">
-              <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">AST</span>
-              <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">Parsers</span>
-            </div>
-          </div>
-          <p data-cms="projects.items.2.description" class="font-body-md text-body-md text-on-surface-variant mb-6">
-            A design-to-code pipeline automating UI handoff from Figma to production React.
-          </p>
-          <div class="mt-auto flex flex-col gap-4">
-            <div>
-              <h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-1">Problem</h4>
-              <p data-cms="projects.items.2.problem" class="font-body-md text-body-md text-on-surface-variant">Friction and inconsistency in manual implementation from design tokens.</p>
-            </div>
-            <div>
-              <h4 class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mb-1">Approach</h4>
-              <p data-cms="projects.items.2.approach" class="font-body-md text-body-md text-on-surface-variant">Custom AST parsers translating Figma JSON to semantic React + Tailwind components.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Code snippet viz -->
-        <div class="w-full md:w-2/3 relative rounded-lg overflow-hidden border border-white/5 bg-[#050505] min-h-[280px] flex items-center p-8">
-          <pre class="font-code-snippet text-code-snippet text-on-surface-variant/50 overflow-x-auto w-full leading-relaxed"><span class="text-secondary">const</span> <span class="text-primary">parser</span> = new <span class="text-tertiary">ASTNodeParser</span>({'{'}
-  target: <span class="text-secondary">'react-tailwind'</span>,
-  strictMode: <span class="text-tertiary">true</span>,
-{'}'});
-
-<span class="text-secondary">function</span> <span class="text-primary">transformNode</span>(node) {'{'}
-  <span class="text-secondary">if</span> (node.type === <span class="text-secondary">'FRAME'</span>) {'{'}
-    <span class="text-secondary">return</span> {'{'}
-      element: <span class="text-secondary">'div'</span>,
-      className: <span class="text-primary">generateTailwind</span>(node.style),
-    {'}'};
-  {'}'}
-{'}'}
-<span class="text-outline">// Result: 40% faster shipping.</span></pre>
-          <div class="absolute bottom-6 right-6 bg-surface-dim/90 backdrop-blur-sm px-6 py-4 rounded border border-primary/20">
-            <h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-1">Impact</h4>
-            <p class="font-headline-md text-headline-md text-on-surface">
-              <span data-cms="projects.items.2.resultMetric">40% Faster</span>
-              <span data-cms="projects.items.2.resultContext"> Shipping</span>
-            </p>
-          </div>
-        </div>
-      </BlobCard>
-
+          </BlobCard>
+        ))}
+      </div>
     </div>
   </div>
+
 </section>
 
+<!-- Project detail modal — content populated from the clicked card's data-project payload -->
+<div id="proj-modal" class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm hidden items-center justify-center p-4 md:p-8" role="dialog" aria-modal="true" aria-labelledby="pm-name">
+  <div class="bento-card rounded-xl max-w-2xl w-full p-8 md:p-10 relative max-h-[85vh] overflow-y-auto">
+    <button
+      id="proj-modal-close"
+      aria-label="Close"
+      class="absolute top-4 right-4 w-9 h-9 rounded-lg border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:border-outline-variant transition-colors"
+    >
+      <span class="material-symbols-outlined text-[18px]">close</span>
+    </button>
+
+    <div class="flex items-center gap-3 mb-2">
+      <span id="pm-icon" class="material-symbols-outlined text-3xl text-primary"></span>
+      <h3 id="pm-name" class="font-headline-md text-headline-md text-primary"></h3>
+    </div>
+    <div id="pm-chips" class="flex gap-2 flex-wrap mb-8"></div>
+
+    <div class="space-y-6">
+      <div>
+        <h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-2">Problem</h4>
+        <p id="pm-problem" class="font-body-md text-body-md text-on-surface-variant"></p>
+      </div>
+      <div>
+        <h4 class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mb-2">Approach</h4>
+        <p id="pm-approach" class="font-body-md text-body-md text-on-surface-variant"></p>
+      </div>
+      <div>
+        <h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2">Result</h4>
+        <p id="pm-result" class="font-headline-md text-headline-md text-on-surface font-bold"></p>
+      </div>
+    </div>
+
+    <a
+      id="pm-link"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-8 items-center gap-2 text-primary hover:text-secondary transition-colors font-code-snippet text-code-snippet"
+      style="display:none"
+    >
+      VIEW_LIVE <span class="material-symbols-outlined text-sm">arrow_forward</span>
+    </a>
+  </div>
+</div>
+
 <script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { fadeUp, staggerFadeUp } from '../scripts/animations.js';
 
   fadeUp('#projects .proj-header', '#projects');
-  staggerFadeUp('#projects .proj-card', '#projects .grid', { stagger: 0.15, start: 'top 75%' });
+  staggerFadeUp('#projects .proj-card', '#projects .proj-track', { start: 'top 85%' });
+
+  // ── Horizontal scroll-jack on desktop; native swipe/scroll on mobile ──────
+  ScrollTrigger.matchMedia({
+    '(min-width: 768px)': () => {
+      const pin      = document.querySelector<HTMLElement>('#projects .proj-pin');
+      const viewport = document.querySelector<HTMLElement>('#projects .proj-viewport');
+      const track    = document.querySelector<HTMLElement>('#projects .proj-track');
+      if (!pin || !viewport || !track) return;
+
+      const distance = track.scrollWidth - viewport.clientWidth;
+      if (distance <= 0) return;
+
+      const tween = gsap.to(track, {
+        x: -distance,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: pin,
+          start: 'top top',
+          end: () => `+=${distance}`,
+          scrub: 1,
+          pin: true,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      return () => tween.scrollTrigger?.kill();
+    },
+  });
+
+  // ── Project detail modal ───────────────────────────────────────────────
+  interface ProjectData {
+    name: string; icon: string; chips: string[];
+    problem: string; approach: string;
+    resultMetric: string; resultContext: string;
+    href: string | null;
+  }
+
+  const modal      = document.getElementById('proj-modal');
+  const modalPanel = modal?.firstElementChild as HTMLElement | null;
+  const modalClose = document.getElementById('proj-modal-close');
+  const els = {
+    icon:     document.getElementById('pm-icon'),
+    name:     document.getElementById('pm-name'),
+    chips:    document.getElementById('pm-chips'),
+    problem:  document.getElementById('pm-problem'),
+    approach: document.getElementById('pm-approach'),
+    result:   document.getElementById('pm-result'),
+    link:     document.getElementById('pm-link') as HTMLAnchorElement | null,
+  };
+
+  function openModal(data: ProjectData) {
+    if (!modal || !els.icon || !els.name || !els.chips || !els.problem || !els.approach || !els.result) return;
+
+    els.icon.textContent = data.icon;
+    els.name.textContent = data.name;
+    els.chips.innerHTML = '';
+    data.chips.forEach(c => {
+      const span = document.createElement('span');
+      span.className = 'px-3 py-1 rounded font-label-sm text-label-sm bg-[#171717] text-on-surface-variant border border-white/10';
+      span.textContent = c;
+      els.chips!.appendChild(span);
+    });
+    els.problem.textContent  = data.problem;
+    els.approach.textContent = data.approach;
+    els.result.textContent   = `${data.resultMetric} — ${data.resultContext}`;
+
+    if (data.href && els.link) {
+      els.link.href = data.href;
+      els.link.style.display = 'inline-flex';
+    } else if (els.link) {
+      els.link.style.display = 'none';
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    if (modalPanel) gsap.fromTo(modalPanel, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
+  }
+
+  function closeModal() {
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll<HTMLElement>('#projects .proj-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const data = JSON.parse(card.dataset.project || '{}') as ProjectData;
+      openModal(data);
+    });
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+    });
+  });
+
+  modalClose?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>

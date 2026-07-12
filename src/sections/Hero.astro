@@ -1,6 +1,11 @@
+---
+import ThinkRingV2 from './ThinkRingV2.astro';
+---
 <section id="hero" class="relative w-full h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-background">
 
-  <div class="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background z-0 pointer-events-none"></div>
+  <ThinkRingV2 />
+
+  <div class="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background z-[1] pointer-events-none"></div>
 
   <div class="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col justify-center h-full pt-20">
     <div class="max-w-4xl">

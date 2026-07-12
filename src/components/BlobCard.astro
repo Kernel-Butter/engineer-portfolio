@@ -25,6 +25,8 @@ interface Props {
   pattern?: 'grid' | 'lines' | 'dots' | 'brackets' | 'none';
   /** Blob definitions — each renders an animated, blurred, shape-morphing div */
   blobs?: BlobConfig[];
+  /** Any other attributes (role, tabindex, data-*, aria-*, etc.) are forwarded to the root element */
+  [key: string]: unknown;
 }
 
 const {
@@ -32,6 +34,7 @@ const {
   class: className = '',
   pattern = 'none',
   blobs = [],
+  ...rest
 } = Astro.props;
 
 function blobStyle(blob: BlobConfig): string {
@@ -42,7 +45,7 @@ function blobStyle(blob: BlobConfig): string {
 }
 ---
 
-<Tag class={className}>
+<Tag class={className} {...rest}>
   {pattern !== 'none' && (
     <div class={`blob-pattern-${pattern} absolute inset-0 rounded-[inherit] pointer-events-none`}></div>
   )}

@@ -5,7 +5,7 @@
 // Magnifier ovals orbit across the stack · flower-of-life center
 ---
 
-<div id="tr2-wrap" style="position:relative;width:100%;height:calc(100vh - 56px);overflow:hidden;background:#03030a;">
+<div id="tr2-wrap" style="position:absolute;inset:0;width:100%;height:100%;overflow:hidden;background:transparent;pointer-events:none;">
   <canvas id="tr2-canvas" style="display:block;width:100%;height:100%;"></canvas>
 </div>
 
@@ -125,7 +125,7 @@
   /* ── Mouse state ─────────────────────────────────────────────── */
   let mouseX = wrap.clientWidth  * 0.5;
   let mouseY = wrap.clientHeight * 0.5;
-  wrap.addEventListener('mousemove', (e: MouseEvent) => {
+  window.addEventListener('mousemove', (e: MouseEvent) => {
     const r = wrap.getBoundingClientRect();
     mouseX = e.clientX - r.left;
     mouseY = e.clientY - r.top;

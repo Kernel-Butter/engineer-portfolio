@@ -1,48 +1,5 @@
 ---
-const posts = [
-  {
-    span: 8,
-    tags: [
-      { label: 'WEBGL',       accent: true  },
-      { label: 'PERFORMANCE', accent: false },
-    ],
-    readTime: '8 MIN READ',
-    title: 'Optimizing Custom Shaders for Multi-Device Environments',
-    excerpt: 'A deep dive into managing precision qualifiers, varying limits, and texture bound constraints when deploying bespoke WebGL shaders across heterogeneous client hardware. We explore a robust fallback matrix strategy.',
-    cta: true,
-    radial: false,
-  },
-  {
-    span: 4,
-    tags: [{ label: 'TYPESCRIPT', accent: false }],
-    readTime: '5 MIN READ',
-    title: 'Type-Safe Event Buses in Distributed Architectures',
-    excerpt: 'Implementing strict compile-time checks for asynchronous messaging patterns across service boundaries.',
-    cta: false,
-    radial: true,
-  },
-  {
-    span: 4,
-    tags: [{ label: 'REACT', accent: false }],
-    readTime: '12 MIN READ',
-    title: 'Deconstructing Concurrent Mode',
-    excerpt: 'Understanding hydration boundaries and suspense mechanics for complex UI states.',
-    cta: false,
-    radial: false,
-  },
-  {
-    span: 8,
-    tags: [
-      { label: 'SYSTEM_DESIGN', accent: false },
-      { label: 'RUST',          accent: false },
-    ],
-    readTime: '15 MIN READ',
-    title: 'Building a Resilient Micro-Gateway with Rust',
-    excerpt: 'A post-mortem on replacing a Node.js API gateway with a Rust-based solution, focusing on memory safety, concurrency models, and the resulting reduction in latency percentiles during peak load.',
-    cta: true,
-    radial: false,
-  },
-];
+// TODO: replace with real posts once written — see conversation with Hamza (2026-07-12).
 ---
 
 <section id="writing" class="py-section-padding px-margin-mobile md:px-margin-desktop">
@@ -58,51 +15,16 @@ const posts = [
         LOG.FILES //
       </h2>
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-        Observations, architectural decisions, and deep dives into modern rendering pipelines and system design.
+        Write-ups on rendering pipelines, checkout architecture, and system design — coming soon.
       </p>
     </div>
 
-    <!-- Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
-      {posts.map(post => (
-        <article class={`wr-card glass-panel rounded-xl p-8 flex flex-col justify-between min-h-[320px] md:col-span-${post.span} cursor-pointer group relative overflow-hidden`}>
-
-          {post.radial && (
-            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,#c0c1ff,transparent_60%)] pointer-events-none"></div>
-          )}
-
-          <div class="relative z-10 flex flex-col gap-4 flex-grow">
-            <div class="flex items-center justify-between w-full flex-wrap gap-2">
-              <div class="flex gap-2 flex-wrap">
-                {post.tags.map(tag => (
-                  <span class={`bg-surface-container-highest px-3 py-1 rounded font-label-sm text-label-sm flex items-center gap-1.5 ${tag.accent ? 'text-secondary' : 'text-on-surface-variant'}`}>
-                    {tag.accent && <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>}
-                    {tag.label}
-                  </span>
-                ))}
-              </div>
-              <span class="font-code-snippet text-code-snippet text-outline flex items-center gap-1">
-                <span class="material-symbols-outlined text-[16px]">schedule</span>
-                {post.readTime}
-              </span>
-            </div>
-
-            <h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors duration-300 mt-2">
-              {post.title}
-            </h3>
-
-            <p class="font-body-md text-body-md text-on-surface-variant line-clamp-3 mt-auto">
-              {post.excerpt}
-            </p>
-          </div>
-
-          {post.cta && (
-            <div class="relative z-10 mt-8 flex items-center text-tertiary font-code-snippet text-code-snippet opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-              READ_FILE <span class="material-symbols-outlined ml-1 text-[18px]">arrow_forward</span>
-            </div>
-          )}
-        </article>
-      ))}
+    <!-- Empty state -->
+    <div class="wr-card glass-panel rounded-xl p-12 flex flex-col items-center justify-center text-center gap-4 min-h-[200px]">
+      <span class="material-symbols-outlined text-outline-variant text-4xl">draft</span>
+      <p class="font-code-snippet text-code-snippet text-on-surface-variant">
+        &gt; No entries logged yet. First write-up in progress.
+      </p>
     </div>
 
   </div>
@@ -112,5 +34,5 @@ const posts = [
   import { fadeUp, staggerFadeUp } from '../scripts/animations.js';
 
   fadeUp('#writing .wr-header', '#writing');
-  staggerFadeUp('#writing .wr-card', '#writing .grid');
+  staggerFadeUp('#writing .wr-card', '#writing');
 </script>

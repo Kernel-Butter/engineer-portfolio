@@ -1,14 +1,14 @@
 ---
 const vitals = [
-  { label: 'LCP', full: 'Largest Contentful Paint', value: '0.8', unit: 's',  pct: '25' },
-  { label: 'FID', full: 'First Input Delay',         value: '12',  unit: 'ms', pct: '8'  },
-  { label: 'CLS', full: 'Cumulative Layout Shift',   value: '0.00',unit: '',   pct: '0'  },
+  { label: 'LCP', full: 'Largest Contentful Paint', note: 'Checked before ship' },
+  { label: 'INP', full: 'Interaction to Next Paint', note: 'Checked before ship' },
+  { label: 'CLS', full: 'Cumulative Layout Shift',   note: 'Checked before ship' },
 ];
 
 const a11yRows = [
-  { key: 'Standard',       val: 'WCAG 2.1 AA+' },
-  { key: 'Contrast Ratio', val: '> 7:1'        },
-  { key: 'Aria Tags',      val: 'Validated'    },
+  { key: 'Target',   val: 'WCAG 2.1 AA' },
+  { key: 'Markup',   val: 'Semantic HTML' },
+  { key: 'Nav',      val: 'Keyboard-navigable' },
 ];
 ---
 
@@ -19,13 +19,13 @@ const a11yRows = [
     <div class="std-header flex flex-col gap-4">
       <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-sm border border-outline-variant/30 self-start">
         <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-        <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">SYSTEM STATUS: OPTIMAL</span>
+        <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">HOW I WORK</span>
       </div>
       <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">
-        Performance &amp; Engineering Standards
+        Engineering Standards
       </h2>
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-        Real-time telemetry of underlying infrastructure. Strict adherence to modern web standards, zero-tolerance policy for technical debt.
+        Practices I hold consistently across projects — not live telemetry, just what I actually do before something ships.
       </p>
     </div>
 
@@ -40,11 +40,11 @@ const a11yRows = [
             <h3 class="font-headline-md text-headline-md">Lighthouse</h3>
           </div>
           <p class="font-code-snippet text-code-snippet text-on-surface-variant">
-            Perfect scores across Performance, Accessibility, Best Practices, and SEO.
-            Rendered securely via CI/CD pipelines.
+            Maintained 90%+ Google Lighthouse scores across client projects through
+            systematic Web Vitals monitoring and optimization.
           </p>
           <div class="flex flex-wrap gap-2 pt-4">
-            {['PERF: 100', 'A11Y: 100', 'SEO: 100'].map(chip => (
+            {['WEB VITALS MONITORED', 'SYSTEMATIC OPTIMIZATION'].map(chip => (
               <span class="px-2 py-1 bg-surface-container rounded text-tertiary font-label-sm text-label-sm">{chip}</span>
             ))}
           </div>
@@ -66,7 +66,9 @@ const a11yRows = [
             />
           </svg>
           <div class="absolute inset-0 flex items-center justify-center flex-col">
-            <span id="lh-counter" class="font-headline-lg text-headline-lg text-white">0</span>
+            <span class="flex items-baseline">
+              <span id="lh-counter" class="font-headline-lg text-headline-lg text-white">0</span><span class="font-headline-lg text-headline-lg text-white">%+</span>
+            </span>
           </div>
         </div>
       </div>
@@ -79,16 +81,9 @@ const a11yRows = [
         </div>
         <div>
           <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Type Coverage</h3>
-          <div class="flex items-end gap-2 mb-4">
-            <span class="font-headline-lg text-headline-lg text-primary">100</span>
-            <span class="font-code-snippet text-code-snippet text-on-surface-variant mb-2">%</span>
-          </div>
-          <div class="w-full h-1 bg-surface-container rounded-full overflow-hidden">
-            <div id="type-bar" class="h-full bg-primary w-0 rounded-full"
-                 style="box-shadow:0 0 10px rgba(192,193,255,0.5)"></div>
-          </div>
-          <p class="font-code-snippet text-code-snippet text-on-surface-variant mt-4 text-xs">
-            TypeScript absolute coverage. No implicit any.
+          <p class="font-headline-md text-headline-md text-primary mb-2">Strict Mode</p>
+          <p class="font-code-snippet text-code-snippet text-on-surface-variant mt-2 text-xs">
+            TypeScript strict mode, no implicit any, on every project.
           </p>
         </div>
       </div>
@@ -117,29 +112,20 @@ const a11yRows = [
           <h3 class="font-headline-md text-headline-md">Core Web Vitals</h3>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {vitals.map((v, i) => (
+          {vitals.map(v => (
             <div class="bg-surface-container-low border border-white/5 rounded-lg p-4">
               <div class="font-label-sm text-label-sm text-on-surface-variant mb-1">
-                {v.label} ({v.full})
+                {v.label}
               </div>
-              <div class="flex items-end gap-1">
-                <span class="font-headline-md text-headline-md text-tertiary">{v.value}</span>
-                {v.unit && <span class="font-code-snippet text-code-snippet text-on-surface-variant mb-1">{v.unit}</span>}
-              </div>
-              <div class="w-full h-0.5 bg-white/10 mt-2 rounded overflow-hidden">
-                <div
-                  class="cwv-bar h-full bg-tertiary rounded"
-                  data-pct={v.pct}
-                  style="width:0%"
-                ></div>
-              </div>
+              <div class="font-code-snippet text-code-snippet text-outline mb-2">{v.full}</div>
+              <span class="font-code-snippet text-code-snippet text-tertiary">{v.note}</span>
             </div>
           ))}
         </div>
         <div class="mt-6 flex items-center gap-2">
           <span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
           <span class="font-code-snippet text-code-snippet text-on-surface-variant text-xs">
-            All metrics passing Core Web Vitals assessment
+            Checked as part of every feature, not just measured after the fact
           </span>
         </div>
       </div>
@@ -151,25 +137,23 @@ const a11yRows = [
 <script>
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  import { fadeUp, staggerFadeUp, animateGauge, countUp, animateBar } from '../scripts/animations.js';
+  import { fadeUp, staggerFadeUp, countUp } from '../scripts/animations.js';
 
   fadeUp('#standards .std-header', '#standards');
   staggerFadeUp('#standards .std-card', '#standards .grid');
 
+  // Circle circumference (r=45) is 282.7 — offset for 90% fill is 282.7 * 0.1
+  const LH_SCORE = 90;
+  const LH_OFFSET = 282.7 * (1 - LH_SCORE / 100);
+
   function playMetrics() {
-    gsap.killTweensOf('#lh-arc, #type-bar, #standards .cwv-bar');
+    gsap.killTweensOf('#lh-arc');
     gsap.set('#lh-arc', { strokeDashoffset: 282.7 });
     const counter = document.getElementById('lh-counter');
     if (counter) counter.textContent = '0';
-    gsap.set('#type-bar', { width: '0%' });
-    gsap.set('#standards .cwv-bar', { width: '0%' });
 
-    animateGauge('lh-arc');
-    countUp('lh-counter', 100);
-    animateBar('#type-bar', 100, { delay: 0.3 });
-    document.querySelectorAll<HTMLElement>('#standards .cwv-bar').forEach((bar, i) => {
-      animateBar(bar, Number(bar.dataset.pct), { duration: 1, delay: 0.2 + i * 0.1 });
-    });
+    gsap.to('#lh-arc', { strokeDashoffset: LH_OFFSET, duration: 1.4, ease: 'power2.out' });
+    countUp('lh-counter', LH_SCORE);
   }
 
   ScrollTrigger.create({
