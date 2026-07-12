@@ -22,20 +22,46 @@ import { PROJECTS } from '../../data/projects.js';
     </p>
   </div>
 
+  <!-- SVG goo filter — blurs the indicator + dots then boosts contrast, so
+       overlapping circles visually merge into one liquid blob instead of
+       just crossing over each other. Classic "gooey nav" technique. -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <filter id="rail-goo">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" result="goo" />
+        <feBlend in="SourceGraphic" in2="goo" />
+      </filter>
+    </defs>
+  </svg>
+
   <!-- Jump-to rail -->
-  <nav id="reel-rail" class="hidden lg:flex flex-col gap-4 fixed right-6 top-1/2 -translate-y-1/2 z-40">
-    {PROJECTS.map((p, i) => (
-      <button
-        class="rail-dot group relative flex items-center justify-end"
-        data-target={`reel-${i}`}
-        aria-label={`Jump to ${p.name}`}
-      >
-        <span class="rail-label absolute right-6 whitespace-nowrap font-code-snippet text-code-snippet text-white/70 bg-black/70 px-2 py-1 rounded opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none">
-          {p.name}
-        </span>
-        <span class="dot block w-2 h-2 rounded-full bg-white/25 transition-all"></span>
-      </button>
-    ))}
+  <nav id="reel-rail" class="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 z-40">
+    <div class="relative flex flex-col gap-4">
+
+      <!-- Goo layer: purely visual — the indicator + dots that actually
+           render and merge. Positioned to exactly overlap the buttons
+           below via identical flex/gap layout. -->
+      <div class="rail-goo absolute inset-0 flex flex-col gap-4 pointer-events-none" style="filter:url(#rail-goo)" aria-hidden="true">
+        <span id="rail-indicator" class="absolute right-0 w-2.5 h-2.5 rounded-full bg-primary"></span>
+        {PROJECTS.map((_, i) => (
+          <span class="dot block w-2 h-2 rounded-full bg-white/40" data-dot-index={i}></span>
+        ))}
+      </div>
+
+      <!-- Interactive layer: transparent hit targets + hover labels, same size/gap as the dots above -->
+      {PROJECTS.map((p, i) => (
+        <button
+          class="rail-dot group relative w-2 h-2"
+          data-target={`reel-${i}`}
+          aria-label={`Jump to ${p.name}`}
+        >
+          <span class="rail-label absolute right-6 top-1/2 -translate-y-1/2 whitespace-nowrap font-code-snippet text-code-snippet text-white/70 bg-black/70 px-2 py-1 rounded opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none">
+            {p.name}
+          </span>
+        </button>
+      ))}
+    </div>
   </nav>
 
   <!-- Immersive project reels -->
@@ -130,10 +156,8 @@ import { PROJECTS } from '../../data/projects.js';
     text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
   }
 
-  #reel-rail .rail-dot.active .dot {
-    background: rgba(192, 193, 255, 0.9);
-    box-shadow: 0 0 8px rgba(192, 193, 255, 0.7);
-    transform: scale(1.4);
+  #reel-rail .dot.active {
+    background: rgba(255, 255, 255, 0.9);
   }
 </style>
 
@@ -209,21 +233,45 @@ import { PROJECTS } from '../../data/projects.js';
     );
   });
 
-  // Jump-to rail: highlight the active project + smooth-scroll via Lenis
-  const dots = document.querySelectorAll<HTMLElement>('#reel-rail .rail-dot');
+  // Jump-to rail: fluid indicator slides from dot to dot via GSAP, merging
+  // into whichever dot it passes near thanks to the goo filter — as the
+  // active project changes, instead of each dot instantly snapping state.
+  const rail       = document.getElementById('reel-rail');
+  const buttons    = document.querySelectorAll<HTMLElement>('#reel-rail .rail-dot');
+  const visualDots = document.querySelectorAll<HTMLElement>('#reel-rail .rail-goo .dot');
+  const indicator  = document.getElementById('rail-indicator');
+
+  function moveIndicatorTo(index: number, instant = false) {
+    if (!indicator || !rail) return;
+    const railDot = visualDots[index];
+    if (!railDot) return;
+    // Measure against the rail's own box via getBoundingClientRect rather
+    // than offsetTop, since the goo layer and buttons are separate stacked
+    // elements, not nested — no shared offsetParent to rely on.
+    const railRect = rail.getBoundingClientRect();
+    const dotRect  = railDot.getBoundingClientRect();
+    const top = dotRect.top - railRect.top + dotRect.height / 2 - indicator.offsetHeight / 2;
+    if (instant) gsap.set(indicator, { top });
+    else gsap.to(indicator, { top, duration: 0.6, ease: 'power3.out' });
+  }
+
   const activeIO = new IntersectionObserver(
     entries => {
       entries.forEach(entry => {
-        const dot = document.querySelector(`.rail-dot[data-target="${entry.target.id}"]`);
-        if (!dot) return;
-        if (entry.isIntersecting) dots.forEach(d => d.classList.toggle('active', d === dot));
+        const index = Array.from(buttons).findIndex(b => b.dataset.target === entry.target.id);
+        if (index === -1 || !entry.isIntersecting) return;
+        visualDots.forEach((d, i) => d.classList.toggle('active', i === index));
+        moveIndicatorTo(index);
       });
     },
     { threshold: 0.5 }
   );
   items.forEach(item => activeIO.observe(item));
 
-  dots.forEach(dot => {
+  // Place the indicator on the first dot immediately, no slide-in from nowhere
+  moveIndicatorTo(0, true);
+
+  buttons.forEach(dot => {
     dot.addEventListener('click', () => {
       const target = document.getElementById(dot.dataset.target ?? '');
       if (!target) return;

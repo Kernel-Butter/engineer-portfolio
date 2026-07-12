@@ -140,9 +140,13 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
           .to({},      { duration: 0.28 })
           .to(overlay, { opacity: 0, duration: 0.30, ease: 'power2.out' });
 
-        /* fromTo only sets y:32 at tween-start — overlay is still opaque then */
+        /* fromTo only sets y:32 at tween-start — overlay is still opaque then.
+           clearProps strips the inline transform once settled — otherwise it
+           lingers at translate3d(0,0,0) and creates a new containing block,
+           breaking position:fixed for any descendant (e.g. a fixed nav rail)
+           on every page reached via a client-side transition. */
         if (main) {
-          tl.fromTo(main, { y: 32 }, { y: 0, duration: 0.36, ease: 'power3.out' }, '<+=0.06');
+          tl.fromTo(main, { y: 32 }, { y: 0, duration: 0.36, ease: 'power3.out', clearProps: 'transform' }, '<+=0.06');
         }
       }
 
