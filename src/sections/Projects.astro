@@ -1,77 +1,15 @@
 ---
-import BlobCard from '../components/BlobCard.astro';
+import { PROJECTS } from '../data/projects.js';
 
-const projects = [
-  {
-    name: 'The White Boutique',
-    icon: 'shopping_cart',
-    chips: ['Live', 'Next.js', 'Checkout'],
-    problem: 'Needed a full checkout journey — cart, order creation, address/map selection, live inventory — built from scratch for a Dubai e-commerce launch.',
-    approach: 'Next.js + TypeScript with Zustand cart state and real-time Supabase inventory sync; SSR/ISR product pages serving 50,000+ monthly pages.',
-    resultMetric: '95%+',
-    resultContext: 'checkout completion rate',
-    href: 'https://twb.ae',
-    pattern: 'grid',
-    blobs: [
-      { color: 'bg-indigo-500/25', position: '-top-20 -left-16', size: 'w-72 h-72', blur: 'blur-[80px]', anim: 'a', dur: '14s' },
-      { color: 'bg-indigo-400/15', position: 'bottom-0 right-4',  size: 'w-48 h-48', blur: 'blur-[60px]', anim: 'b', dur: '9s', delay: '-4s' },
-    ],
-  },
-  {
-    name: 'TWB Catering',
-    icon: 'event',
-    chips: ['Next.js', 'Supabase'],
-    problem: 'Event catering orders needed abandoned-checkout recovery, live quantity sync, and delivery slot booking.',
-    approach: 'Order creation and resume flow with map-based address selection, built on Next.js and Supabase.',
-    resultMetric: 'Live',
-    resultContext: 'in production',
-    href: 'https://twb.ae/catering',
-    pattern: 'lines',
-    blobs: [
-      { color: 'bg-teal-500/25', position: '-top-10 -right-10', size: 'w-56 h-56', blur: 'blur-[70px]', anim: 'b', dur: '11s' },
-      { color: 'bg-teal-400/15', position: 'bottom-0 left-0',   size: 'w-40 h-40', blur: 'blur-[50px]', anim: 'c', dur: '8s', delay: '-3s' },
-    ],
-  },
-  {
-    name: 'Xpensly',
-    icon: 'payments',
-    chips: ['Offline-first', 'Dexie.js'],
-    problem: 'Field usage needed reliable offline entry with sync once connectivity returned, plus support for new business types without code changes.',
-    approach: 'Next.js + Supabase/Postgres with a Dexie.js/IndexedDB offline-first sync queue and config-driven business-type schema.',
-    resultMetric: 'Zero',
-    resultContext: 'code changes to add a business type',
-    href: 'https://xpensly.vercel.app',
-    pattern: 'dots',
-    blobs: [
-      { color: 'bg-violet-500/20', position: '-top-16 -left-16', size: 'w-64 h-64', blur: 'blur-[75px]', anim: 'c', dur: '15s' },
-      { color: 'bg-violet-400/15', position: 'bottom-0 right-0', size: 'w-48 h-48', blur: 'blur-[55px]', anim: 'a', dur: '11s', delay: '-7s' },
-    ],
-  },
-  {
-    name: 'TWB Admin Panel',
-    icon: 'admin_panel_settings',
-    chips: ['React', 'Internal'],
-    problem: 'Ops team needed to edit live orders — catering items, packages, flowers — without touching the database directly.',
-    approach: 'Tabbed modal workflow for in-place add/replace/delete on live orders, plus category search and filtering.',
-    resultMetric: 'Internal',
-    resultContext: 'NDA — no public link',
-    href: null,
-    pattern: 'brackets',
-    blobs: [
-      { color: 'bg-blue-500/20', position: '-top-16 right-0', size: 'w-64 h-64', blur: 'blur-[75px]', anim: 'a', dur: '13s' },
-      { color: 'bg-blue-400/15', position: 'bottom-0 -left-8', size: 'w-48 h-48', blur: 'blur-[55px]', anim: 'b', dur: '9s', delay: '-4s' },
-    ],
-  },
-];
+// Homepage teaser: hand-picked for visual strength — real photography,
+// not the login-wall (Xpensly) or image-less NDA card (TWB Admin).
+// The full set (including those two) still lives on /projects.
+const TEASER_SLUGS = ['twb-catering', 'ware-malcomb', 'yoo-interior', 'septiembre-arquitectura'];
+const projects = TEASER_SLUGS.map(slug => PROJECTS.find(p => p.slug === slug)).filter(Boolean);
 ---
 
-<style>
-  #projects .proj-viewport::-webkit-scrollbar { display: none; }
-  #projects .proj-viewport.dragging { cursor: grabbing; scroll-snap-type: none; }
-</style>
-
-<section id="projects" class="py-section-padding overflow-hidden">
-  <div class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<section id="projects" class="py-section-padding px-margin-mobile md:px-margin-desktop">
+  <div class="w-full max-w-container-max mx-auto">
 
     <!-- Header -->
     <header class="proj-header mb-16">
@@ -85,239 +23,92 @@ const projects = [
       <p data-cms="projects.sectionSubtitle" class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
         Production e-commerce and internal tooling — checkout architecture, multi-gateway payments, and offline-first data sync.
       </p>
-      <div class="flex items-center justify-between mt-4">
-        <p class="font-code-snippet text-code-snippet text-outline">
-          &gt; drag or use arrows to explore · click a card for full details
-        </p>
-        <div class="hidden md:flex items-center gap-2">
-          <button id="proj-prev" aria-label="Previous project" class="w-10 h-10 rounded-lg border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary/40 transition-colors">
-            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-          </button>
-          <button id="proj-next" aria-label="Next project" class="w-10 h-10 rounded-lg border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary/40 transition-colors">
-            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-          </button>
-        </div>
-      </div>
     </header>
-  </div>
 
-  <!-- Horizontal carousel: drag/swipe + scroll-snap, no scroll-hijacking -->
-  <div class="proj-viewport w-full overflow-x-auto pb-4" style="scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x proximity;cursor:grab;">
-      <div class="proj-track flex gap-8 px-margin-mobile md:px-margin-desktop items-stretch" style="width:max-content">
-        {projects.map(p => (
-          <BlobCard
-            tag="div"
-            class="proj-card bento-card rounded-xl shrink-0 w-[82vw] sm:w-[420px] flex flex-col p-8 group relative cursor-pointer"
-            style="scroll-snap-align:start"
-            pattern={p.pattern}
-            blobs={p.blobs}
-            role="button"
-            tabindex="0"
-            aria-haspopup="dialog"
-            aria-label={`View details for ${p.name}`}
-            data-project={JSON.stringify(p)}
-          >
-            <div class="flex justify-between items-start mb-6">
-              <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-3xl">{p.icon}</span>
-              {p.href && (
-                <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface rounded flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span> Live
-                </span>
+    <!-- Case studies -->
+    <div class="flex flex-col">
+      {projects.map((p, i) => (
+        <article class="proj-row grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-center py-14 md:py-20 border-b border-outline-variant/10 last:border-0">
+
+          <!-- Screenshot / placeholder -->
+          <div class={`md:col-span-7 ${i % 2 === 1 ? 'md:order-2' : ''}`}>
+            <div class="rounded-xl overflow-hidden border border-outline-variant/20 shadow-2xl bg-surface-container-lowest">
+              <div class="flex items-center gap-1.5 px-4 py-3 bg-[#111214]">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></span>
+              </div>
+              {p.image ? (
+                <img src={p.image} alt={`${p.name} screenshot`} loading="lazy" class="w-full h-auto block" />
+              ) : (
+                <div class="aspect-[16/10] flex flex-col items-center justify-center gap-3 bg-surface-container text-on-surface-variant">
+                  <span class="material-symbols-outlined text-4xl opacity-40">lock</span>
+                  <p class="font-code-snippet text-code-snippet text-xs opacity-60 text-center px-6">Internal tool — NDA, no public link</p>
+                </div>
               )}
             </div>
+          </div>
 
-            <h3 class="font-headline-md text-headline-md text-primary mb-2">{p.name}</h3>
+          <!-- Copy -->
+          <div class={`md:col-span-5 ${i % 2 === 1 ? 'md:order-1' : ''}`}>
+            <span class="font-code-snippet text-code-snippet text-secondary">0{i + 1} //</span>
+            <h3 class="font-headline-md text-headline-md text-primary mt-2 mb-3">{p.name}</h3>
+
             <div class="flex gap-2 flex-wrap mb-6">
-              {p.chips.map(c => (
-                <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">{c}</span>
+              {p.tech.slice(0, 3).map(t => (
+                <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">{t}</span>
               ))}
             </div>
 
-            <p class="font-body-md text-body-md text-on-surface-variant line-clamp-4 mb-6">{p.problem}</p>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-6">{p.description}</p>
 
-            <div class="mt-auto pt-6 border-t border-outline-variant/20 flex items-end justify-between">
-              <div>
-                <p class="font-headline-md text-headline-md text-on-surface font-bold">{p.resultMetric}</p>
-                <p class="font-body-md text-body-md text-on-surface-variant text-sm">{p.resultContext}</p>
-              </div>
-              <span class="font-code-snippet text-code-snippet text-secondary group-hover:text-primary transition-colors flex items-center gap-1 whitespace-nowrap">
-                VIEW_DETAILS <span class="material-symbols-outlined text-sm">arrow_forward</span>
-              </span>
+            <div class="mt-6 pt-6 border-t border-outline-variant/20 flex items-center justify-between gap-4">
+              <span class="font-code-snippet text-code-snippet text-outline">{p.category}</span>
+              {p.href ? (
+                <a href={p.href} target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-secondary hover:text-primary transition-colors flex items-center gap-1 whitespace-nowrap">
+                  VIEW_LIVE <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+              ) : (
+                <span class="font-code-snippet text-code-snippet text-outline whitespace-nowrap">NDA — no link</span>
+              )}
             </div>
-          </BlobCard>
-        ))}
-      </div>
-  </div>
+          </div>
 
+        </article>
+      ))}
+    </div>
+
+    <!-- View all -->
+    <div class="proj-cta flex justify-center mt-16">
+      <a
+        href="/projects"
+        class="px-8 py-4 border border-primary/30 text-primary font-code-snippet text-code-snippet rounded hover:bg-primary/10 hover:border-primary/50 transition-colors flex items-center gap-2"
+      >
+        VIEW_ALL_PROJECTS <span class="material-symbols-outlined text-sm">arrow_forward</span>
+      </a>
+    </div>
+
+  </div>
 </section>
 
-<!-- Project detail modal — content populated from the clicked card's data-project payload -->
-<div id="proj-modal" class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm hidden items-center justify-center p-4 md:p-8" role="dialog" aria-modal="true" aria-labelledby="pm-name">
-  <div class="bento-card rounded-xl max-w-2xl w-full p-8 md:p-10 relative max-h-[85vh] overflow-y-auto">
-    <button
-      id="proj-modal-close"
-      aria-label="Close"
-      class="absolute top-4 right-4 w-9 h-9 rounded-lg border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:border-outline-variant transition-colors"
-    >
-      <span class="material-symbols-outlined text-[18px]">close</span>
-    </button>
-
-    <div class="flex items-center gap-3 mb-2">
-      <span id="pm-icon" class="material-symbols-outlined text-3xl text-primary"></span>
-      <h3 id="pm-name" class="font-headline-md text-headline-md text-primary"></h3>
-    </div>
-    <div id="pm-chips" class="flex gap-2 flex-wrap mb-8"></div>
-
-    <div class="space-y-6">
-      <div>
-        <h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-2">Problem</h4>
-        <p id="pm-problem" class="font-body-md text-body-md text-on-surface-variant"></p>
-      </div>
-      <div>
-        <h4 class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mb-2">Approach</h4>
-        <p id="pm-approach" class="font-body-md text-body-md text-on-surface-variant"></p>
-      </div>
-      <div>
-        <h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-2">Result</h4>
-        <p id="pm-result" class="font-headline-md text-headline-md text-on-surface font-bold"></p>
-      </div>
-    </div>
-
-    <a
-      id="pm-link"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="mt-8 items-center gap-2 text-primary hover:text-secondary transition-colors font-code-snippet text-code-snippet"
-      style="display:none"
-    >
-      VIEW_LIVE <span class="material-symbols-outlined text-sm">arrow_forward</span>
-    </a>
-  </div>
-</div>
+<style>
+  #projects .proj-header,
+  #projects .proj-row,
+  #projects .proj-cta {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+</style>
 
 <script>
-  import { fadeUp, staggerFadeUp } from '../scripts/animations.js';
+  import { fadeUp } from '../scripts/animations.js';
 
   fadeUp('#projects .proj-header', '#projects');
-  staggerFadeUp('#projects .proj-card', '#projects .proj-track', { start: 'top 85%' });
 
-  // ── Horizontal carousel — native scroll-snap, drag-to-scroll, arrow buttons ──
-  // No vertical-scroll hijacking: works the same on mobile (native swipe) and
-  // desktop (drag or arrow buttons), and never fights the site's Lenis smooth scroll.
-  const viewport = document.querySelector<HTMLElement>('#projects .proj-viewport');
-  const track    = document.querySelector<HTMLElement>('#projects .proj-track');
-  const prevBtn  = document.getElementById('proj-prev');
-  const nextBtn  = document.getElementById('proj-next');
-
-  let isDragging = false;
-  let dragMoved  = false;
-  let startX     = 0;
-  let startScroll = 0;
-
-  if (viewport) {
-    viewport.addEventListener('pointerdown', e => {
-      isDragging = true;
-      dragMoved  = false;
-      startX     = e.clientX;
-      startScroll = viewport.scrollLeft;
-      viewport.classList.add('dragging');
-      viewport.setPointerCapture(e.pointerId);
-    });
-
-    viewport.addEventListener('pointermove', e => {
-      if (!isDragging) return;
-      const dx = e.clientX - startX;
-      if (Math.abs(dx) > 6) dragMoved = true;
-      viewport.scrollLeft = startScroll - dx;
-    });
-
-    const endDrag = () => {
-      isDragging = false;
-      viewport.classList.remove('dragging');
-    };
-    viewport.addEventListener('pointerup', endDrag);
-    viewport.addEventListener('pointerleave', endDrag);
-    viewport.addEventListener('pointercancel', endDrag);
-
-    const scrollByCard = (dir: 1 | -1) => {
-      const card = viewport.querySelector<HTMLElement>('.proj-card');
-      const gap  = 32; // matches gap-8
-      const step = card ? card.getBoundingClientRect().width + gap : viewport.clientWidth * 0.8;
-      viewport.scrollBy({ left: dir * step, behavior: 'smooth' });
-    };
-    prevBtn?.addEventListener('click', () => scrollByCard(-1));
-    nextBtn?.addEventListener('click', () => scrollByCard(1));
-  }
-
-  // ── Project detail modal ───────────────────────────────────────────────
-  interface ProjectData {
-    name: string; icon: string; chips: string[];
-    problem: string; approach: string;
-    resultMetric: string; resultContext: string;
-    href: string | null;
-  }
-
-  const modal      = document.getElementById('proj-modal');
-  const modalPanel = modal?.firstElementChild as HTMLElement | null;
-  const modalClose = document.getElementById('proj-modal-close');
-  const els = {
-    icon:     document.getElementById('pm-icon'),
-    name:     document.getElementById('pm-name'),
-    chips:    document.getElementById('pm-chips'),
-    problem:  document.getElementById('pm-problem'),
-    approach: document.getElementById('pm-approach'),
-    result:   document.getElementById('pm-result'),
-    link:     document.getElementById('pm-link') as HTMLAnchorElement | null,
-  };
-
-  function openModal(data: ProjectData) {
-    if (!modal || !els.icon || !els.name || !els.chips || !els.problem || !els.approach || !els.result) return;
-
-    els.icon.textContent = data.icon;
-    els.name.textContent = data.name;
-    els.chips.innerHTML = '';
-    data.chips.forEach(c => {
-      const span = document.createElement('span');
-      span.className = 'px-3 py-1 rounded font-label-sm text-label-sm bg-[#171717] text-on-surface-variant border border-white/10';
-      span.textContent = c;
-      els.chips!.appendChild(span);
-    });
-    els.problem.textContent  = data.problem;
-    els.approach.textContent = data.approach;
-    els.result.textContent   = `${data.resultMetric} — ${data.resultContext}`;
-
-    if (data.href && els.link) {
-      els.link.href = data.href;
-      els.link.style.display = 'inline-flex';
-    } else if (els.link) {
-      els.link.style.display = 'none';
-    }
-
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-    document.body.style.overflow = 'hidden';
-    if (modalPanel) gsap.fromTo(modalPanel, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
-  }
-
-  function closeModal() {
-    if (!modal) return;
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-    document.body.style.overflow = '';
-  }
-
-  document.querySelectorAll<HTMLElement>('#projects .proj-card').forEach(card => {
-    card.addEventListener('click', () => {
-      if (dragMoved) return; // ignore the click that fires at the end of a drag gesture
-      const data = JSON.parse(card.dataset.project || '{}') as ProjectData;
-      openModal(data);
-    });
-    card.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
-    });
+  // Each row reveals independently as it scrolls into view — a single
+  // trigger on the section would fire every row (even ones far below
+  // the fold) as soon as the header appears.
+  document.querySelectorAll('#projects .proj-row, #projects .proj-cta').forEach(row => {
+    fadeUp(row as HTMLElement, row as HTMLElement, { start: 'top 90%' });
   });
-
-  modalClose?.addEventListener('click', closeModal);
-  modal?.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>

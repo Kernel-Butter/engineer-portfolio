@@ -1,0 +1,218 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { PROJECTS } from '../../data/projects.js';
+---
+
+<BaseLayout title="All Projects // SYS.ENGINEER">
+
+  <!-- Header -->
+  <div class="px-margin-mobile md:px-margin-desktop pt-32 pb-16 max-w-container-max mx-auto">
+    <a href="/#projects" class="font-code-snippet text-code-snippet text-secondary hover:text-primary transition-colors inline-flex items-center gap-2 mb-8">
+      <span class="material-symbols-outlined text-sm">arrow_back</span> BACK_TO_PORTFOLIO
+    </a>
+    <div class="flex items-center gap-3 mb-4">
+      <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+      <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">// ALL_CASE_STUDIES</span>
+    </div>
+    <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">
+      Everything I&rsquo;ve Shipped
+    </h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+      {PROJECTS.length} projects — production e-commerce, internal tooling, and agency work spanning checkout systems to architecture studio portfolios.
+    </p>
+  </div>
+
+  <!-- Jump-to rail -->
+  <nav id="reel-rail" class="hidden lg:flex flex-col gap-4 fixed right-6 top-1/2 -translate-y-1/2 z-40">
+    {PROJECTS.map((p, i) => (
+      <button
+        class="rail-dot group relative flex items-center justify-end"
+        data-target={`reel-${i}`}
+        aria-label={`Jump to ${p.name}`}
+      >
+        <span class="rail-label absolute right-6 whitespace-nowrap font-code-snippet text-code-snippet text-white/70 bg-black/70 px-2 py-1 rounded opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none">
+          {p.name}
+        </span>
+        <span class="dot block w-2 h-2 rounded-full bg-white/25 transition-all"></span>
+      </button>
+    ))}
+  </nav>
+
+  <!-- Immersive project reels -->
+  <div class="proj-reel">
+    {PROJECTS.map((p, i) => (
+      <a
+        id={`reel-${i}`}
+        href={p.href ?? undefined}
+        target={p.href ? '_blank' : undefined}
+        rel={p.href ? 'noopener noreferrer' : undefined}
+        class={`reel-item group relative flex items-end min-h-[85vh] w-full overflow-hidden border-t border-outline-variant/10 ${p.href ? 'cursor-pointer' : 'cursor-default'}`}
+      >
+        <div class="reel-image-wrap absolute inset-0 w-full h-full">
+          {p.image ? (
+            <img
+              src={p.image}
+              alt={`${p.name} screenshot`}
+              loading="lazy"
+              class="reel-img absolute inset-0 w-full h-[120%] -top-[10%] object-cover object-top"
+            />
+          ) : (
+            <div class="absolute inset-0 w-full h-full flex items-center justify-center bg-surface-container">
+              <span class="material-symbols-outlined text-8xl text-outline-variant/30">lock</span>
+            </div>
+          )}
+        </div>
+
+        <!-- Gradient scrim for legibility -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 group-hover:from-black/95 transition-colors duration-500"></div>
+
+        <!-- Counter -->
+        <div class="absolute top-8 right-8 font-code-snippet text-code-snippet text-white/50">
+          {String(i + 1).padStart(2, '0')} / {String(PROJECTS.length).padStart(2, '0')}
+        </div>
+
+        <!-- Content -->
+        <div class="reel-content relative z-10 w-full px-margin-mobile md:px-margin-desktop pb-12 md:pb-16">
+          <div class="max-w-container-max mx-auto">
+            <div class="reel-fade flex items-center gap-3 mb-3 font-code-snippet text-code-snippet text-secondary uppercase tracking-widest text-sm">
+              <span>{p.category}</span>
+              <span class="text-white/30">·</span>
+              <span class="text-white/60">{p.client}</span>
+            </div>
+            <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-4 group-hover:text-primary transition-colors overflow-hidden">
+              {p.name.split(' ').map(word => (
+                <span class="word-mask inline-block overflow-hidden align-top">
+                  <span class="word-inner inline-block">{word}&nbsp;</span>
+                </span>
+              ))}
+            </h2>
+            <p class="reel-fade font-body-lg text-body-lg text-white/70 max-w-2xl mb-6">{p.description}</p>
+
+            <div class="reel-fade flex flex-wrap gap-2 mb-6">
+              {p.tech.map(t => (
+                <span class="px-3 py-1 rounded font-label-sm text-label-sm bg-white/10 text-white/80 border border-white/10">{t}</span>
+              ))}
+            </div>
+
+            {p.href ? (
+              <span class="reel-fade font-code-snippet text-code-snippet text-primary flex items-center gap-2 w-fit group-hover:gap-3 transition-all">
+                VIEW_LIVE <span class="material-symbols-outlined text-sm">arrow_forward</span>
+              </span>
+            ) : (
+              <span class="reel-fade font-code-snippet text-code-snippet text-outline">Internal tool — NDA, no public link</span>
+            )}
+          </div>
+        </div>
+      </a>
+    ))}
+  </div>
+
+</BaseLayout>
+
+<style>
+  /* Image starts clipped shut (wipe reveal) and drifts via parallax once visible */
+  .reel-item .reel-img {
+    clip-path: inset(0 100% 0 0);
+  }
+  .reel-item.revealed .reel-img {
+    transition: clip-path 1.3s cubic-bezier(0.16, 1, 0.3, 1);
+    clip-path: inset(0 0% 0 0);
+  }
+
+  /* Title words slide up from behind their own mask */
+  .reel-item .word-inner {
+    transform: translateY(110%);
+  }
+  .reel-item.revealed .word-inner {
+    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--word-i, 0) * 60ms + 200ms);
+    transform: translateY(0);
+  }
+
+  .reel-item .reel-fade {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .reel-item.revealed .reel-fade {
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: 0.45s;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  #reel-rail .rail-dot.active .dot {
+    background: rgba(192, 193, 255, 0.9);
+    box-shadow: 0 0 8px rgba(192, 193, 255, 0.7);
+    transform: scale(1.4);
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  const items = document.querySelectorAll<HTMLElement>('.reel-item');
+
+  // Stagger delay per word, set as a CSS custom property read by the transition-delay above
+  items.forEach(item => {
+    item.querySelectorAll<HTMLElement>('.word-inner').forEach((word, i) => {
+      word.style.setProperty('--word-i', String(i));
+    });
+  });
+
+  // One-shot reveal (wipe + word stagger + fade) — plain IntersectionObserver,
+  // no pinning or scrubbing, so it needs zero extra wiring with Lenis.
+  const revealIO = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          revealIO.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.2 }
+  );
+  items.forEach(item => revealIO.observe(item));
+
+  // Continuous parallax while each image is on screen — a scrubbed
+  // ScrollTrigger with no pin, which is safe alongside Lenis (it only reads
+  // scroll progress every frame; it doesn't take control of scrolling itself).
+  items.forEach(item => {
+    const img = item.querySelector<HTMLElement>('.reel-img');
+    if (!img) return;
+    gsap.fromTo(
+      img,
+      { yPercent: -8 },
+      {
+        yPercent: 8,
+        ease: 'none',
+        scrollTrigger: { trigger: item, start: 'top bottom', end: 'bottom top', scrub: true },
+      }
+    );
+  });
+
+  // Jump-to rail: highlight the active project + smooth-scroll via Lenis
+  const dots = document.querySelectorAll<HTMLElement>('#reel-rail .rail-dot');
+  const activeIO = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        const dot = document.querySelector(`.rail-dot[data-target="${entry.target.id}"]`);
+        if (!dot) return;
+        if (entry.isIntersecting) dots.forEach(d => d.classList.toggle('active', d === dot));
+      });
+    },
+    { threshold: 0.5 }
+  );
+  items.forEach(item => activeIO.observe(item));
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const target = document.getElementById(dot.dataset.target ?? '');
+      if (!target) return;
+      const lenis = (window as any).__lenis;
+      if (lenis?.scrollTo) lenis.scrollTo(target, { offset: 0 });
+      else target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
