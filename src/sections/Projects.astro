@@ -65,6 +65,11 @@ const projects = [
 ];
 ---
 
+<style>
+  #projects .proj-viewport::-webkit-scrollbar { display: none; }
+  #projects .proj-viewport.dragging { cursor: grabbing; scroll-snap-type: none; }
+</style>
+
 <section id="projects" class="py-section-padding overflow-hidden">
   <div class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
 
@@ -80,20 +85,30 @@ const projects = [
       <p data-cms="projects.sectionSubtitle" class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
         Production e-commerce and internal tooling — checkout architecture, multi-gateway payments, and offline-first data sync.
       </p>
-      <p class="font-code-snippet text-code-snippet text-outline mt-4 hidden md:block">
-        &gt; scroll to slide · click a card for full details
-      </p>
+      <div class="flex items-center justify-between mt-4">
+        <p class="font-code-snippet text-code-snippet text-outline">
+          &gt; drag or use arrows to explore · click a card for full details
+        </p>
+        <div class="hidden md:flex items-center gap-2">
+          <button id="proj-prev" aria-label="Previous project" class="w-10 h-10 rounded-lg border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary/40 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+          </button>
+          <button id="proj-next" aria-label="Next project" class="w-10 h-10 rounded-lg border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary/40 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+          </button>
+        </div>
+      </div>
     </header>
   </div>
 
-  <!-- Horizontal slider: pinned + scroll-driven on desktop, native swipe on mobile -->
-  <div class="proj-pin relative">
-    <div class="proj-viewport w-full overflow-x-auto md:overflow-x-hidden pb-4 md:pb-0" style="scrollbar-width:thin">
+  <!-- Horizontal carousel: drag/swipe + scroll-snap, no scroll-hijacking -->
+  <div class="proj-viewport w-full overflow-x-auto pb-4" style="scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x proximity;cursor:grab;">
       <div class="proj-track flex gap-8 px-margin-mobile md:px-margin-desktop items-stretch" style="width:max-content">
         {projects.map(p => (
           <BlobCard
             tag="div"
             class="proj-card bento-card rounded-xl shrink-0 w-[82vw] sm:w-[420px] flex flex-col p-8 group relative cursor-pointer"
+            style="scroll-snap-align:start"
             pattern={p.pattern}
             blobs={p.blobs}
             role="button"
@@ -132,7 +147,6 @@ const projects = [
           </BlobCard>
         ))}
       </div>
-    </div>
   </div>
 
 </section>
@@ -182,40 +196,58 @@ const projects = [
 </div>
 
 <script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { fadeUp, staggerFadeUp } from '../scripts/animations.js';
 
   fadeUp('#projects .proj-header', '#projects');
   staggerFadeUp('#projects .proj-card', '#projects .proj-track', { start: 'top 85%' });
 
-  // ── Horizontal scroll-jack on desktop; native swipe/scroll on mobile ──────
-  ScrollTrigger.matchMedia({
-    '(min-width: 768px)': () => {
-      const pin      = document.querySelector<HTMLElement>('#projects .proj-pin');
-      const viewport = document.querySelector<HTMLElement>('#projects .proj-viewport');
-      const track    = document.querySelector<HTMLElement>('#projects .proj-track');
-      if (!pin || !viewport || !track) return;
+  // ── Horizontal carousel — native scroll-snap, drag-to-scroll, arrow buttons ──
+  // No vertical-scroll hijacking: works the same on mobile (native swipe) and
+  // desktop (drag or arrow buttons), and never fights the site's Lenis smooth scroll.
+  const viewport = document.querySelector<HTMLElement>('#projects .proj-viewport');
+  const track    = document.querySelector<HTMLElement>('#projects .proj-track');
+  const prevBtn  = document.getElementById('proj-prev');
+  const nextBtn  = document.getElementById('proj-next');
 
-      const distance = track.scrollWidth - viewport.clientWidth;
-      if (distance <= 0) return;
+  let isDragging = false;
+  let dragMoved  = false;
+  let startX     = 0;
+  let startScroll = 0;
 
-      const tween = gsap.to(track, {
-        x: -distance,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: pin,
-          start: 'top top',
-          end: () => `+=${distance}`,
-          scrub: 1,
-          pin: true,
-          invalidateOnRefresh: true,
-        },
-      });
+  if (viewport) {
+    viewport.addEventListener('pointerdown', e => {
+      isDragging = true;
+      dragMoved  = false;
+      startX     = e.clientX;
+      startScroll = viewport.scrollLeft;
+      viewport.classList.add('dragging');
+      viewport.setPointerCapture(e.pointerId);
+    });
 
-      return () => tween.scrollTrigger?.kill();
-    },
-  });
+    viewport.addEventListener('pointermove', e => {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 6) dragMoved = true;
+      viewport.scrollLeft = startScroll - dx;
+    });
+
+    const endDrag = () => {
+      isDragging = false;
+      viewport.classList.remove('dragging');
+    };
+    viewport.addEventListener('pointerup', endDrag);
+    viewport.addEventListener('pointerleave', endDrag);
+    viewport.addEventListener('pointercancel', endDrag);
+
+    const scrollByCard = (dir: 1 | -1) => {
+      const card = viewport.querySelector<HTMLElement>('.proj-card');
+      const gap  = 32; // matches gap-8
+      const step = card ? card.getBoundingClientRect().width + gap : viewport.clientWidth * 0.8;
+      viewport.scrollBy({ left: dir * step, behavior: 'smooth' });
+    };
+    prevBtn?.addEventListener('click', () => scrollByCard(-1));
+    nextBtn?.addEventListener('click', () => scrollByCard(1));
+  }
 
   // ── Project detail modal ───────────────────────────────────────────────
   interface ProjectData {
@@ -276,6 +308,7 @@ const projects = [
 
   document.querySelectorAll<HTMLElement>('#projects .proj-card').forEach(card => {
     card.addEventListener('click', () => {
+      if (dragMoved) return; // ignore the click that fires at the end of a drag gesture
       const data = JSON.parse(card.dataset.project || '{}') as ProjectData;
       openModal(data);
     });
