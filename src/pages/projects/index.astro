@@ -37,13 +37,13 @@ import { PROJECTS } from '../../data/projects.js';
 
   <!-- Jump-to rail -->
   <nav id="reel-rail" class="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 z-40">
-    <div class="relative flex flex-col gap-4">
+    <div class="relative flex flex-col items-center gap-4">
 
       <!-- Goo layer: purely visual — the indicator + dots that actually
            render and merge. Positioned to exactly overlap the buttons
            below via identical flex/gap layout. -->
-      <div class="rail-goo absolute inset-0 flex flex-col gap-4 pointer-events-none" style="filter:url(#rail-goo)" aria-hidden="true">
-        <span id="rail-indicator" class="absolute right-0 w-2.5 h-2.5 rounded-full bg-primary"></span>
+      <div class="rail-goo absolute inset-0 flex flex-col items-center gap-4 pointer-events-none" style="filter:url(#rail-goo)" aria-hidden="true">
+        <span id="rail-indicator" class="absolute left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-primary" style="box-shadow:0 0 10px 2px rgba(192,193,255,0.9)"></span>
         {PROJECTS.map((_, i) => (
           <span class="dot block w-2 h-2 rounded-full bg-white/40" data-dot-index={i}></span>
         ))}
