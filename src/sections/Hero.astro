@@ -68,26 +68,33 @@ import ThinkRingV2 from './ThinkRingV2.astro';
   import { gsap } from 'gsap';
   import { magneticButton, shimmerHover } from '../scripts/animations.js';
 
-  // Hide elements immediately so they don't flash visible during #main-content fade-in
-  gsap.set('#hero .eyebrow',     { opacity: 0, y: 10 });
-  gsap.set('#hero h1',           { opacity: 0, y: 30 });
-  gsap.set('#hero .subheadline', { opacity: 0, y: 20 });
-  gsap.set('#hero .cta-row',     { opacity: 0, y: 20 });
-  gsap.set('#hero .scroll-hint', { opacity: 0        });
+  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // this module once ever; without re-binding here, returning to this page
+  // leaves the fresh Hero elements permanently at their gsap.set-hidden
+  // state (nothing left alive to reveal them), and the CTA's magnetic/
+  // shimmer hover effects would still be bound to the first visit's button.
+  document.addEventListener('astro:page-load', () => {
+    // Hide elements immediately so they don't flash visible during #main-content fade-in
+    gsap.set('#hero .eyebrow',     { opacity: 0, y: 10 });
+    gsap.set('#hero h1',           { opacity: 0, y: 30 });
+    gsap.set('#hero .subheadline', { opacity: 0, y: 20 });
+    gsap.set('#hero .cta-row',     { opacity: 0, y: 20 });
+    gsap.set('#hero .scroll-hint', { opacity: 0        });
 
-  document.addEventListener('portfolio:ready', () => {
-    gsap.timeline({ defaults: { ease: 'power3.out' } })
-      .to('#hero .eyebrow',     { opacity: 1, y: 0, duration: 0.6 })
-      .to('#hero h1',           { opacity: 1, y: 0, duration: 0.7 }, '-=0.3')
-      .to('#hero .subheadline', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
-      .to('#hero .cta-row',     { opacity: 1, y: 0, duration: 0.5 }, '-=0.3')
-      .to('#hero .scroll-hint', { opacity: 1,        duration: 0.4 }, '-=0.2');
-  }, { once: true });
+    document.addEventListener('portfolio:ready', () => {
+      gsap.timeline({ defaults: { ease: 'power3.out' } })
+        .to('#hero .eyebrow',     { opacity: 1, y: 0, duration: 0.6 })
+        .to('#hero h1',           { opacity: 1, y: 0, duration: 0.7 }, '-=0.3')
+        .to('#hero .subheadline', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
+        .to('#hero .cta-row',     { opacity: 1, y: 0, duration: 0.5 }, '-=0.3')
+        .to('#hero .scroll-hint', { opacity: 1,        duration: 0.4 }, '-=0.2');
+    }, { once: true });
 
-  const heroCta     = document.getElementById('hero-cta') as HTMLElement | null;
-  const heroShimmer = document.getElementById('hero-shimmer') as HTMLElement | null;
-  if (heroCta && heroShimmer) {
-    magneticButton(heroCta);
-    shimmerHover(heroCta, heroShimmer);
-  }
+    const heroCta     = document.getElementById('hero-cta') as HTMLElement | null;
+    const heroShimmer = document.getElementById('hero-shimmer') as HTMLElement | null;
+    if (heroCta && heroShimmer) {
+      magneticButton(heroCta);
+      shimmerHover(heroCta, heroShimmer);
+    }
+  });
 </script>

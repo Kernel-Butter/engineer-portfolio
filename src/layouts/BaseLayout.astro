@@ -77,6 +77,7 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
 
   <script>
     import { gsap } from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
     let _active     = false;
     let _inDone     = false;
@@ -86,6 +87,20 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
       _inDone = true;
       if (_pendingOut) { _pendingOut(); _pendingOut = null; }
     }
+
+    /* Astro's client-side nav only ever re-runs each page's own <script>
+       modules once (the browser's module registry is keyed by URL and
+       survives the DOM swap) — but every section's ScrollTrigger-driven
+       reveal is set up as a top-level call in that script. Without this,
+       a section visited a second time keeps its stale ScrollTrigger bound
+       to the OLD (now-detached) DOM, while the fresh DOM sits at its CSS
+       opacity:0 starting state with nothing left to ever reveal it.
+       Killing every ScrollTrigger right after the DOM swap (before
+       astro:page-load fires and each section's own listener re-creates
+       its own trigger against the fresh elements) clears that stale state. */
+    document.addEventListener('astro:after-swap', () => {
+      ScrollTrigger.getAll().forEach(st => st.kill());
+    });
 
     /* PHASE 1 — fade to black + "NAVIGATING" line */
     document.addEventListener('astro:before-preparation', () => {

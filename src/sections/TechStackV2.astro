@@ -114,9 +114,14 @@ const categories = [
   import * as CANNON from 'cannon-es';
   import { fadeUp, staggerFadeUp, onEnterOnce } from '../scripts/animations.js';
 
-  fadeUp('#tech-stack-v2 .stkv2-header', '#tech-stack-v2');
-  staggerFadeUp('#tech-stack-v2 .stkv2-panel', '#tech-stack-v2 .grid', { stagger: 0.1, start: 'top 75%' });
-  onEnterOnce('#tech-stack-v2', initAtoms);
+  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // this module once ever; without re-binding here, returning to this page
+  // leaves the fresh DOM stuck at its CSS opacity:0 starting state.
+  document.addEventListener('astro:page-load', () => {
+    fadeUp('#tech-stack-v2 .stkv2-header', '#tech-stack-v2');
+    staggerFadeUp('#tech-stack-v2 .stkv2-panel', '#tech-stack-v2 .grid', { stagger: 0.1, start: 'top 75%' });
+    onEnterOnce('#tech-stack-v2', initAtoms);
+  });
 
   // ── Three.js + cannon-es atom constellation ──────────────────────────────
   function initAtoms() {

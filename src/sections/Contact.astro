@@ -148,31 +148,38 @@ const socials = [
 <script>
   import { fadeUp, staggerFadeUp, magneticButton, rippleHover, clickBurst } from '../scripts/animations.js';
 
-  fadeUp('#contact .ct-left',  '#contact', { start: 'top 78%' });
-  staggerFadeUp('#contact .ct-card', '#contact .grid', { stagger: 0.15, start: 'top 75%' });
+  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // this module once ever; without re-binding here, returning to this page
+  // leaves the fresh DOM stuck at its CSS opacity:0 starting state, and the
+  // button/form listeners below would still be bound to elements from the
+  // very first visit instead of the fresh ones.
+  document.addEventListener('astro:page-load', () => {
+    fadeUp('#contact .ct-left',  '#contact', { start: 'top 78%' });
+    staggerFadeUp('#contact .ct-card', '#contact .grid', { stagger: 0.15, start: 'top 75%' });
 
-  const btn    = document.getElementById('schedule-btn');
-  const ripple = document.getElementById('schedule-ripple');
-  if (btn && ripple) {
-    magneticButton(btn);
-    rippleHover(btn, ripple);
-    clickBurst(btn);
-  }
+    const btn    = document.getElementById('schedule-btn');
+    const ripple = document.getElementById('schedule-ripple');
+    if (btn && ripple) {
+      magneticButton(btn);
+      rippleHover(btn, ripple);
+      clickBurst(btn);
+    }
 
-  // Form submit (hook up to EmailJS / backend later)
-  const form   = document.getElementById('contact-form');
-  const status = document.getElementById('ct-status');
-  form?.addEventListener('submit', e => {
-    e.preventDefault();
-    if (!status) return;
-    status.textContent = '> TRANSMISSION QUEUED...';
-    status.style.opacity = '1';
-    status.classList.replace('text-outline', 'text-tertiary');
-    // Simulated success — replace with real send logic
-    setTimeout(() => {
-      status.textContent = '> SIGNAL RECEIVED. WILL RESPOND WITHIN 24H.';
-      status.classList.replace('text-tertiary', 'text-secondary');
-      (form as HTMLFormElement).reset();
-    }, 1200);
+    // Form submit (hook up to EmailJS / backend later)
+    const form   = document.getElementById('contact-form');
+    const status = document.getElementById('ct-status');
+    form?.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!status) return;
+      status.textContent = '> TRANSMISSION QUEUED...';
+      status.style.opacity = '1';
+      status.classList.replace('text-outline', 'text-tertiary');
+      // Simulated success — replace with real send logic
+      setTimeout(() => {
+        status.textContent = '> SIGNAL RECEIVED. WILL RESPOND WITHIN 24H.';
+        status.classList.replace('text-tertiary', 'text-secondary');
+        (form as HTMLFormElement).reset();
+      }, 1200);
+    });
   });
 </script>

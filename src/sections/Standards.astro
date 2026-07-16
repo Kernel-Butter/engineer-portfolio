@@ -139,27 +139,32 @@ const a11yRows = [
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { fadeUp, staggerFadeUp, countUp } from '../scripts/animations.js';
 
-  fadeUp('#standards .std-header', '#standards');
-  staggerFadeUp('#standards .std-card', '#standards .grid');
+  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // this module once ever; without re-binding here, returning to this page
+  // leaves the fresh DOM stuck at its CSS opacity:0 starting state.
+  document.addEventListener('astro:page-load', () => {
+    fadeUp('#standards .std-header', '#standards');
+    staggerFadeUp('#standards .std-card', '#standards .grid');
 
-  // Circle circumference (r=45) is 282.7 — offset for 90% fill is 282.7 * 0.1
-  const LH_SCORE = 90;
-  const LH_OFFSET = 282.7 * (1 - LH_SCORE / 100);
+    // Circle circumference (r=45) is 282.7 — offset for 90% fill is 282.7 * 0.1
+    const LH_SCORE = 90;
+    const LH_OFFSET = 282.7 * (1 - LH_SCORE / 100);
 
-  function playMetrics() {
-    gsap.killTweensOf('#lh-arc');
-    gsap.set('#lh-arc', { strokeDashoffset: 282.7 });
-    const counter = document.getElementById('lh-counter');
-    if (counter) counter.textContent = '0';
+    function playMetrics() {
+      gsap.killTweensOf('#lh-arc');
+      gsap.set('#lh-arc', { strokeDashoffset: 282.7 });
+      const counter = document.getElementById('lh-counter');
+      if (counter) counter.textContent = '0';
 
-    gsap.to('#lh-arc', { strokeDashoffset: LH_OFFSET, duration: 1.4, ease: 'power2.out' });
-    countUp('lh-counter', LH_SCORE);
-  }
+      gsap.to('#lh-arc', { strokeDashoffset: LH_OFFSET, duration: 1.4, ease: 'power2.out' });
+      countUp('lh-counter', LH_SCORE);
+    }
 
-  ScrollTrigger.create({
-    trigger: '#standards .grid',
-    start: 'top 78%',
-    onEnter:     playMetrics,
-    onEnterBack: playMetrics,
+    ScrollTrigger.create({
+      trigger: '#standards .grid',
+      start: 'top 78%',
+      onEnter:     playMetrics,
+      onEnterBack: playMetrics,
+    });
   });
 </script>
