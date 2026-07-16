@@ -2,8 +2,8 @@
 import BlobCard from '../components/BlobCard.astro';
 
 const socials = [
-  { label: 'GitHub',   icon: 'code',   hoverColor: 'hover:text-primary',   cmsKey: 'contact.githubHref'   },
-  { label: 'LinkedIn', icon: 'work',   hoverColor: 'hover:text-secondary', cmsKey: 'contact.linkedinHref' },
+  { label: 'GitHub',   icon: 'code', hoverColor: 'hover:text-primary',   cmsKey: 'contact.githubHref',   href: 'https://github.com/Kernel-Butter' },
+  { label: 'LinkedIn', icon: 'work', hoverColor: 'hover:text-secondary', cmsKey: 'contact.linkedinHref', href: 'https://linkedin.com/in/hamzabhutta' },
 ];
 ---
 
@@ -31,7 +31,7 @@ const socials = [
         </h2>
 
         <p data-cms="contact.subheadline" class="font-body-lg text-body-lg text-on-surface-variant max-w-md">
-          Currently accepting high-impact projects. Friction-free booking below.
+          Open to remote frontend roles with a European product team. Friction-free booking below.
         </p>
       </div>
 
@@ -48,7 +48,7 @@ const socials = [
         {socials.map(s => (
           <a
             data-cms-href={s.cmsKey}
-            href="#"
+            href={s.href}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={s.label}
