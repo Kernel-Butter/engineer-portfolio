@@ -12,6 +12,7 @@
   import * as THREE from 'three';
   import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
   import { RenderPass }     from 'three/addons/postprocessing/RenderPass.js';
+  import { mergeVertices }  from 'three/addons/utils/BufferGeometryUtils.js';
 
   const wrap   = document.getElementById('ls-wrap')   as HTMLElement;
   const canvas = document.getElementById('ls-canvas') as HTMLCanvasElement;
@@ -43,8 +44,11 @@
   const ITER     = 8;
   const DT       = 0.22;
 
-  /* Physics geometry — compact indexed icosphere; all spring constraints run here */
-  const geo     = new THREE.IcosahedronGeometry(RADIUS, DETAIL);
+  /* Physics geometry — compact indexed icosphere; all spring constraints run here.
+     IcosahedronGeometry (like all PolyhedronGeometry) ships non-indexed —
+     mergeVertices welds the duplicate corner vertices into a proper shared-
+     vertex index, which the spring/neighbour system below depends on. */
+  const geo     = mergeVertices(new THREE.IcosahedronGeometry(RADIUS, DETAIL));
   const posAttr = geo.attributes.position as THREE.BufferAttribute;
   const N       = posAttr.count;
   const physIdx = (geo.index as THREE.BufferAttribute).array;

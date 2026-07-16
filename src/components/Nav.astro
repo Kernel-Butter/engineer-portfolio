@@ -2,16 +2,16 @@
      class="sticky top-0 z-50 backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(192,193,255,0.05)] bg-surface-dim/60">
   <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-20 w-full max-w-container-max mx-auto">
 
-    <div class="font-headline-md text-headline-md font-bold tracking-tighter text-primary">
+    <a href="/" class="font-headline-md text-headline-md font-bold tracking-tighter text-primary">
       SYS.ENGINEER
-    </div>
+    </a>
 
     <div class="hidden md:flex items-center gap-8">
-      <a href="#tech-stack-v2" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300">STK</a>
-      <a href="#projects"      class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300">PRJ</a>
-      <a href="#experience"    class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300">EXP</a>
-      <a href="#standards"     class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300">MET</a>
-      <a href="/experiments"   class="font-code-snippet text-code-snippet text-tertiary/70 hover:text-tertiary transition-colors duration-300 border border-tertiary/20 px-2 py-0.5 rounded text-[11px] uppercase tracking-widest">LAB</a>
+      <a href="/#tech-stack-v2" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300">STK</a>
+      <a href="/#projects"      class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300">PRJ</a>
+      <a href="/#experience"    class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300">EXP</a>
+      <a href="/#standards"     class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300">MET</a>
+      <a href="/experiments"    class="font-code-snippet text-code-snippet text-tertiary/70 hover:text-tertiary transition-colors duration-300 border border-tertiary/20 px-2 py-0.5 rounded text-[11px] uppercase tracking-widest">LAB</a>
     </div>
 
     <div class="flex items-center gap-4">
@@ -35,11 +35,11 @@
 
   <div x-show="open" x-transition
        class="md:hidden border-t border-white/10 bg-surface-dim/95 px-margin-mobile py-4 flex flex-col gap-4">
-    <a href="#tech-stack-v2" @click="open=false" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors">STK</a>
-    <a href="#projects"      @click="open=false" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors">PRJ</a>
-    <a href="#experience"    @click="open=false" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors">EXP</a>
-    <a href="#standards"     @click="open=false" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors">MET</a>
-    <a href="/experiments"   @click="open=false" class="text-tertiary/70 font-code-snippet text-code-snippet hover:text-tertiary transition-colors self-start border border-tertiary/20 px-2 py-0.5 rounded text-[11px] uppercase tracking-widest">LAB</a>
+    <a href="/#tech-stack-v2" @click="open=false" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors">STK</a>
+    <a href="/#projects"      @click="open=false" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors">PRJ</a>
+    <a href="/#experience"    @click="open=false" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors">EXP</a>
+    <a href="/#standards"     @click="open=false" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors">MET</a>
+    <a href="/experiments"    @click="open=false" class="text-tertiary/70 font-code-snippet text-code-snippet hover:text-tertiary transition-colors self-start border border-tertiary/20 px-2 py-0.5 rounded text-[11px] uppercase tracking-widest">LAB</a>
   </div>
 </nav>
 
@@ -49,10 +49,19 @@
   const hireBtn = document.getElementById('nav-hire');
   if (hireBtn) scrambleText(hireBtn);
 
-  document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach(link => {
+  // Nav section links are now "/#id" so they work as real navigation from
+  // any page (not just the homepage). Only intercept for a smooth in-page
+  // scroll when we're already on "/" and the target actually exists here —
+  // otherwise let the link navigate normally to "/" + hash.
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="/#"], a[href^="#"]').forEach(link => {
     link.addEventListener('click', e => {
-      const id = link.getAttribute('href');
-      if (!id || id === '#') return;
+      const href = link.getAttribute('href');
+      if (!href) return;
+      const hashIndex = href.indexOf('#');
+      if (hashIndex === -1) return;
+      const id = href.slice(hashIndex);
+      if (id === '#' || location.pathname !== '/') return; // not on homepage — let it navigate
+
       const target = document.querySelector<HTMLElement>(id);
       if (!target) return;
       e.preventDefault();
