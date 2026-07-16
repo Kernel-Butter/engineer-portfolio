@@ -391,7 +391,8 @@ const transitions = [
         tl = gsap.timeline({ repeat:-1, repeatDelay:1.4, paused:true,
           onRepeat() {
             gsap.set([wL,wR], { width:'0%' });
-            gsap.set(pageA, { zIndex:1 }).set(pageB, { zIndex:0 });
+            gsap.set(pageA, { zIndex:1 });
+            gsap.set(pageB, { zIndex:0 });
           }
         });
         tl
@@ -412,7 +413,8 @@ const transitions = [
           onRepeat() {
             gsap.set(overlay, { opacity:0 });
             gsap.set(text, { textContent:'' });
-            gsap.set(pageA, { zIndex:1 }).set(pageB, { zIndex:0 });
+            gsap.set(pageA, { zIndex:1 });
+            gsap.set(pageB, { zIndex:0 });
           }
         });
         tl.to(overlay, { opacity:1, duration:.04, ease:'none' });
@@ -438,7 +440,8 @@ const transitions = [
         tl = gsap.timeline({ repeat:-1, repeatDelay:1.4, paused:true,
           onRepeat() {
             gsap.set(cells, { opacity:1 });
-            gsap.set(pageA, { zIndex:1 }).set(pageB, { zIndex:0 });
+            gsap.set(pageA, { zIndex:1 });
+            gsap.set(pageB, { zIndex:0 });
           }
         });
         tl
@@ -482,7 +485,8 @@ const transitions = [
           onRepeat() {
             gsap.set(even, { x:'-100%' });
             gsap.set(odd,  { x:'100%' });
-            gsap.set(pageA, { zIndex:1 }).set(pageB, { zIndex:0 });
+            gsap.set(pageA, { zIndex:1 });
+            gsap.set(pageB, { zIndex:0 });
           }
         });
         tl
@@ -536,7 +540,8 @@ const transitions = [
         tl = gsap.timeline({ repeat:-1, repeatDelay:1.4, paused:true,
           onRepeat() {
             gsap.set(overlay, { opacity:0 });
-            gsap.set(pageA, { zIndex:1 }).set(pageB, { zIndex:0 });
+            gsap.set(pageA, { zIndex:1 });
+            gsap.set(pageB, { zIndex:0 });
           }
         });
         tl
