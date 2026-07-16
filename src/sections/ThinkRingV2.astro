@@ -3,9 +3,21 @@
 // Pure 2D Canvas · warm amber/gold · 7 concentric ring bands
 // Each band: inner/outer border, radial sector dividers, glyph per sector
 // Magnifier ovals orbit across the stack · flower-of-life center
+
+interface Props {
+  // Standalone (default): establishes its own height — used on the
+  // /experiments page where the parent panel has no defined height.
+  // fill: absolute inset:0 over a positioned parent — used as Hero's
+  // background layer, where Hero itself provides the sized container.
+  fill?: boolean;
+}
+const { fill = false } = Astro.props;
+const wrapStyle = fill
+  ? 'position:absolute;inset:0;width:100%;height:100%;overflow:hidden;background:transparent;pointer-events:none;'
+  : 'position:relative;width:100%;height:calc(100vh - 56px);overflow:hidden;background:#03030a;';
 ---
 
-<div id="tr2-wrap" style="position:absolute;inset:0;width:100%;height:100%;overflow:hidden;background:transparent;pointer-events:none;">
+<div id="tr2-wrap" style={wrapStyle}>
   <canvas id="tr2-canvas" style="display:block;width:100%;height:100%;"></canvas>
 </div>
 
