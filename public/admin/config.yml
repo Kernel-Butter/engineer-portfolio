@@ -278,21 +278,19 @@ collections:
               - { label: Show booking card, name: booking, widget: boolean, required: false, default: true }
               - { label: Show contact form, name: contactForm, widget: boolean, required: false, default: true }
 
-  - name: projectsPage
+  - name: projects_page
     label: Projects Page
     label_singular: Page Section
     icon: work
-    divider: true
     folder: src/content/projects
     create: true
     extension: json
     format: json
     identifier_field: label
     summary: "Section {{order}} - {{label}}"
-    slug: "{{slug}}"
     fields:
       - { label: Section number, name: order, widget: number, required: false, value_type: int, min: 1, hint: Section 01 is the page header. Projects follow from Section 02. }
-      - { label: Section label, name: label, widget: string, required: false, hint: Used in the CMS section list }
+      - { label: Section label, name: label, widget: string, hint: Required only so the CMS can identify and name this section in the list }
       - label: Section content
         name: section
         widget: object
