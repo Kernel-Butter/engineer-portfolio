@@ -7,7 +7,8 @@ import global from '../content/global.json';
 import '../styles/tailwind.css';
 import '../styles/global.scss';
 
-const { title = global.siteTitle, description = global.siteDescription } = Astro.props;
+const { header = {}, contact = {}, footer = {}, seo = {} } = global;
+const { title = seo.siteTitle, description = seo.siteDescription } = Astro.props;
 const currentYear = new Date().getFullYear();
 ---
 <!DOCTYPE html>
@@ -20,7 +21,7 @@ const currentYear = new Date().getFullYear();
   <meta property="og:title" content={title} />
   {description && <meta property="og:description" content={description} />}
   <meta property="og:type" content="website" />
-  {global.socialImage && <meta property="og:image" content={global.socialImage} />}
+  {seo.socialImage && <meta property="og:image" content={seo.socialImage} />}
   <ClientRouter />
   <!-- Kill Astro's built-in page crossfade - GSAP overlay handles all transitions -->
   <style>
@@ -53,16 +54,16 @@ const currentYear = new Date().getFullYear();
     <footer class="bg-surface-container-lowest border-t border-outline-variant/20 py-12">
       <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto gap-gutter">
         <div class="font-headline-md text-headline-md text-primary font-bold tracking-tighter">
-          {global.brandLabel}
+          {header.brandLabel}
         </div>
         <div class="font-code-snippet text-code-snippet text-on-surface-variant opacity-60 text-center">
-          ©{currentYear} {global.footerText}
+          ©{currentYear} {footer.text}
         </div>
         <nav class="flex flex-wrap justify-center gap-6">
-          {global.githubHref && <a href={global.githubHref} target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">GITHUB</a>}
-          {global.linkedinHref && <a href={global.linkedinHref} target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">LINKEDIN</a>}
-          {global.cvHref && <a href={global.cvHref} target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">CV_DL</a>}
-          {global.contactEmail && <a href={`mailto:${global.contactEmail}`} class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">EMAIL</a>}
+          {contact.githubHref && <a href={contact.githubHref} target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">GITHUB</a>}
+          {contact.linkedinHref && <a href={contact.linkedinHref} target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">LINKEDIN</a>}
+          {contact.cvHref && <a href={contact.cvHref} target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">CV_DL</a>}
+          {contact.contactEmail && <a href={`mailto:${contact.contactEmail}`} class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">EMAIL</a>}
         </nav>
       </div>
     </footer>

@@ -7,23 +7,24 @@ const sectionHashes = {
   techStack: '#tech-stack-v2', career: '#experience', aiWorkflow: '#ai-workflow',
   writing: '#writing', standards: '#standards', testimonials: '#testimonials', contact: '#contact',
 };
+const header = global.header ?? {};
 const visibleSections = new Set((pageLayout.sections ?? []).filter(item => item.visible).map(item => item.section));
-const navItems = (global.navigation ?? [])
+const navItems = (header.navigation ?? [])
   .filter(item => item.visible !== false && visibleSections.has(item.section) && sectionHashes[item.section])
   .map(item => ({ ...item, href: `/${sectionHashes[item.section]}` }));
-const showHire = visibleSections.has('contact') && global.hireLabel;
+const showHire = visibleSections.has('contact') && header.hireLabel;
 ---
 <nav x-data="{ open: false }"
      class="sticky top-0 z-50 backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(192,193,255,0.05)] bg-surface-dim/60">
   <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-20 w-full max-w-container-max mx-auto">
 
     <a href="/" class="font-headline-md text-headline-md font-bold tracking-tighter text-primary">
-      {global.brandLabel}
+      {header.brandLabel}
     </a>
 
     <div class="hidden md:flex items-center gap-8">
       {navItems.map(item => <a href={item.href} class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors duration-300">{item.label}</a>)}
-      {global.showExperimentsLink && <a href="/experiments" class="font-code-snippet text-code-snippet text-tertiary/70 hover:text-tertiary transition-colors duration-300 border border-tertiary/20 px-2 py-0.5 rounded text-[11px] uppercase tracking-widest">{global.experimentsLabel}</a>}
+      {header.showExperimentsLink && <a href="/experiments" class="font-code-snippet text-code-snippet text-tertiary/70 hover:text-tertiary transition-colors duration-300 border border-tertiary/20 px-2 py-0.5 rounded text-[11px] uppercase tracking-widest">{header.experimentsLabel}</a>}
     </div>
 
     <div class="flex items-center gap-4">
@@ -35,7 +36,7 @@ const showHire = visibleSections.has('contact') && global.hireLabel;
           <span class="material-symbols-outlined">code</span>
         </button>
       </div>
-      {showHire && <a id="nav-hire" href={global.hireHref || '/#contact'} class="bg-primary text-on-primary font-label-sm text-label-sm px-4 py-2 rounded uppercase hover:bg-secondary transition-colors duration-300">{global.hireLabel}</a>}
+      {showHire && <a id="nav-hire" href={header.hireHref || '/#contact'} class="bg-primary text-on-primary font-label-sm text-label-sm px-4 py-2 rounded uppercase hover:bg-secondary transition-colors duration-300">{header.hireLabel}</a>}
       <button class="md:hidden text-primary" @click="open = !open">
         <span class="material-symbols-outlined" x-text="open ? 'close' : 'menu'">menu</span>
       </button>
@@ -46,7 +47,7 @@ const showHire = visibleSections.has('contact') && global.hireLabel;
   <div x-show="open" x-transition
        class="md:hidden border-t border-white/10 bg-surface-dim/95 px-margin-mobile py-4 flex flex-col gap-4">
     {navItems.map(item => <a href={item.href} @click="open=false" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors">{item.label}</a>)}
-    {global.showExperimentsLink && <a href="/experiments" @click="open=false" class="text-tertiary/70 font-code-snippet text-code-snippet hover:text-tertiary transition-colors self-start border border-tertiary/20 px-2 py-0.5 rounded text-[11px] uppercase tracking-widest">{global.experimentsLabel}</a>}
+    {header.showExperimentsLink && <a href="/experiments" @click="open=false" class="text-tertiary/70 font-code-snippet text-code-snippet hover:text-tertiary transition-colors self-start border border-tertiary/20 px-2 py-0.5 rounded text-[11px] uppercase tracking-widest">{header.experimentsLabel}</a>}
   </div>
 </nav>
 

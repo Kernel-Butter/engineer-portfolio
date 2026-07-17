@@ -1,27 +1,37 @@
 {
-  "siteTitle": "Hamza Bhutta — Frontend Software Engineer",
-  "siteDescription": "Hamza Bhutta is a frontend software engineer building production e-commerce products, interactive web experiences, and performance-focused applications with React, Next.js, and TypeScript.",
-  "fullName": "Hamza Bhutta",
-  "professionalTitle": "Frontend Software Engineer",
-  "location": "",
-  "timezone": "",
-  "professionalSummary": "Frontend software engineer focused on production e-commerce, interactive experiences, and measurable web performance.",
-  "profileImage": "",
-  "brandLabel": "HAMZA.BHUTTA",
-  "hireLabel": "HIRE_ME",
-  "hireHref": "/#contact",
-  "githubHref": "https://github.com/Kernel-Butter",
-  "linkedinHref": "https://linkedin.com/in/hamzabhutta",
-  "cvHref": "",
-  "contactEmail": "hamzaabhutta@gmail.com",
-  "footerText": "HAMZA BHUTTA // FRONTEND ENGINEER",
-  "socialImage": "",
-  "showExperimentsLink": true,
-  "experimentsLabel": "LAB",
-  "navigation": [
-    { "section": "techStack", "label": "STK", "visible": true },
-    { "section": "projects", "label": "PRJ", "visible": true },
-    { "section": "career", "label": "EXP", "visible": true },
-    { "section": "standards", "label": "MET", "visible": true }
-  ]
+  "identity": {
+    "fullName": "Hamza Bhutta",
+    "professionalTitle": "Frontend Software Engineer",
+    "location": "",
+    "timezone": "",
+    "professionalSummary": "Frontend software engineer focused on production e-commerce, interactive experiences, and measurable web performance.",
+    "profileImage": ""
+  },
+  "header": {
+    "brandLabel": "HAMZA.BHUTTA",
+    "hireLabel": "HIRE_ME",
+    "hireHref": "/#contact",
+    "showExperimentsLink": true,
+    "experimentsLabel": "LAB",
+    "navigation": [
+      { "section": "techStack", "label": "STK", "visible": true },
+      { "section": "projects", "label": "PRJ", "visible": true },
+      { "section": "career", "label": "EXP", "visible": true },
+      { "section": "standards", "label": "MET", "visible": true }
+    ]
+  },
+  "contact": {
+    "githubHref": "https://github.com/Kernel-Butter",
+    "linkedinHref": "https://linkedin.com/in/hamzabhutta",
+    "cvHref": "",
+    "contactEmail": "hamzaabhutta@gmail.com"
+  },
+  "footer": {
+    "text": "HAMZA BHUTTA // FRONTEND ENGINEER"
+  },
+  "seo": {
+    "siteTitle": "Hamza Bhutta — Frontend Software Engineer",
+    "siteDescription": "Hamza Bhutta is a frontend software engineer building production e-commerce products, interactive web experiences, and performance-focused applications with React, Next.js, and TypeScript.",
+    "socialImage": ""
+  }
 }

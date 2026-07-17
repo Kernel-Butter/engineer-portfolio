@@ -25,7 +25,15 @@ export const prerender = true;
         const Preview = createClass({
           render() {
             const rawData = this.props.entry.get('data')?.toJS?.() ?? {};
-            const data = rawData.section?.type ? rawData.section : rawData;
+            const source = rawData.section?.type ? rawData.section : rawData;
+            const data = source.identity ? {
+              ...source.seo,
+              ...source.identity,
+              ...source.header,
+              ...source.contact,
+              footerText: source.footer?.text,
+              navigation: source.header?.navigation,
+            } : source;
             const asset = path => {
               const item = path && this.props.getAsset(path);
               return item?.url ?? item?.toString?.() ?? path;
