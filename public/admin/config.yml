@@ -279,11 +279,12 @@ collections:
               - { label: Show contact form, name: contactForm, widget: boolean, required: false, default: true }
 
   - name: projectsPageSettings
-    label: Projects Page Settings
+    label: Projects Page / Section 01 - Header
     icon: tune
+    divider: true
     files:
       - name: projectsPageSettings
-        label: Header Content
+        label: Section 01 - Header
         file: src/content/projects-page.json
         format: json
         fields:
@@ -292,18 +293,18 @@ collections:
           - { label: Page introduction, name: sectionSubtitle, widget: text, required: false }
 
   - name: projects
-    label: Projects
-    label_singular: Project
+    label: Projects Page / Project Sections
+    label_singular: Project Section
     icon: work
     folder: src/content/projects
     create: true
     extension: json
     format: json
     identifier_field: name
-    summary: "{{order}} - {{name}}"
+    summary: "Section {{order}} - {{name}}"
     slug: "{{slug}}"
     fields:
-      - { label: Display order, name: order, widget: number, required: false, value_type: int, min: 1, hint: Lower numbers appear first }
+      - { label: Section number, name: order, widget: number, required: false, value_type: int, min: 2, hint: Header is Section 01. Project sections start from Section 02. }
       - { label: Show project, name: visible, widget: boolean, required: false, default: true }
       - { label: URL slug, name: slug, widget: string, required: false, hint: Use lowercase words separated by hyphens }
       - { label: Project name, name: name, widget: string, required: false }
