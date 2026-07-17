@@ -88,5 +88,19 @@ const showHire = visibleSections.has('contact') && header.hireLabel;
         }
       });
     });
+
+    // Cross-page links need the hash so the browser/Astro router can land on
+    // the correct homepage section. Once that landing has resolved, remove
+    // only the hash from the address bar so the canonical homepage URL stays
+    // clean. Same-page smooth-scroll links already remain hash-free because
+    // their click handler prevents the browser's default URL mutation.
+    if (location.pathname === '/' && location.hash) {
+      const target = document.querySelector<HTMLElement>(location.hash);
+      if (target) {
+        window.setTimeout(() => {
+          history.replaceState(history.state, '', `${location.pathname}${location.search}`);
+        }, 250);
+      }
+    }
   });
 </script>

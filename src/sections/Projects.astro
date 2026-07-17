@@ -34,7 +34,7 @@ const show = { header: true, viewAll: true, ...projects.visibility };
                 <span class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></span>
               </div>
               {p.image ? (
-                <img src={p.image} alt={p.imageAlt} loading="lazy" class="w-full h-auto block" />
+                <img src={p.image} alt={p.imageAlt} loading="lazy" class="w-full aspect-[16/10] object-cover block" />
               ) : (
                 <div class="aspect-[16/10] flex flex-col items-center justify-center gap-3 bg-surface-container text-on-surface-variant">
                   <span class="material-symbols-outlined text-4xl opacity-40">lock</span>

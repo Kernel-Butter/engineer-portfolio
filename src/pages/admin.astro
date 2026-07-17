@@ -22,6 +22,71 @@ export const prerender = true;
         const text = value => value == null ? '' : String(value);
         const list = value => Array.isArray(value) ? value : [];
 
+        // Reuse the exact stylesheet bundles emitted for the public portfolio.
+        // This keeps CMS typography, colors, spacing, chips and cards aligned
+        // with the deployed site without hard-coding a second design system.
+        fetch('/')
+          .then(response => response.text())
+          .then(markup => {
+            const page = new DOMParser().parseFromString(markup, 'text/html');
+            page.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+              CMS.registerPreviewStyle(new URL(link.getAttribute('href'), location.origin).href);
+            });
+          })
+          .catch(() => {});
+
+        CMS.registerPreviewStyle(`
+          body { margin: 0; background: #03030a; }
+          .cms-live-preview { min-height: 100vh; padding: 48px 36px; background: #0b0b0b; color: #d7d8df; font-family: Inter, system-ui, sans-serif; }
+          .cms-live-preview * { box-sizing: border-box; }
+          .cms-live-preview > section { width: 100%; max-width: 1180px; margin: 0 auto; }
+          .cms-live-preview h1 { margin: 0 0 24px; color: #c0c1ff; font-size: clamp(38px, 7vw, 76px); line-height: .98; letter-spacing: -.04em; }
+          .cms-live-preview h2 { margin: 0 0 12px; color: #c0c1ff; font-size: 22px; line-height: 1.15; }
+          .cms-live-preview p { color: #a6a8b0; line-height: 1.65; }
+          .cms-live-preview .text-secondary { color: #44e2cd !important; }
+          .cms-live-preview .text-primary { color: #c0c1ff !important; }
+          .cms-live-preview .text-on-primary { color: #101018 !important; }
+          .cms-live-preview .text-on-surface, .cms-live-preview .text-on-surface-variant { color: #d7d8df !important; }
+          .cms-live-preview .text-outline { color: #777b86 !important; }
+          .cms-live-preview .bg-primary { background: #c0c1ff !important; }
+          .cms-live-preview .bg-secondary { background: #44e2cd !important; }
+          .cms-live-preview .flex { display: flex; }
+          .cms-live-preview .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+          .cms-live-preview .flex-col { flex-direction: column; }
+          .cms-live-preview .flex-wrap { flex-wrap: wrap; }
+          .cms-live-preview .items-center { align-items: center; }
+          .cms-live-preview .gap-2 { gap: 8px; }
+          .cms-live-preview .gap-3 { gap: 12px; }
+          .cms-live-preview .gap-4 { gap: 16px; }
+          .cms-live-preview .gap-bento-gap { gap: 16px; }
+          .cms-live-preview .mb-2 { margin-bottom: 8px; }
+          .cms-live-preview .mb-3 { margin-bottom: 12px; }
+          .cms-live-preview .mb-4 { margin-bottom: 16px; }
+          .cms-live-preview .mb-6 { margin-bottom: 24px; }
+          .cms-live-preview .mb-8 { margin-bottom: 32px; }
+          .cms-live-preview .mb-10 { margin-bottom: 40px; }
+          .cms-live-preview .mt-4 { margin-top: 16px; }
+          .cms-live-preview .mt-5 { margin-top: 20px; }
+          .cms-live-preview .mt-6 { margin-top: 24px; }
+          .cms-live-preview .mt-8 { margin-top: 32px; }
+          .cms-live-preview .p-6 { padding: 24px; }
+          .cms-live-preview .p-12 { padding: 48px; }
+          .cms-live-preview .px-3 { padding-left: 12px; padding-right: 12px; }
+          .cms-live-preview .px-6 { padding-left: 24px; padding-right: 24px; }
+          .cms-live-preview .py-1 { padding-top: 4px; padding-bottom: 4px; }
+          .cms-live-preview .py-3 { padding-top: 12px; padding-bottom: 12px; }
+          .cms-live-preview .rounded, .cms-live-preview .rounded-lg { border-radius: 6px; }
+          .cms-live-preview .rounded-xl { border-radius: 12px; }
+          .cms-live-preview .rounded-full { border-radius: 999px; }
+          .cms-live-preview .w-full { width: 100%; }
+          .cms-live-preview img { max-width: 100%; }
+          .cms-live-preview .cms-preview-card, .cms-live-preview .bento-card { opacity: 1 !important; transform: none !important; border: 1px solid rgba(255,255,255,.1); background: #15151a; }
+          .cms-live-preview .chip { border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); }
+          .cms-live-preview a { color: #44e2cd; }
+          .cms-preview-badge { position: sticky; top: 12px; z-index: 20; width: max-content; margin: 0 0 28px auto; padding: 7px 10px; border: 1px solid rgba(68,226,205,.35); border-radius: 5px; background: rgba(3,3,10,.88); color: #44e2cd; font: 10px 'JetBrains Mono', monospace; letter-spacing: .12em; }
+          @media (max-width: 640px) { .cms-live-preview { padding: 32px 20px; } }
+        `, { raw: true });
+
         const Preview = createClass({
           render() {
             const rawData = this.props.entry.get('data')?.toJS?.() ?? {};
@@ -43,51 +108,60 @@ export const prerender = true;
             const intro = data.sectionSubtitle || data.subheadline || data.professionalSummary || '';
             const groups = list(data.sections || data.navigation || data.projects || data.items || data.roles || data.categories || data.cards).filter(item => isLayout || item.visible !== false);
 
-            return h('main', { style: { minHeight: '100%', padding: '48px 36px', background: '#0b0b0b', color: '#d7d8df', fontFamily: 'Inter, system-ui, sans-serif' } },
-              h('section', { style: { maxWidth: '920px', margin: '0 auto' } },
-                h('div', { style: { color: '#44e2cd', font: '600 12px ui-monospace, monospace', letterSpacing: '.12em', marginBottom: '14px' } }, text(data.sectionLabel || data.eyebrow || data.statusBadge)),
-                h('h1', { style: { color: '#c0c1ff', fontSize: 'clamp(32px, 6vw, 68px)', lineHeight: '1', margin: '0 0 22px', letterSpacing: '-.04em' } }, text(heading)),
-                intro && h('p', { style: { color: '#a6a8b0', fontSize: '17px', lineHeight: '1.7', maxWidth: '720px', marginBottom: '34px' } }, text(intro)),
-                data.profileImage && h('img', { src: asset(data.profileImage), alt: text(data.fullName), style: { width: '96px', height: '96px', objectFit: 'cover', borderRadius: '50%', marginBottom: '24px', border: '1px solid #44e2cd66' } }),
-                data.professionalTitle && h('p', { style: { color: '#44e2cd', font: '14px ui-monospace, monospace', marginBottom: '12px' } }, text(data.professionalTitle)),
-                (data.location || data.timezone) && h('p', { style: { color: '#777b86', font: '12px ui-monospace, monospace', marginBottom: '24px' } }, [data.location, data.timezone].filter(Boolean).join(' · ')),
-                data.tagline && h('p', { style: { color: '#44e2cd', font: '14px ui-monospace, monospace', marginBottom: '24px' } }, text(data.tagline)),
-                (data.ctaLabel || data.statusLabel) && h('div', { style: { display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', marginBottom: '30px' } },
-                  data.ctaLabel && h('span', { style: { padding: '12px 18px', borderRadius: '6px', background: '#c0c1ff', color: '#0b0b0b', fontWeight: '700' } }, text(data.ctaLabel)),
-                  data.statusLabel && h('span', { style: { color: '#a6a8b0', font: '12px ui-monospace, monospace' } }, text(data.statusLabel))
+            return h('main', { class: 'cms-live-preview min-h-screen bg-background text-on-surface px-margin-mobile md:px-margin-desktop py-12' },
+              h('section', { class: 'w-full max-w-container-max mx-auto' },
+                h('div', { class: 'cms-preview-badge' }, 'LIVE SECTION PREVIEW'),
+                h('div', { class: 'flex items-center gap-3 mb-4 font-label-sm text-label-sm text-secondary uppercase tracking-widest' },
+                  h('span', { class: 'w-2 h-2 rounded-full bg-secondary' }),
+                  text(data.sectionLabel || data.eyebrow || data.statusBadge)
                 ),
-                data.ctaHref && h('div', { style: { color: '#777b86', fontSize: '11px', margin: '-20px 0 28px' } }, `Button link: ${text(data.ctaHref)}`),
-                data.image && h('img', { src: asset(data.image), alt: text(data.imageAlt), style: { width: '100%', borderRadius: '14px', marginBottom: '24px' } }),
-                data.metric && h('div', { style: { display: 'inline-block', padding: '12px 18px', border: '1px solid #44e2cd55', borderRadius: '999px', color: '#44e2cd', marginBottom: '24px' } }, text(data.metric)),
-                data.metricTitle && h('h2', { style: { color: '#c0c1ff', marginBottom: '8px' } }, text(data.metricTitle)),
-                data.metricDescription && h('p', { style: { color: '#a6a8b0', lineHeight: '1.65', marginBottom: '28px' } }, text(data.metricDescription)),
-                groups.length > 0 && h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: '16px' } },
-                  ...groups.map((item, index) => h('article', { key: index, style: { border: '1px solid #ffffff18', background: '#151515', borderRadius: '12px', padding: '20px', overflow: 'hidden' } },
-                    item.image && h('img', { src: asset(item.image), alt: text(item.imageAlt), style: { width: 'calc(100% + 40px)', height: '150px', objectFit: 'cover', margin: '-20px -20px 18px' } }),
-                    h('div', { style: { color: item.visible === false ? '#ff7777' : '#44e2cd', font: '12px ui-monospace, monospace', marginBottom: '8px' } }, text(isLayout ? (item.visible === false ? 'HIDDEN' : 'VISIBLE') : item.icon || item.initials || item.period || item.category || item.label || item.role)),
-                    h('h2', { style: { color: '#c0c1ff', fontSize: '20px', margin: '0 0 10px' } }, text(item.label || item.section || item.name || item.title || item.company)),
-                    item.location && h('p', { style: { color: '#777b86', fontSize: '12px', margin: '0 0 10px' } }, text(item.location)),
-                    item.company && item.title && h('p', { style: { color: '#d7d8df', fontSize: '13px', margin: '0 0 10px' } }, text(item.company)),
-                    h('p', { style: { color: '#a6a8b0', lineHeight: '1.55', margin: 0 } }, text(item.description || item.quote)),
-                    (item.points || item.bullets || item.highlights) && h('ul', { style: { color: '#a6a8b0', lineHeight: '1.55', paddingLeft: '18px' } },
-                      ...list(item.points || item.bullets || item.highlights).map((point, pointIndex) => h('li', { key: pointIndex, style: { marginBottom: '6px' } }, text(point)))
+                h('h1', { class: 'font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-6' }, text(heading)),
+                intro && h('p', { class: 'font-body-lg text-body-lg text-on-surface-variant max-w-3xl mb-10' }, text(intro)),
+                data.profileImage && h('img', { src: asset(data.profileImage), alt: text(data.fullName), style: { width: '96px', height: '96px', objectFit: 'cover', borderRadius: '50%', marginBottom: '24px', border: '1px solid #44e2cd66' } }),
+                data.professionalTitle && h('p', { class: 'font-code-snippet text-code-snippet text-secondary mb-3' }, text(data.professionalTitle)),
+                (data.location || data.timezone) && h('p', { class: 'font-code-snippet text-code-snippet text-outline mb-6' }, [data.location, data.timezone].filter(Boolean).join(' · ')),
+                data.tagline && h('p', { class: 'font-code-snippet text-code-snippet text-primary mb-6 border-l-2 border-primary/30 pl-5' }, text(data.tagline)),
+                (data.ctaLabel || data.statusLabel) && h('div', { class: 'flex items-center gap-4 flex-wrap mb-8' },
+                  data.ctaLabel && h('span', { class: 'bg-primary text-on-primary font-code-snippet text-code-snippet px-6 py-3 rounded' }, text(data.ctaLabel)),
+                  data.statusLabel && h('span', { class: 'font-code-snippet text-code-snippet text-on-surface-variant' }, text(data.statusLabel))
+                ),
+                data.ctaHref && h('div', { class: 'font-code-snippet text-[11px] text-outline -mt-5 mb-8' }, `Button link: ${text(data.ctaHref)}`),
+                data.image && h('div', { class: 'rounded-xl overflow-hidden border border-outline-variant/20 shadow-2xl bg-surface-container-lowest mb-8' },
+                  h('div', { class: 'flex items-center gap-1.5 px-4 py-3 bg-[#111214]' },
+                    ...['#ff5f56', '#ffbd2e', '#27c93f'].map(color => h('span', { style: { width: '10px', height: '10px', borderRadius: '50%', background: color } }))
+                  ),
+                  h('img', { src: asset(data.image), alt: text(data.imageAlt), class: 'w-full h-auto block' })
+                ),
+                data.metric && h('div', { class: 'inline-flex px-5 py-3 border border-secondary/30 rounded-full text-secondary font-code-snippet mb-6' }, text(data.metric)),
+                data.metricTitle && h('h2', { class: 'font-headline-md text-headline-md text-primary mb-2' }, text(data.metricTitle)),
+                data.metricDescription && h('p', { class: 'font-body-md text-body-md text-on-surface-variant mb-8' }, text(data.metricDescription)),
+                groups.length > 0 && h('div', { class: 'grid grid-cols-1 md:grid-cols-2 gap-bento-gap w-full' },
+                  ...groups.map((item, index) => h('article', { key: index, class: 'cms-preview-card bento-card rounded-xl p-6 overflow-hidden' },
+                    item.image && h('img', { src: asset(item.image), alt: text(item.imageAlt), class: 'w-full aspect-[16/10] object-cover rounded-lg mb-5' }),
+                    h('div', { class: `font-code-snippet text-code-snippet mb-2 ${item.visible === false ? 'text-error' : 'text-secondary'}` }, text(isLayout ? (item.visible === false ? 'HIDDEN' : 'VISIBLE') : item.icon || item.initials || item.period || item.category || item.label || item.role)),
+                    h('h2', { class: 'font-headline-md text-headline-md text-primary mb-3' }, text(item.label || item.section || item.name || item.title || item.company)),
+                    item.location && h('p', { class: 'font-code-snippet text-code-snippet text-outline mb-3' }, text(item.location)),
+                    item.company && item.title && h('p', { class: 'font-body-md text-body-md text-on-surface mb-3' }, text(item.company)),
+                    h('p', { class: 'font-body-md text-body-md text-on-surface-variant' }, text(item.description || item.quote)),
+                    (item.points || item.bullets || item.highlights) && h('ul', { class: 'font-code-snippet text-code-snippet text-on-surface-variant mt-4 flex flex-col gap-2' },
+                      ...list(item.points || item.bullets || item.highlights).map((point, pointIndex) => h('li', { key: pointIndex }, `> ${text(point)}`))
                     ),
-                    (item.chips || item.tags || item.tech) && h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '16px' } },
-                      ...list(item.chips || item.tags || item.tech).map((chip, chipIndex) => h('span', { key: chipIndex, style: { padding: '5px 8px', border: '1px solid #ffffff18', borderRadius: '5px', fontSize: '11px' } }, text(chip)))
+                    (item.chips || item.tags || item.tech) && h('div', { class: 'flex flex-wrap gap-2 mt-4' },
+                      ...list(item.chips || item.tags || item.tech).map((chip, chipIndex) => h('span', { key: chipIndex, class: 'chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded' }, text(chip)))
                     ),
-                    item.href && h('a', { href: item.href, style: { display: 'inline-block', color: '#44e2cd', marginTop: '14px', fontSize: '12px' } }, text(item.href))
+                    item.href && h('a', { href: item.href, class: 'inline-block text-secondary font-code-snippet text-code-snippet mt-4' }, 'VIEW_LIVE →')
                   ))
                 ),
-                data.bookCallTitle && h('div', { style: { border: '1px solid #ffffff18', background: '#151515', borderRadius: '12px', padding: '24px', marginTop: '24px' } },
-                  h('h2', { style: { color: '#c0c1ff', marginTop: 0 } }, text(data.bookCallTitle)),
-                  h('p', { style: { color: '#a6a8b0' } }, text(data.bookCallSubtitle))
+                data.bookCallTitle && h('div', { class: 'bento-card rounded-xl p-6 mt-6' },
+                  h('h2', { class: 'font-headline-md text-headline-md text-primary mb-2' }, text(data.bookCallTitle)),
+                  h('p', { class: 'text-on-surface-variant' }, text(data.bookCallSubtitle))
                 ),
-                data.hint && h('p', { style: { color: '#44e2cd', marginTop: '24px' } }, text(data.hint)),
-                (data.githubHref || data.linkedinHref || data.cvHref || data.bookCallHref || data.contactEmail) && h('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '18px', fontSize: '12px' } },
-                  ...[data.githubHref, data.linkedinHref, data.cvHref, data.bookCallHref, data.contactEmail].filter(Boolean).map((url, index) => h('span', { key: index, style: { color: '#a6a8b0' } }, text(url)))
+                data.hint && h('p', { class: 'text-secondary mt-6' }, text(data.hint)),
+                (data.githubHref || data.linkedinHref || data.cvHref || data.bookCallHref || data.contactEmail) && h('div', { class: 'flex flex-col gap-2 mt-5 font-code-snippet text-code-snippet' },
+                  ...[data.githubHref, data.linkedinHref, data.cvHref, data.bookCallHref, data.contactEmail].filter(Boolean).map((url, index) => h('span', { key: index, class: 'text-on-surface-variant' }, text(url)))
                 ),
-                data.formTitle && h('h2', { style: { color: '#c0c1ff', marginTop: '28px' } }, text(data.formTitle)),
-                data.emptyMessage && h('div', { style: { border: '1px solid #ffffff18', borderRadius: '12px', padding: '40px', textAlign: 'center', color: '#a6a8b0' } }, text(data.emptyMessage))
+                data.formTitle && h('h2', { class: 'font-headline-md text-headline-md text-primary mt-8' }, text(data.formTitle)),
+                data.emptyMessage && h('div', { class: 'bento-card rounded-xl p-12 text-center text-on-surface-variant mt-6' }, text(data.emptyMessage))
               )
             );
           }
