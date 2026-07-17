@@ -1,6 +1,7 @@
 {
   "sectionLabel": "SYSTEM_ARCHITECTURE_CAPABILITIES",
   "sectionTitle": "Value Proposition",
+  "visibility": { "header": true, "statusBar": true },
   "cards": [
     {
       "title": "Pixel-Perfect UI Systems",

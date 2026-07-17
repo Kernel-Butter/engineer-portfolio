@@ -6,5 +6,6 @@
   "tagline": "I sell engineered experience, not just websites.",
   "ctaLabel": "INITIATE_DEPLOYMENT",
   "ctaHref": "#contact",
-  "statusLabel": "FRONTEND_ENGINEER · 3+ YRS"
+  "statusLabel": "FRONTEND_ENGINEER · 3+ YRS",
+  "visibility": { "eyebrow": true, "introduction": true, "tagline": true, "cta": true, "status": true }
 }

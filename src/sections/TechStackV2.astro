@@ -1,13 +1,14 @@
 ---
 import content from '../content/index.js';
 const tech = content.techStack;
-const categories = tech.categories ?? [];
+const categories = (tech.categories ?? []).filter(category => category.visible !== false);
+const show = { header: true, visualization: true, categoryList: true, ...tech.visibility };
 ---
 
 <section id="tech-stack-v2" class="py-section-padding px-margin-mobile md:px-margin-desktop">
   <div class="w-full max-w-container-max mx-auto">
 
-    <header class="stkv2-header mb-16">
+    {show.header && <header class="stkv2-header mb-16">
       <div class="flex items-center gap-3 mb-4">
         <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
         <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">{tech.sectionLabel}</span>
@@ -18,12 +19,12 @@ const categories = tech.categories ?? [];
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
         {tech.sectionSubtitle}
       </p>
-    </header>
+    </header>}
 
     <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap w-full md:h-[640px]">
 
       <!-- Three.js canvas - 8 cols -->
-      <div class="stkv2-panel bento-card col-span-1 md:col-span-8 rounded-xl h-[420px] md:h-full relative flex items-center justify-center group overflow-hidden" style="cursor:crosshair">
+      {show.visualization && <div class="stkv2-panel bento-card col-span-1 md:col-span-8 rounded-xl h-[420px] md:h-full relative flex items-center justify-center group overflow-hidden" style="cursor:crosshair">
         <div id="stk-canvas-v2" class="absolute inset-0"></div>
 
         <!-- Expand to fullscreen button -->
@@ -49,10 +50,10 @@ const categories = tech.categories ?? [];
             Atom Network // Move to Disturb · Scroll to Zoom
           </span>
         </div>
-      </div>
+      </div>}
 
       <!-- Right chips - 4 cols -->
-      <div class="col-span-1 md:col-span-4 flex flex-col gap-bento-gap md:h-full overflow-y-auto">
+      {show.categoryList && <div class="col-span-1 md:col-span-4 flex flex-col gap-bento-gap md:h-full overflow-y-auto">
         {categories.map(cat => (
           <div class="stkv2-panel bento-card p-5 rounded-xl flex flex-col justify-center">
             <h3 class="font-headline-md text-headline-md text-primary mb-3 flex items-center gap-2">
@@ -68,7 +69,7 @@ const categories = tech.categories ?? [];
             </div>
           </div>
         ))}
-      </div>
+      </div>}
 
     </div>
 

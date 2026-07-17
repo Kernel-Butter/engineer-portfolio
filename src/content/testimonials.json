@@ -1,5 +1,6 @@
 {
   "sectionTitle": "SOCIAL_PROOF",
+  "visibility": { "header": true, "testimonialGrid": true },
   "items": [
     { "name": "Marcus R.", "initials": "MR", "role": "VP ENGINEERING @ NEURAL_SYNC", "quote": "The architectural decisions made during the core refactor didn't just solve our scaling issues; they laid a foundation we'll be building on for the next five years. Precision engineering meets uncompromising execution.", "tags": ["SYSTEM_ARCH", "RUST"] },
     { "name": "Elena K.", "initials": "EK", "role": "FOUNDER @ DATAVOID", "quote": "Delivered a complex WebGL visualization engine weeks ahead of schedule. The code was practically poetry.", "tags": ["FRONTEND"] },

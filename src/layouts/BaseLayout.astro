@@ -93,6 +93,13 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
       ScrollTrigger.getAll().forEach(st => st.kill());
     });
 
+    // CMS-controlled visibility and ordering change every section's document
+    // position. Refresh after all section page-load handlers have recreated
+    // their triggers so animations keep matching the rendered layout.
+    document.addEventListener('astro:page-load', () => {
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+    });
+
     /* PHASE 1 - fade to black + "NAVIGATING" line */
     document.addEventListener('astro:before-preparation', () => {
       /* Skip if the preloader hasn't completed its first run yet - avoids a black

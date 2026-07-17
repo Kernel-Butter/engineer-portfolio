@@ -1,13 +1,14 @@
 ---
 import content from '../content/index.js';
 const { writing } = content;
+const show = { header: true, emptyState: true, ...writing.visibility };
 ---
 
 <section id="writing" class="py-section-padding px-margin-mobile md:px-margin-desktop">
   <div class="w-full max-w-container-max mx-auto flex flex-col gap-12">
 
     <!-- Header -->
-    <div class="wr-header flex flex-col gap-4">
+    {show.header && <div class="wr-header flex flex-col gap-4">
       <div class="flex items-center gap-3">
         <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
         <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">{writing.sectionLabel}</span>
@@ -18,15 +19,15 @@ const { writing } = content;
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
         {writing.sectionSubtitle}
       </p>
-    </div>
+    </div>}
 
     <!-- Empty state -->
-    <div class="wr-card glass-panel rounded-xl p-12 flex flex-col items-center justify-center text-center gap-4 min-h-[200px]">
+    {show.emptyState && <div class="wr-card glass-panel rounded-xl p-12 flex flex-col items-center justify-center text-center gap-4 min-h-[200px]">
       <span class="material-symbols-outlined text-outline-variant text-4xl">draft</span>
       <p class="font-code-snippet text-code-snippet text-on-surface-variant">
         {writing.emptyMessage}
       </p>
-    </div>
+    </div>}
 
   </div>
 </section>

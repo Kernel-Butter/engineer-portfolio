@@ -2,6 +2,7 @@
 import ThinkRingV2 from './ThinkRingV2.astro';
 import content from '../content/index.js';
 const { hero } = content;
+const show = { eyebrow: true, introduction: true, tagline: true, cta: true, status: true, ...hero.visibility };
 ---
 <section id="hero" class="relative w-full h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-background">
 
@@ -12,36 +13,34 @@ const { hero } = content;
   <div class="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col justify-center h-full pt-20">
     <div class="max-w-4xl">
 
-      <div class="eyebrow flex items-center gap-3 mb-6">
+      {show.eyebrow && <div class="eyebrow flex items-center gap-3 mb-6">
         <div class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#44e2cd] animate-pulse"></div>
         <span data-cms="hero.eyebrow" class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">
           {hero.eyebrow}
         </span>
-      </div>
+      </div>}
 
       <h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-8">
         <span>{hero.headlinePrefix?.trim()}</span>{' '}<span class="text-primary">{hero.headlineAccent?.trim()}</span>
       </h1>
 
-      <p class="subheadline font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-12 border-l-2 border-primary/30 pl-6 py-2 bg-surface-container/20 backdrop-blur-sm">
-        <span>{hero.subheadline}</span>
-        <br />
-        <span data-cms="hero.tagline" class="text-primary font-code-snippet text-code-snippet mt-4 block">
-          {hero.tagline}
-        </span>
-      </p>
+      {(show.introduction || show.tagline) && <p class="subheadline font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-12 border-l-2 border-primary/30 pl-6 py-2 bg-surface-container/20 backdrop-blur-sm">
+        {show.introduction && <span>{hero.subheadline}</span>}
+        {show.introduction && show.tagline && <br />}
+        {show.tagline && <span class="text-primary font-code-snippet text-code-snippet mt-4 block">{hero.tagline}</span>}
+      </p>}
 
       <div class="cta-row flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-        <a id="hero-cta" href={hero.ctaHref}
+        {show.cta && <a id="hero-cta" href={hero.ctaHref}
            class="relative bg-primary text-on-primary font-code-snippet text-code-snippet px-8 py-4 rounded flex items-center gap-2 overflow-hidden hover:shadow-[0_0_20px_rgba(68,226,205,0.4)] transition-shadow duration-300">
           <span>{hero.ctaLabel}</span>
           <span class="material-symbols-outlined text-[18px]">rocket_launch</span>
           <span id="hero-shimmer" class="absolute inset-0 pointer-events-none" style="background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,0.22) 50%,transparent 62%);transform:translateX(-100%)"></span>
-        </a>
-        <div class="flex items-center gap-4 text-on-surface-variant font-code-snippet text-code-snippet">
+        </a>}
+        {show.status && <div class="flex items-center gap-4 text-on-surface-variant font-code-snippet text-code-snippet">
           <span class="material-symbols-outlined text-outline">memory</span>
           <span>{hero.statusLabel}</span>
-        </div>
+        </div>}
       </div>
 
     </div>

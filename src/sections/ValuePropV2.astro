@@ -2,7 +2,8 @@
 import BlobCard from '../components/BlobCard.astro';
 import content from '../content/index.js';
 const value = content.valueProposition;
-const cards = value.cards ?? [];
+const show = { header: true, statusBar: true, ...value.visibility };
+const cards = (value.cards ?? []).filter(card => card.visible !== false);
 const variants = [
   { span: 'md:col-span-8', pattern: 'grid', text: 'text-primary', icon: 'design_services', color: 'bg-indigo-500/30', position: '-top-20 -left-16' },
   { span: 'md:col-span-4', pattern: 'lines', text: 'text-secondary', icon: 'speed', color: 'bg-teal-500/30', position: '-top-10 -right-10' },
@@ -15,7 +16,7 @@ const variants = [
 
   <div class="w-full max-w-container-max mx-auto flex flex-col gap-12 relative z-10">
 
-    <div class="vp2-header text-center flex flex-col gap-4 max-w-3xl mx-auto">
+    {show.header && <div class="vp2-header text-center flex flex-col gap-4 max-w-3xl mx-auto">
       <div class="flex items-center justify-center gap-2">
         <span class="status-dot bg-secondary"></span>
         <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">
@@ -25,7 +26,7 @@ const variants = [
       <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
         {value.sectionTitle}
       </h2>
-    </div>
+    </div>}
 
     <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap w-full">
       {cards.map((card, index) => {
@@ -55,7 +56,7 @@ const variants = [
       })}
     </div>
 
-    <div class="vp2-status w-full border-t border-b border-outline-variant/20 flex flex-col md:flex-row justify-between items-center py-4 gap-4">
+    {show.statusBar && <div class="vp2-status w-full border-t border-b border-outline-variant/20 flex flex-col md:flex-row justify-between items-center py-4 gap-4">
       <div class="flex gap-6 flex-wrap">
         <div class="flex items-center gap-2">
           <div class="status-dot bg-secondary"></div>
@@ -70,7 +71,7 @@ const variants = [
         INITIATE_PROTOCOL
         <span class="material-symbols-outlined group-hover/link:translate-x-1 transition-transform duration-300">arrow_forward</span>
       </a>
-    </div>
+    </div>}
 
   </div>
 </section>

@@ -13,6 +13,35 @@ collections:
     label: Home Page
     icon: home
     files:
+      - name: pageLayout
+        label: 00 - Page Layout
+        file: src/content/page-layout.json
+        format: json
+        fields:
+          - label: Sections
+            name: sections
+            widget: list
+            required: false
+            summary: "{{fields.section}}"
+            hint: Drag items to change their order. Turn visibility off to hide a section.
+            fields:
+              - label: Section
+                name: section
+                widget: select
+                required: false
+                options:
+                  - { label: Hero, value: hero }
+                  - { label: Value Proposition, value: valueProposition }
+                  - { label: Featured Projects, value: projects }
+                  - { label: Technology Stack, value: techStack }
+                  - { label: Career, value: career }
+                  - { label: AI Workflow, value: aiWorkflow }
+                  - { label: Writing, value: writing }
+                  - { label: Engineering Standards, value: standards }
+                  - { label: Testimonials, value: testimonials }
+                  - { label: Contact, value: contact }
+              - { label: Show section, name: visible, widget: boolean, required: false, default: true }
+
       - name: hero
         label: 01 - Hero
         file: src/content/hero.json
@@ -26,6 +55,16 @@ collections:
           - { label: Button label, name: ctaLabel, widget: string, required: false }
           - { label: Button link, name: ctaHref, widget: string, required: false }
           - { label: Role label, name: statusLabel, widget: string, required: false }
+          - label: Visible parts
+            name: visibility
+            widget: object
+            required: false
+            fields:
+              - { label: Show eyebrow, name: eyebrow, widget: boolean, required: false, default: true }
+              - { label: Show introduction, name: introduction, widget: boolean, required: false, default: true }
+              - { label: Show tagline, name: tagline, widget: boolean, required: false, default: true }
+              - { label: Show CTA button, name: cta, widget: boolean, required: false, default: true }
+              - { label: Show role status, name: status, widget: boolean, required: false, default: true }
 
       - name: valueProposition
         label: 02 - Value Proposition
@@ -34,12 +73,20 @@ collections:
         fields:
           - { label: Section label, name: sectionLabel, widget: string, required: false }
           - { label: Section title, name: sectionTitle, widget: string, required: false }
+          - label: Visible parts
+            name: visibility
+            widget: object
+            required: false
+            fields:
+              - { label: Show header, name: header, widget: boolean, required: false, default: true }
+              - { label: Show status bar, name: statusBar, widget: boolean, required: false, default: true }
           - label: Cards
             name: cards
             widget: list
             required: false
             summary: "{{fields.title}}"
             fields:
+              - { label: Show card, name: visible, widget: boolean, required: false, default: true }
               - { label: Title, name: title, widget: string, required: false }
               - { label: Points, name: points, widget: list, required: false, field: { label: Point, name: item, widget: string, required: false } }
 
@@ -51,12 +98,20 @@ collections:
           - { label: Section label, name: sectionLabel, widget: string, required: false }
           - { label: Section title, name: sectionTitle, widget: string, required: false }
           - { label: Section introduction, name: sectionSubtitle, widget: text, required: false }
+          - label: Visible parts
+            name: visibility
+            widget: object
+            required: false
+            fields:
+              - { label: Show header, name: header, widget: boolean, required: false, default: true }
+              - { label: Show View All button, name: viewAll, widget: boolean, required: false, default: true }
           - label: Projects
             name: items
             widget: list
             required: false
             summary: "{{fields.name}}"
             fields:
+              - { label: Show project, name: visible, widget: boolean, required: false, default: true }
               - { label: Name, name: name, widget: string, required: false }
               - { label: Tags, name: chips, widget: list, required: false, field: { label: Tag, name: tag, widget: string, required: false } }
               - { label: Description, name: description, widget: text, required: false }
@@ -73,12 +128,21 @@ collections:
           - { label: Section label, name: sectionLabel, widget: string, required: false }
           - { label: Section title, name: sectionTitle, widget: string, required: false }
           - { label: Section introduction, name: sectionSubtitle, widget: text, required: false }
+          - label: Visible parts
+            name: visibility
+            widget: object
+            required: false
+            fields:
+              - { label: Show header, name: header, widget: boolean, required: false, default: true }
+              - { label: Show interactive visualization, name: visualization, widget: boolean, required: false, default: true }
+              - { label: Show category list, name: categoryList, widget: boolean, required: false, default: true }
           - label: Categories
             name: categories
             widget: list
             required: false
             summary: "{{fields.label}}"
             fields:
+              - { label: Show category, name: visible, widget: boolean, required: false, default: true }
               - { label: Icon, name: icon, widget: string, required: false }
               - { label: Category, name: label, widget: string, required: false }
               - { label: Technologies, name: chips, widget: list, required: false, field: { label: Technology, name: item, widget: string, required: false } }
@@ -97,6 +161,7 @@ collections:
             required: false
             summary: "{{fields.title}} at {{fields.company}}"
             fields:
+              - { label: Show role, name: visible, widget: boolean, required: false, default: true }
               - { label: Period, name: period, widget: string, required: false }
               - { label: Location, name: location, widget: string, required: false }
               - { label: Job title, name: title, widget: string, required: false }
@@ -116,6 +181,14 @@ collections:
           - { label: Metric, name: metric, widget: string, required: false }
           - { label: Metric title, name: metricTitle, widget: string, required: false }
           - { label: Metric description, name: metricDescription, widget: text, required: false }
+          - label: Visible parts
+            name: visibility
+            widget: object
+            required: false
+            fields:
+              - { label: Show header, name: header, widget: boolean, required: false, default: true }
+              - { label: Show terminal, name: terminal, widget: boolean, required: false, default: true }
+              - { label: Show metric card, name: metricCard, widget: boolean, required: false, default: true }
 
       - name: writing
         label: 07 - Writing
@@ -126,6 +199,13 @@ collections:
           - { label: Section title, name: sectionTitle, widget: string, required: false }
           - { label: Section introduction, name: sectionSubtitle, widget: text, required: false }
           - { label: Empty message, name: emptyMessage, widget: string, required: false }
+          - label: Visible parts
+            name: visibility
+            widget: object
+            required: false
+            fields:
+              - { label: Show header, name: header, widget: boolean, required: false, default: true }
+              - { label: Show empty state, name: emptyState, widget: boolean, required: false, default: true }
 
       - name: standards
         label: 08 - Engineering Standards
@@ -135,6 +215,13 @@ collections:
           - { label: Section label, name: sectionLabel, widget: string, required: false }
           - { label: Section title, name: sectionTitle, widget: string, required: false }
           - { label: Section introduction, name: sectionSubtitle, widget: text, required: false }
+          - label: Visible parts
+            name: visibility
+            widget: object
+            required: false
+            fields:
+              - { label: Show header, name: header, widget: boolean, required: false, default: true }
+              - { label: Show standards cards, name: standardsGrid, widget: boolean, required: false, default: true }
 
       - name: testimonials
         label: 09 - Testimonials
@@ -142,12 +229,20 @@ collections:
         format: json
         fields:
           - { label: Section title, name: sectionTitle, widget: string, required: false }
+          - label: Visible parts
+            name: visibility
+            widget: object
+            required: false
+            fields:
+              - { label: Show header, name: header, widget: boolean, required: false, default: true }
+              - { label: Show testimonial cards, name: testimonialGrid, widget: boolean, required: false, default: true }
           - label: Testimonials
             name: items
             widget: list
             required: false
             summary: "{{fields.name}}"
             fields:
+              - { label: Show testimonial, name: visible, widget: boolean, required: false, default: true }
               - { label: Name, name: name, widget: string, required: false }
               - { label: Initials, name: initials, widget: string, required: false }
               - { label: Role and company, name: role, widget: string, required: false }
@@ -170,3 +265,15 @@ collections:
           - { label: Booking description, name: bookCallSubtitle, widget: string, required: false }
           - { label: Booking link, name: bookCallHref, widget: string, required: false }
           - { label: Contact form title, name: formTitle, widget: string, required: false }
+          - label: Visible parts
+            name: visibility
+            widget: object
+            required: false
+            fields:
+              - { label: Show status badge, name: status, widget: boolean, required: false, default: true }
+              - { label: Show headline, name: headline, widget: boolean, required: false, default: true }
+              - { label: Show introduction, name: introduction, widget: boolean, required: false, default: true }
+              - { label: Show help text, name: hint, widget: boolean, required: false, default: true }
+              - { label: Show social links, name: socials, widget: boolean, required: false, default: true }
+              - { label: Show booking card, name: booking, widget: boolean, required: false, default: true }
+              - { label: Show contact form, name: contactForm, widget: boolean, required: false, default: true }

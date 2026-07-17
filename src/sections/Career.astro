@@ -1,7 +1,7 @@
 ---
 import content from '../content/index.js';
 const { career } = content;
-const roles = (career.roles ?? []).map((role, index) => ({
+const roles = (career.roles ?? []).filter(role => role.visible !== false).map((role, index) => ({
   ...role,
   reverse: index % 2 === 1,
   bullets: role.bullets ?? [],

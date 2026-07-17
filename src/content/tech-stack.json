@@ -2,6 +2,7 @@
   "sectionLabel": "// SYSTEM_CAPABILITIES",
   "sectionTitle": "SYSTEM.CAPABILITIES",
   "sectionSubtitle": "Every tool in the stack, suspended and alive. Move through to disturb the field.",
+  "visibility": { "header": true, "visualization": true, "categoryList": true },
   "categories": [
     { "icon": "memory", "label": "Core / Lang", "chips": ["HTML5", "CSS3", "JavaScript", "TypeScript", "JSX / TSX", "Vue 3"] },
     { "icon": "developer_board", "label": "Frameworks / State", "chips": ["React", "Next.js", "Astro", "Zustand", "React Query", "Redux", "GraphQL", "REST", "Supabase", "WebSockets"] },

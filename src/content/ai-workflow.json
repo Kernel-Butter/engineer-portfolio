@@ -4,5 +4,6 @@
   "sectionSubtitle": "AI-assisted development for boilerplate, scaffolding, and structural shells, while keeping the same code-review bar for anything that ships.",
   "metric": "~30% Faster Delivery",
   "metricTitle": "Delivery Accelerated",
-  "metricDescription": "Adopted AI-assisted workflows for boilerplate generation and structural scaffolding, cutting delivery time by roughly 30% while keeping code-review standards."
+  "metricDescription": "Adopted AI-assisted workflows for boilerplate generation and structural scaffolding, cutting delivery time by roughly 30% while keeping code-review standards.",
+  "visibility": { "header": true, "terminal": true, "metricCard": true }
 }

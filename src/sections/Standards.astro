@@ -1,6 +1,7 @@
 ---
 import content from '../content/index.js';
 const { standards } = content;
+const show = { header: true, standardsGrid: true, ...standards.visibility };
 const vitals = [
   { label: 'LCP', full: 'Largest Contentful Paint', note: 'Checked before ship' },
   { label: 'INP', full: 'Interaction to Next Paint', note: 'Checked before ship' },
@@ -18,7 +19,7 @@ const a11yRows = [
   <div class="w-full max-w-container-max mx-auto flex flex-col gap-12">
 
     <!-- Header -->
-    <div class="std-header flex flex-col gap-4">
+    {show.header && <div class="std-header flex flex-col gap-4">
       <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-sm border border-outline-variant/30 self-start">
         <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
         <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">{standards.sectionLabel}</span>
@@ -29,10 +30,10 @@ const a11yRows = [
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
         {standards.sectionSubtitle}
       </p>
-    </div>
+    </div>}
 
     <!-- Bento Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+    {show.standardsGrid && <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
 
       <!-- Lighthouse Score (col-span-8) -->
       <div class="std-card bento-card md:col-span-8 p-8 flex flex-col md:flex-row items-center justify-between gap-8 group">
@@ -132,7 +133,7 @@ const a11yRows = [
         </div>
       </div>
 
-    </div>
+    </div>}
   </div>
 </section>
 

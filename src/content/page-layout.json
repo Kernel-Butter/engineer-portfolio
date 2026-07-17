@@ -1,0 +1,14 @@
+{
+  "sections": [
+    { "section": "hero", "visible": true },
+    { "section": "valueProposition", "visible": true },
+    { "section": "projects", "visible": true },
+    { "section": "techStack", "visible": true },
+    { "section": "career", "visible": true },
+    { "section": "aiWorkflow", "visible": true },
+    { "section": "writing", "visible": true },
+    { "section": "standards", "visible": true },
+    { "section": "testimonials", "visible": true },
+    { "section": "contact", "visible": true }
+  ]
+}

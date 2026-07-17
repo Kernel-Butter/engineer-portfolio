@@ -29,9 +29,10 @@ export const prerender = true;
               const item = path && this.props.getAsset(path);
               return item?.url ?? item?.toString?.() ?? path;
             };
-            const heading = data.sectionTitle || [data.headlinePrefix, data.headlineAccent].filter(Boolean).join(' ') || [data.headlineLine1, data.headlineLine2].filter(Boolean).join(' ') || 'Section preview';
+            const isLayout = Array.isArray(data.sections);
+            const heading = isLayout ? 'Home Page Layout' : data.sectionTitle || [data.headlinePrefix, data.headlineAccent].filter(Boolean).join(' ') || [data.headlineLine1, data.headlineLine2].filter(Boolean).join(' ') || 'Section preview';
             const intro = data.sectionSubtitle || data.subheadline || '';
-            const groups = data.items || data.roles || data.categories || data.cards || [];
+            const groups = list(data.sections || data.items || data.roles || data.categories || data.cards).filter(item => isLayout || item.visible !== false);
 
             return h('main', { style: { minHeight: '100%', padding: '48px 36px', background: '#0b0b0b', color: '#d7d8df', fontFamily: 'Inter, system-ui, sans-serif' } },
               h('section', { style: { maxWidth: '920px', margin: '0 auto' } },
@@ -51,8 +52,8 @@ export const prerender = true;
                 groups.length > 0 && h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: '16px' } },
                   ...groups.map((item, index) => h('article', { key: index, style: { border: '1px solid #ffffff18', background: '#151515', borderRadius: '12px', padding: '20px', overflow: 'hidden' } },
                     item.image && h('img', { src: asset(item.image), alt: text(item.imageAlt), style: { width: 'calc(100% + 40px)', height: '150px', objectFit: 'cover', margin: '-20px -20px 18px' } }),
-                    h('div', { style: { color: '#44e2cd', font: '12px ui-monospace, monospace', marginBottom: '8px' } }, text(item.icon || item.initials || item.period || item.category || item.label || item.role)),
-                    h('h2', { style: { color: '#c0c1ff', fontSize: '20px', margin: '0 0 10px' } }, text(item.name || item.title || item.company)),
+                    h('div', { style: { color: item.visible === false ? '#ff7777' : '#44e2cd', font: '12px ui-monospace, monospace', marginBottom: '8px' } }, text(isLayout ? (item.visible === false ? 'HIDDEN' : 'VISIBLE') : item.icon || item.initials || item.period || item.category || item.label || item.role)),
+                    h('h2', { style: { color: '#c0c1ff', fontSize: '20px', margin: '0 0 10px' } }, text(item.section || item.name || item.title || item.company)),
                     item.location && h('p', { style: { color: '#777b86', fontSize: '12px', margin: '0 0 10px' } }, text(item.location)),
                     item.company && item.title && h('p', { style: { color: '#d7d8df', fontSize: '13px', margin: '0 0 10px' } }, text(item.company)),
                     h('p', { style: { color: '#a6a8b0', lineHeight: '1.55', margin: 0 } }, text(item.description || item.quote)),
@@ -80,7 +81,7 @@ export const prerender = true;
           }
         });
 
-        ['hero', 'valueProposition', 'projects', 'techStack', 'career', 'aiWorkflow', 'writing', 'standards', 'testimonials', 'contact']
+        ['pageLayout', 'hero', 'valueProposition', 'projects', 'techStack', 'career', 'aiWorkflow', 'writing', 'standards', 'testimonials', 'contact']
           .forEach(name => CMS.registerPreviewTemplate(name, Preview));
       })();
     </script>

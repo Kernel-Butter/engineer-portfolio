@@ -1,14 +1,15 @@
 ---
 import content from '../content/index.js';
 const { projects } = content;
-const projectItems = projects.items ?? [];
+const projectItems = (projects.items ?? []).filter(project => project.visible !== false);
+const show = { header: true, viewAll: true, ...projects.visibility };
 ---
 
 <section id="projects" class="py-section-padding px-margin-mobile md:px-margin-desktop">
   <div class="w-full max-w-container-max mx-auto">
 
     <!-- Header -->
-    <header class="proj-header mb-16">
+    {show.header && <header class="proj-header mb-16">
       <div class="flex items-center gap-3 mb-4">
         <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
         <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">{projects.sectionLabel}</span>
@@ -17,7 +18,7 @@ const projectItems = projects.items ?? [];
         <span class="text-secondary">//</span> <span>{projects.sectionTitle}</span>
       </h2>
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">{projects.sectionSubtitle}</p>
-    </header>
+    </header>}
 
     <!-- Case studies -->
     <div class="flex flex-col">
@@ -73,14 +74,14 @@ const projectItems = projects.items ?? [];
     </div>
 
     <!-- View all -->
-    <div class="proj-cta flex justify-center mt-16">
+    {show.viewAll && <div class="proj-cta flex justify-center mt-16">
       <a
         href="/projects"
         class="px-8 py-4 border border-primary/30 text-primary font-code-snippet text-code-snippet rounded hover:bg-primary/10 hover:border-primary/50 transition-colors flex items-center gap-2"
       >
         VIEW_ALL_PROJECTS <span class="material-symbols-outlined text-sm">arrow_forward</span>
       </a>
-    </div>
+    </div>}
 
   </div>
 </section>

@@ -9,5 +9,6 @@
   "bookCallTitle": "Book a Technical Discovery",
   "bookCallSubtitle": "30-min deep dive into your architecture.",
   "bookCallHref": "mailto:hamzaabhutta@gmail.com?subject=Technical%20Discovery%20Call",
-  "formTitle": "Direct Transmission"
+  "formTitle": "Direct Transmission",
+  "visibility": { "status": true, "headline": true, "introduction": true, "hint": true, "socials": true, "booking": true, "contactForm": true }
 }
