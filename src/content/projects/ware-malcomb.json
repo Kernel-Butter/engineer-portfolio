@@ -1,0 +1,25 @@
+{
+  "order": 5,
+  "visible": true,
+  "slug": "ware-malcomb",
+  "name": "Ware Malcomb",
+  "client": "Ware Malcomb",
+  "category": "Architecture / Corporate",
+  "period": "2024 - 2025",
+  "image": "/projects/ware-malcomb.jpg",
+  "tech": [
+    "HTML5",
+    "CSS3",
+    "JavaScript",
+    "GSAP"
+  ],
+  "description": "Corporate portfolio site for a major North American architecture and engineering firm serving healthcare, industrial, and commercial sectors.",
+  "highlights": [
+    "Delivered a pixel-perfect responsive layout showcasing large-scale architectural project photography",
+    "Built an expandable navigation system, image carousels, and popup content sections",
+    "Implemented smooth scroll animations suited to a B2B institutional audience"
+  ],
+  "href": "https://waremalcomb.com",
+  "featured": true,
+  "type": "agency"
+}

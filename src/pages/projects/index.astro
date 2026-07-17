@@ -1,7 +1,11 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import projectsPage from '../../content/projects-page.json';
-const PROJECTS = (projectsPage.projects ?? []).filter(project => project.visible !== false);
+const projectModules = import.meta.glob('../../content/projects/*.json', { eager: true });
+const PROJECTS = Object.values(projectModules)
+  .map(module => module.default)
+  .filter(project => project.visible !== false)
+  .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
 ---
 
 <BaseLayout title="All Projects // SYS.ENGINEER">

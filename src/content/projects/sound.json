@@ -1,0 +1,23 @@
+{
+  "order": 8,
+  "visible": true,
+  "slug": "sound",
+  "name": "Sound.com",
+  "client": "Sound.com",
+  "category": "SaaS",
+  "period": "2024 - 2025",
+  "image": "/projects/sound.jpg",
+  "tech": [
+    "GSAP",
+    "ScrollTrigger",
+    "Vanilla JavaScript"
+  ],
+  "description": "Homepage scroll animation for an enterprise music and sound licensing SaaS platform handling hundreds of thousands of audio files.",
+  "highlights": [
+    "Built scroll-driven animation sequences using GSAP ScrollTrigger",
+    "Delivered performant transitions that visually communicate the platform's scale"
+  ],
+  "href": "https://sound.com",
+  "featured": false,
+  "type": "agency"
+}

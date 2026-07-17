@@ -1,0 +1,25 @@
+{
+  "order": 3,
+  "visible": true,
+  "slug": "xpensly",
+  "name": "Xpensly",
+  "client": "Personal / small business client",
+  "category": "Mobile-First Tool",
+  "period": "2025",
+  "image": "/projects/xpensly.jpg",
+  "tech": [
+    "Next.js",
+    "Supabase",
+    "Postgres",
+    "Dexie.js",
+    "IndexedDB"
+  ],
+  "description": "Offline-first expense tracker built for a small agricultural business, with a config-driven schema for adding new business types.",
+  "highlights": [
+    "Built an offline-first sync queue using Dexie.js/IndexedDB so field entry works without connectivity",
+    "Config-driven business-type schema adds new business types with zero code changes"
+  ],
+  "href": "https://xpensly.vercel.app",
+  "featured": true,
+  "type": "personal"
+}
