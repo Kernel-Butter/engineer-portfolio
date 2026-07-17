@@ -46,31 +46,39 @@
 <script>
   import { scrambleText } from '../scripts/animations.js';
 
-  const hireBtn = document.getElementById('nav-hire');
-  if (hireBtn) scrambleText(hireBtn);
+  // astro:page-load (not top-level) — Nav lives inside #main-content, which
+  // Astro's client-side nav fully replaces on every navigation, but this
+  // module only ever executes once. Without re-binding here, the fresh nav
+  // (a brand-new set of <a> elements) has zero click listeners attached —
+  // clicks just fall through to the browser's native instant hash-jump
+  // instead of Lenis's smooth eased scroll.
+  document.addEventListener('astro:page-load', () => {
+    const hireBtn = document.getElementById('nav-hire');
+    if (hireBtn) scrambleText(hireBtn);
 
-  // Nav section links are now "/#id" so they work as real navigation from
-  // any page (not just the homepage). Only intercept for a smooth in-page
-  // scroll when we're already on "/" and the target actually exists here —
-  // otherwise let the link navigate normally to "/" + hash.
-  document.querySelectorAll<HTMLAnchorElement>('a[href^="/#"], a[href^="#"]').forEach(link => {
-    link.addEventListener('click', e => {
-      const href = link.getAttribute('href');
-      if (!href) return;
-      const hashIndex = href.indexOf('#');
-      if (hashIndex === -1) return;
-      const id = href.slice(hashIndex);
-      if (id === '#' || location.pathname !== '/') return; // not on homepage — let it navigate
+    // Nav section links are "/#id" so they work as real navigation from any
+    // page (not just the homepage). Only intercept for a smooth in-page
+    // scroll when we're already on "/" and the target actually exists here —
+    // otherwise let the link navigate normally to "/" + hash.
+    document.querySelectorAll<HTMLAnchorElement>('a[href^="/#"], a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const href = link.getAttribute('href');
+        if (!href) return;
+        const hashIndex = href.indexOf('#');
+        if (hashIndex === -1) return;
+        const id = href.slice(hashIndex);
+        if (id === '#' || location.pathname !== '/') return; // not on homepage — let it navigate
 
-      const target = document.querySelector<HTMLElement>(id);
-      if (!target) return;
-      e.preventDefault();
-      const lenis = (window as any).__lenis;
-      if (lenis) {
-        lenis.scrollTo(target, { offset: -40, duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-      } else {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+        const target = document.querySelector<HTMLElement>(id);
+        if (!target) return;
+        e.preventDefault();
+        const lenis = (window as any).__lenis;
+        if (lenis) {
+          lenis.scrollTo(target, { offset: -40, duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+        } else {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
     });
   });
 </script>

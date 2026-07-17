@@ -14,6 +14,11 @@
   import { RenderPass }     from 'three/addons/postprocessing/RenderPass.js';
   import { mergeVertices }  from 'three/addons/utils/BufferGeometryUtils.js';
 
+  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // this module once ever, but the canvas element is recreated fresh on
+  // every visit to this page. Without re-binding here, returning to this
+  // page a second time leaves a blank canvas.
+  document.addEventListener('astro:page-load', () => {
   const wrap   = document.getElementById('ls-wrap')   as HTMLElement;
   const canvas = document.getElementById('ls-canvas') as HTMLCanvasElement;
   if (!wrap || !canvas) throw new Error('LS: missing mount');
@@ -318,4 +323,5 @@
     (hitSphere.material as THREE.Material).dispose();
     hitSphere.geometry.dispose();
   }, { once: true });
+  });
 </script>

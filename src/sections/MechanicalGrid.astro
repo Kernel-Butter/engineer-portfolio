@@ -16,6 +16,11 @@
 </section>
 
 <script>
+// astro:page-load (not top-level) — Astro's client-side nav only executes
+// this module once ever, but the canvas element is recreated fresh on
+// every visit to this page. Without re-binding here, returning to this
+// page a second time leaves a blank canvas.
+document.addEventListener('astro:page-load', () => {
 const canvas   = document.getElementById('mg-canvas') as HTMLCanvasElement;
 const ctx      = canvas.getContext('2d')!;
 const elCoords = document.getElementById('mg-coords')!;
@@ -266,4 +271,5 @@ section.addEventListener('touchend', () => { mouseX = -9999; mouseY = -9999; });
 resize();
 tick();
 new ResizeObserver(resize).observe(canvas.parentElement!);
+});
 </script>
