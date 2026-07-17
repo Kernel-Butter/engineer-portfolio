@@ -9,7 +9,7 @@
   class="htr relative w-full h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-background"
 >
 
-  <!-- Slow horizontal scan line — sweeps top → bottom -->
+  <!-- Slow horizontal scan line - sweeps top → bottom -->
   <div class="htr-scanh" aria-hidden="true"></div>
 
   <!-- ═══════════════════════════
@@ -41,7 +41,7 @@
   </div>
 
   <!-- ═══════════════════════════
-       TOP-LEFT — RETICLE + GEO
+       TOP-LEFT - RETICLE + GEO
   ═══════════════════════════ -->
   <div class="htr-panel htr-tl" aria-hidden="true">
     <!-- Crosshair reticle -->
@@ -66,7 +66,7 @@
   </div>
 
   <!-- ═══════════════════════════
-       TOP-RIGHT — BITRATE / UPLINK
+       TOP-RIGHT - BITRATE / UPLINK
   ═══════════════════════════ -->
   <div class="htr-panel htr-tr" aria-hidden="true">
     <!-- Signal strength bars -->
@@ -90,7 +90,7 @@
   </div>
 
   <!-- ═══════════════════════════
-       BOTTOM-LEFT — SYSTEM STATUS
+       BOTTOM-LEFT - SYSTEM STATUS
   ═══════════════════════════ -->
   <div class="htr-panel htr-bl" aria-hidden="true">
     <div class="htr-row htr-live">
@@ -112,7 +112,7 @@
   </div>
 
   <!-- ═══════════════════════════
-       BOTTOM-RIGHT — RADAR
+       BOTTOM-RIGHT - RADAR
   ═══════════════════════════ -->
   <div class="htr-panel htr-br" aria-hidden="true">
     <div class="htr-row"><span class="htr-key">PROXIMITY_SCAN</span></div>
@@ -148,7 +148,7 @@
   </div>
 
   <!-- ═══════════════════════════
-       LEFT EDGE — VERTICAL TEXT
+       LEFT EDGE - VERTICAL TEXT
   ═══════════════════════════ -->
   <div class="htr-edge htr-edge-l" aria-hidden="true">
     <div class="htr-edge-line"></div>
@@ -162,7 +162,7 @@
   </div>
 
   <!-- ═══════════════════════════
-       RIGHT EDGE — VERTICAL TEXT
+       RIGHT EDGE - VERTICAL TEXT
   ═══════════════════════════ -->
   <div class="htr-edge htr-edge-r" aria-hidden="true">
     <div class="htr-edge-line"></div>
@@ -176,7 +176,7 @@
   </div>
 
   <!-- ═══════════════════════════
-       HERO CONTENT — center, untouched
+       HERO CONTENT - center, untouched
   ═══════════════════════════ -->
   <div class="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col justify-center h-full pt-20">
     <div class="max-w-4xl">
@@ -259,7 +259,7 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
-    /* hide on small screens — only show ≥1024px */
+    /* hide on small screens - only show ≥1024px */
     display: none;
   }
   @media (min-width:1024px) { .htr-panel { display:flex; } }
@@ -381,7 +381,7 @@
       const h     = Math.floor(ms / 3600000);
       const frac  = pad(Math.floor((ms % 1000) / 10));
       clockEl.textContent = `T+${pad(h)}:${pad(m)}:${pad(s)}.${frac}0`;
-    }, 87); // ~12fps — fast enough to feel live
+    }, 87); // ~12fps - fast enough to feel live
   }
 
   /* ── FLUCTUATING BITRATE ── */

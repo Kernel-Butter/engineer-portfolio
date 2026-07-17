@@ -18,11 +18,11 @@ import { PROJECTS } from '../../data/projects.js';
       Everything I&rsquo;ve Shipped
     </h1>
     <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-      {PROJECTS.length} projects — production e-commerce, internal tooling, and agency work spanning checkout systems to architecture studio portfolios.
+      {PROJECTS.length} projects - production e-commerce, internal tooling, and agency work spanning checkout systems to architecture studio portfolios.
     </p>
   </div>
 
-  <!-- SVG goo filter — blurs the indicator + dots then boosts contrast, so
+  <!-- SVG goo filter - blurs the indicator + dots then boosts contrast, so
        overlapping circles visually merge into one liquid blob instead of
        just crossing over each other. Classic "gooey nav" technique. -->
   <svg width="0" height="0" style="position:absolute">
@@ -39,7 +39,7 @@ import { PROJECTS } from '../../data/projects.js';
   <nav id="reel-rail" class="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 z-40">
     <div class="relative flex flex-col items-center gap-4">
 
-      <!-- Goo layer: purely visual — the indicator + dots that actually
+      <!-- Goo layer: purely visual - the indicator + dots that actually
            render and merge. Positioned to exactly overlap the buttons
            below via identical flex/gap layout. -->
       <div class="rail-goo absolute inset-0 flex flex-col items-center gap-4 pointer-events-none" style="filter:url(#rail-goo)" aria-hidden="true">
@@ -75,7 +75,7 @@ import { PROJECTS } from '../../data/projects.js';
         class={`reel-item group relative flex items-end min-h-[85vh] w-full overflow-hidden border-t border-outline-variant/10 ${p.href ? 'cursor-pointer' : 'cursor-default'}`}
       >
         <!-- Wipe-reveal clip lives on the wrapper; the image inside gets its
-             own independent parallax transform — keeping the two animated
+             own independent parallax transform - keeping the two animated
              properties on separate elements avoids fighting compositing
              work on a single node, which was contributing to the janky feel. -->
         <div class="reel-image-wrap absolute inset-0 w-full h-full overflow-hidden">
@@ -129,7 +129,7 @@ import { PROJECTS } from '../../data/projects.js';
                 VIEW_LIVE <span class="material-symbols-outlined text-sm">arrow_forward</span>
               </span>
             ) : (
-              <span class="reel-fade font-code-snippet text-code-snippet text-outline">Internal tool — NDA, no public link</span>
+              <span class="reel-fade font-code-snippet text-code-snippet text-outline">Internal tool - NDA, no public link</span>
             )}
           </div>
         </div>
@@ -140,7 +140,7 @@ import { PROJECTS } from '../../data/projects.js';
 </BaseLayout>
 
 <style>
-  /* Starting (pre-animation) states — GSAP takes over from here on reveal */
+  /* Starting (pre-animation) states - GSAP takes over from here on reveal */
   .reel-item .reel-image-wrap {
     clip-path: inset(0 100% 0 0);
   }
@@ -165,7 +165,7 @@ import { PROJECTS } from '../../data/projects.js';
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever; without re-binding here, returning to this page
   // leaves the fresh DOM's reel items, rail dots, and click handlers all
   // permanently unbound (observers/listeners still reference the previous
@@ -173,10 +173,10 @@ import { PROJECTS } from '../../data/projects.js';
   document.addEventListener('astro:page-load', () => {
   const items = document.querySelectorAll<HTMLElement>('.reel-item');
 
-  // Text reveal (word stagger + fade) — one-shot, triggered by
+  // Text reveal (word stagger + fade) - one-shot, triggered by
   // IntersectionObserver rather than ScrollTrigger's position-calculated
   // start/end. On a page this tall (14 stacked full-height sections), a
-  // single stale position calc for one item can cascade — IntersectionObserver
+  // single stale position calc for one item can cascade - IntersectionObserver
   // is browser-native and self-correcting, so a failed trigger can't leave a
   // section permanently stuck at its hidden starting state.
   const revealIO = new IntersectionObserver(
@@ -198,8 +198,8 @@ import { PROJECTS } from '../../data/projects.js';
   );
   items.forEach(item => revealIO.observe(item));
 
-  // Image wipe — auto-plays forward when the section enters scrolling down,
-  // auto-reverses if you scroll back up past it (toggleActions, not scrub —
+  // Image wipe - auto-plays forward when the section enters scrolling down,
+  // auto-reverses if you scroll back up past it (toggleActions, not scrub -
   // scrub would let the wipe get stuck half-open if you stop scrolling
   // mid-transition, which reads as broken rather than intentional).
   // Alternates direction per project: even ones wipe open left-to-right,
@@ -223,7 +223,7 @@ import { PROJECTS } from '../../data/projects.js';
   // Continuous parallax while each image is on screen. A small numeric scrub
   // (instead of `scrub: true`) adds a touch of its own lag so the image
   // doesn't snap frame-to-frame against Lenis's already-smoothed scroll
-  // position — two unsmoothed layers fighting each other is what read as
+  // position - two unsmoothed layers fighting each other is what read as
   // "slippery"/glitchy before.
   items.forEach(item => {
     const img = item.querySelector<HTMLElement>('.reel-img');
@@ -240,7 +240,7 @@ import { PROJECTS } from '../../data/projects.js';
   });
 
   // Jump-to rail: fluid indicator slides from dot to dot via GSAP, merging
-  // into whichever dot it passes near thanks to the goo filter — as the
+  // into whichever dot it passes near thanks to the goo filter - as the
   // active project changes, instead of each dot instantly snapping state.
   const rail       = document.getElementById('reel-rail');
   const buttons    = document.querySelectorAll<HTMLElement>('#reel-rail .rail-dot');
@@ -253,7 +253,7 @@ import { PROJECTS } from '../../data/projects.js';
     if (!railDot) return;
     // Measure against the rail's own box via getBoundingClientRect rather
     // than offsetTop, since the goo layer and buttons are separate stacked
-    // elements, not nested — no shared offsetParent to rely on.
+    // elements, not nested - no shared offsetParent to rely on.
     const railRect = rail.getBoundingClientRect();
     const dotRect  = railDot.getBoundingClientRect();
     const top = dotRect.top - railRect.top + dotRect.height / 2 - indicator.offsetHeight / 2;

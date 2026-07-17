@@ -37,7 +37,18 @@ export function hydrateDOM(content) {
     if (val != null && val !== '') el.setAttribute('href', String(val));
   });
 
-  // Bullet <ul> lists — value is string[]
+  // Image sources and accessible alt text
+  document.querySelectorAll('[data-cms-src]').forEach(el => {
+    const val = resolve(content, el.dataset.cmsSrc);
+    if (val != null && val !== '') el.setAttribute('src', String(val));
+  });
+
+  document.querySelectorAll('[data-cms-alt]').forEach(el => {
+    const val = resolve(content, el.dataset.cmsAlt);
+    if (val != null && val !== '') el.setAttribute('alt', String(val));
+  });
+
+  // Bullet <ul> lists - value is string[]
   document.querySelectorAll('[data-cms-bullets]').forEach(ul => {
     const val = resolve(content, ul.dataset.cmsBullets);
     if (!Array.isArray(val) || val.length === 0) return;
@@ -51,7 +62,7 @@ export function hydrateDOM(content) {
       .join('');
   });
 
-  // Chip containers — value is string[]
+  // Chip containers - value is string[]
   document.querySelectorAll('[data-cms-chips]').forEach(container => {
     const val = resolve(content, container.dataset.cmsChips);
     if (!Array.isArray(val) || val.length === 0) return;

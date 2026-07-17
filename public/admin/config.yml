@@ -1,0 +1,172 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+backend:
+  name: github
+  repo: Kernel-Butter/engineer-portfolio
+  auth_methods: [token]
+
+site_url: /
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: home
+    label: Home Page
+    icon: home
+    files:
+      - name: hero
+        label: 01 - Hero
+        file: src/content/hero.json
+        format: json
+        fields:
+          - { label: Status eyebrow, name: eyebrow, widget: string, required: false }
+          - { label: Headline main text, name: headlinePrefix, widget: string, required: false }
+          - { label: Headline accent text, name: headlineAccent, widget: string, required: false }
+          - { label: Introduction, name: subheadline, widget: text, required: false }
+          - { label: Tagline, name: tagline, widget: string, required: false }
+          - { label: Button label, name: ctaLabel, widget: string, required: false }
+          - { label: Button link, name: ctaHref, widget: string, required: false }
+          - { label: Role label, name: statusLabel, widget: string, required: false }
+
+      - name: valueProposition
+        label: 02 - Value Proposition
+        file: src/content/value-proposition.json
+        format: json
+        fields:
+          - { label: Section label, name: sectionLabel, widget: string, required: false }
+          - { label: Section title, name: sectionTitle, widget: string, required: false }
+          - label: Cards
+            name: cards
+            widget: list
+            required: false
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Title, name: title, widget: string, required: false }
+              - { label: Points, name: points, widget: list, required: false, field: { label: Point, name: item, widget: string, required: false } }
+
+      - name: projects
+        label: 03 - Featured Projects
+        file: src/content/projects.json
+        format: json
+        fields:
+          - { label: Section label, name: sectionLabel, widget: string, required: false }
+          - { label: Section title, name: sectionTitle, widget: string, required: false }
+          - { label: Section introduction, name: sectionSubtitle, widget: text, required: false }
+          - label: Projects
+            name: items
+            widget: list
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: Name, name: name, widget: string, required: false }
+              - { label: Tags, name: chips, widget: list, required: false, field: { label: Tag, name: tag, widget: string, required: false } }
+              - { label: Description, name: description, widget: text, required: false }
+              - { label: Category, name: category, widget: string, required: false }
+              - { label: Image, name: image, widget: image, required: false }
+              - { label: Image description, name: imageAlt, widget: string, required: false }
+              - { label: Live website URL, name: href, widget: string, required: false }
+
+      - name: techStack
+        label: 04 - Technology Stack
+        file: src/content/tech-stack.json
+        format: json
+        fields:
+          - { label: Section label, name: sectionLabel, widget: string, required: false }
+          - { label: Section title, name: sectionTitle, widget: string, required: false }
+          - { label: Section introduction, name: sectionSubtitle, widget: text, required: false }
+          - label: Categories
+            name: categories
+            widget: list
+            required: false
+            summary: "{{fields.label}}"
+            fields:
+              - { label: Icon, name: icon, widget: string, required: false }
+              - { label: Category, name: label, widget: string, required: false }
+              - { label: Technologies, name: chips, widget: list, required: false, field: { label: Technology, name: item, widget: string, required: false } }
+
+      - name: career
+        label: 05 - Career
+        file: src/content/career.json
+        format: json
+        fields:
+          - { label: Section label, name: sectionLabel, widget: string, required: false }
+          - { label: Section title, name: sectionTitle, widget: string, required: false }
+          - { label: Section introduction, name: sectionSubtitle, widget: text, required: false }
+          - label: Roles
+            name: roles
+            widget: list
+            required: false
+            summary: "{{fields.title}} at {{fields.company}}"
+            fields:
+              - { label: Period, name: period, widget: string, required: false }
+              - { label: Location, name: location, widget: string, required: false }
+              - { label: Job title, name: title, widget: string, required: false }
+              - { label: Company, name: company, widget: string, required: false }
+              - { label: Icon, name: icon, widget: string, required: false, hint: Material Symbols icon name }
+              - { label: Achievements, name: bullets, widget: list, required: false, field: { label: Achievement, name: item, widget: text, required: false } }
+              - { label: Technologies, name: chips, widget: list, required: false, field: { label: Technology, name: item, widget: string, required: false } }
+
+      - name: aiWorkflow
+        label: 06 - AI Workflow
+        file: src/content/ai-workflow.json
+        format: json
+        fields:
+          - { label: Section label, name: sectionLabel, widget: string, required: false }
+          - { label: Section title, name: sectionTitle, widget: string, required: false }
+          - { label: Section introduction, name: sectionSubtitle, widget: text, required: false }
+          - { label: Metric, name: metric, widget: string, required: false }
+          - { label: Metric title, name: metricTitle, widget: string, required: false }
+          - { label: Metric description, name: metricDescription, widget: text, required: false }
+
+      - name: writing
+        label: 07 - Writing
+        file: src/content/writing.json
+        format: json
+        fields:
+          - { label: Section label, name: sectionLabel, widget: string, required: false }
+          - { label: Section title, name: sectionTitle, widget: string, required: false }
+          - { label: Section introduction, name: sectionSubtitle, widget: text, required: false }
+          - { label: Empty message, name: emptyMessage, widget: string, required: false }
+
+      - name: standards
+        label: 08 - Engineering Standards
+        file: src/content/standards.json
+        format: json
+        fields:
+          - { label: Section label, name: sectionLabel, widget: string, required: false }
+          - { label: Section title, name: sectionTitle, widget: string, required: false }
+          - { label: Section introduction, name: sectionSubtitle, widget: text, required: false }
+
+      - name: testimonials
+        label: 09 - Testimonials
+        file: src/content/testimonials.json
+        format: json
+        fields:
+          - { label: Section title, name: sectionTitle, widget: string, required: false }
+          - label: Testimonials
+            name: items
+            widget: list
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: Name, name: name, widget: string, required: false }
+              - { label: Initials, name: initials, widget: string, required: false }
+              - { label: Role and company, name: role, widget: string, required: false }
+              - { label: Quote, name: quote, widget: text, required: false }
+              - { label: Tags, name: tags, widget: list, required: false, field: { label: Tag, name: item, widget: string, required: false } }
+
+      - name: contact
+        label: 10 - Contact
+        file: src/content/contact.json
+        format: json
+        fields:
+          - { label: Availability badge, name: statusBadge, widget: string, required: false }
+          - { label: Headline line 1, name: headlineLine1, widget: string, required: false }
+          - { label: Headline line 2, name: headlineLine2, widget: string, required: false }
+          - { label: Introduction, name: subheadline, widget: text, required: false }
+          - { label: Help text, name: hint, widget: string, required: false }
+          - { label: GitHub URL, name: githubHref, widget: string, required: false }
+          - { label: LinkedIn URL, name: linkedinHref, widget: string, required: false }
+          - { label: Booking title, name: bookCallTitle, widget: string, required: false }
+          - { label: Booking description, name: bookCallSubtitle, widget: string, required: false }
+          - { label: Booking link, name: bookCallHref, widget: string, required: false }
+          - { label: Contact form title, name: formTitle, widget: string, required: false }

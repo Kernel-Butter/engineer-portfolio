@@ -1,11 +1,7 @@
 ---
-import { PROJECTS } from '../data/projects.js';
-
-// Homepage teaser: hand-picked for visual strength — real photography,
-// not the login-wall (Xpensly) or image-less NDA card (TWB Admin).
-// The full set (including those two) still lives on /projects.
-const TEASER_SLUGS = ['twb-catering', 'ware-malcomb', 'yoo-interior', 'septiembre-arquitectura'];
-const projects = TEASER_SLUGS.map(slug => PROJECTS.find(p => p.slug === slug)).filter(Boolean);
+import content from '../content/index.js';
+const { projects } = content;
+const projectItems = projects.items ?? [];
 ---
 
 <section id="projects" class="py-section-padding px-margin-mobile md:px-margin-desktop">
@@ -15,19 +11,17 @@ const projects = TEASER_SLUGS.map(slug => PROJECTS.find(p => p.slug === slug)).f
     <header class="proj-header mb-16">
       <div class="flex items-center gap-3 mb-4">
         <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-        <span data-cms="projects.sectionLabel" class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">// CASE_STUDIES</span>
+        <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">{projects.sectionLabel}</span>
       </div>
       <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">
-        <span class="text-secondary">//</span> <span data-cms="projects.sectionTitle">Featured Projects</span>
+        <span class="text-secondary">//</span> <span>{projects.sectionTitle}</span>
       </h2>
-      <p data-cms="projects.sectionSubtitle" class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-        Production e-commerce and internal tooling — checkout architecture, multi-gateway payments, and offline-first data sync.
-      </p>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">{projects.sectionSubtitle}</p>
     </header>
 
     <!-- Case studies -->
     <div class="flex flex-col">
-      {projects.map((p, i) => (
+      {projectItems.map((p, i) => (
         <article class="proj-row grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-center py-14 md:py-20 border-b border-outline-variant/10 last:border-0">
 
           <!-- Screenshot / placeholder -->
@@ -39,11 +33,11 @@ const projects = TEASER_SLUGS.map(slug => PROJECTS.find(p => p.slug === slug)).f
                 <span class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></span>
               </div>
               {p.image ? (
-                <img src={p.image} alt={`${p.name} screenshot`} loading="lazy" class="w-full h-auto block" />
+                <img src={p.image} alt={p.imageAlt} loading="lazy" class="w-full h-auto block" />
               ) : (
                 <div class="aspect-[16/10] flex flex-col items-center justify-center gap-3 bg-surface-container text-on-surface-variant">
                   <span class="material-symbols-outlined text-4xl opacity-40">lock</span>
-                  <p class="font-code-snippet text-code-snippet text-xs opacity-60 text-center px-6">Internal tool — NDA, no public link</p>
+                  <p class="font-code-snippet text-code-snippet text-xs opacity-60 text-center px-6">Internal tool - NDA, no public link</p>
                 </div>
               )}
             </div>
@@ -55,7 +49,7 @@ const projects = TEASER_SLUGS.map(slug => PROJECTS.find(p => p.slug === slug)).f
             <h3 class="font-headline-md text-headline-md text-primary mt-2 mb-3">{p.name}</h3>
 
             <div class="flex gap-2 flex-wrap mb-6">
-              {p.tech.slice(0, 3).map(t => (
+              {(p.chips ?? []).slice(0, 3).map(t => (
                 <span class="chip font-label-sm text-label-sm px-3 py-1 text-on-surface-variant rounded">{t}</span>
               ))}
             </div>
@@ -69,7 +63,7 @@ const projects = TEASER_SLUGS.map(slug => PROJECTS.find(p => p.slug === slug)).f
                   VIEW_LIVE <span class="material-symbols-outlined text-sm">arrow_forward</span>
                 </a>
               ) : (
-                <span class="font-code-snippet text-code-snippet text-outline whitespace-nowrap">NDA — no link</span>
+                <span class="font-code-snippet text-code-snippet text-outline whitespace-nowrap">NDA - no link</span>
               )}
             </div>
           </div>
@@ -103,13 +97,13 @@ const projects = TEASER_SLUGS.map(slug => PROJECTS.find(p => p.slug === slug)).f
 <script>
   import { fadeUp } from '../scripts/animations.js';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever; without re-binding here, returning to this page
   // leaves the fresh DOM stuck at its CSS opacity:0 starting state.
   document.addEventListener('astro:page-load', () => {
     fadeUp('#projects .proj-header', '#projects');
 
-    // Each row reveals independently as it scrolls into view — a single
+    // Each row reveals independently as it scrolls into view - a single
     // trigger on the section would fire every row (even ones far below
     // the fold) as soon as the header appears.
     document.querySelectorAll('#projects .proj-row, #projects .proj-cta').forEach(row => {

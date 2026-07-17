@@ -1,10 +1,7 @@
 ---
-const categories = [
-  { icon: 'memory',          label: 'Core / Lang',      chips: ['HTML5','CSS3','JavaScript','TypeScript','JSX / TSX','Vue 3'] },
-  { icon: 'developer_board', label: 'Frameworks / State', chips: ['React','Next.js','Astro','Zustand','React Query','Redux','GraphQL','REST','Supabase','WebSockets'] },
-  { icon: 'brush',           label: 'Styling / FX',     chips: ['Tailwind CSS','SCSS','Radix UI','GSAP','Framer Motion','Three.js','Canvas API'] },
-  { icon: 'cloud',           label: 'Quality / Tooling', chips: ['Jest','Vitest','React Testing Library','Cypress','Lighthouse','Web Vitals','Git','Vite','Vercel','ESLint','Prettier','CI/CD'] },
-];
+import content from '../content/index.js';
+const tech = content.techStack;
+const categories = tech.categories ?? [];
 ---
 
 <section id="tech-stack-v2" class="py-section-padding px-margin-mobile md:px-margin-desktop">
@@ -13,19 +10,19 @@ const categories = [
     <header class="stkv2-header mb-16">
       <div class="flex items-center gap-3 mb-4">
         <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-        <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">// SYSTEM_CAPABILITIES</span>
+        <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">{tech.sectionLabel}</span>
       </div>
       <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">
-        SYSTEM.CAPABILITIES
+        {tech.sectionTitle}
       </h2>
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-        Every tool in the stack — suspended and alive. Move through to disturb the field.
+        {tech.sectionSubtitle}
       </p>
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap w-full md:h-[640px]">
 
-      <!-- Three.js canvas — 8 cols -->
+      <!-- Three.js canvas - 8 cols -->
       <div class="stkv2-panel bento-card col-span-1 md:col-span-8 rounded-xl h-[420px] md:h-full relative flex items-center justify-center group overflow-hidden" style="cursor:crosshair">
         <div id="stk-canvas-v2" class="absolute inset-0"></div>
 
@@ -54,7 +51,7 @@ const categories = [
         </div>
       </div>
 
-      <!-- Right chips — 4 cols -->
+      <!-- Right chips - 4 cols -->
       <div class="col-span-1 md:col-span-4 flex flex-col gap-bento-gap md:h-full overflow-y-auto">
         {categories.map(cat => (
           <div class="stkv2-panel bento-card p-5 rounded-xl flex flex-col justify-center">
@@ -63,7 +60,7 @@ const categories = [
               {cat.label}
             </h3>
             <div class="flex flex-wrap gap-1.5">
-              {cat.chips.map(chip => (
+              {(cat.chips ?? []).map(chip => (
                 <span class="tech-chip px-2.5 py-1 rounded font-code-snippet text-[11px] text-on-surface-variant">
                   {chip}
                 </span>
@@ -78,7 +75,7 @@ const categories = [
   </div>
 </section>
 
-<!-- Modal — fullscreen expanded canvas for more play area -->
+<!-- Modal - fullscreen expanded canvas for more play area -->
 <div id="stk-v2-modal"
   class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm hidden flex-col gap-3 p-4 md:p-6">
 
@@ -114,7 +111,7 @@ const categories = [
   import * as CANNON from 'cannon-es';
   import { fadeUp, staggerFadeUp, onEnterOnce } from '../scripts/animations.js';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever; without re-binding here, returning to this page
   // leaves the fresh DOM stuck at its CSS opacity:0 starting state.
   document.addEventListener('astro:page-load', () => {
@@ -138,7 +135,7 @@ const categories = [
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // ── Modal — expands canvas to full screen for more play area ───────────
+    // ── Modal - expands canvas to full screen for more play area ───────────
     const modalEl       = document.getElementById('stk-v2-modal');
     const modalCanvas   = document.getElementById('stk-v2-modal-canvas');
     let   activeHost    = container; // whichever div currently holds the renderer
@@ -190,7 +187,7 @@ const categories = [
 
     // ── Node data (positions scaled ×1.35 for breathing room) ─────────────
     const P = '#c0c1ff', S = '#44e2cd', T = '#4edea3';
-    const SP = 1.35; // position spread factor — more breathing room between nodes
+    const SP = 1.35; // position spread factor - more breathing room between nodes
 
     const NODES = [
       { label:'HTML5',          c:P, p:[-14*SP,  2*SP,  1*SP] },

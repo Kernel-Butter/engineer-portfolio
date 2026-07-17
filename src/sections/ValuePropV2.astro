@@ -1,5 +1,14 @@
 ---
 import BlobCard from '../components/BlobCard.astro';
+import content from '../content/index.js';
+const value = content.valueProposition;
+const cards = value.cards ?? [];
+const variants = [
+  { span: 'md:col-span-8', pattern: 'grid', text: 'text-primary', icon: 'design_services', color: 'bg-indigo-500/30', position: '-top-20 -left-16' },
+  { span: 'md:col-span-4', pattern: 'lines', text: 'text-secondary', icon: 'speed', color: 'bg-teal-500/30', position: '-top-10 -right-10' },
+  { span: 'md:col-span-5', pattern: 'dots', text: 'text-tertiary', icon: 'memory', color: 'bg-violet-500/25', position: '-bottom-16 -left-16' },
+  { span: 'md:col-span-7', pattern: 'brackets', text: 'vp2-blue', icon: 'rocket_launch', color: 'bg-blue-500/25', position: '-top-16 right-0' },
+];
 ---
 
 <section id="value-prop-v2" class="py-section-padding px-margin-mobile md:px-margin-desktop relative overflow-hidden">
@@ -10,112 +19,40 @@ import BlobCard from '../components/BlobCard.astro';
       <div class="flex items-center justify-center gap-2">
         <span class="status-dot bg-secondary"></span>
         <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">
-          SYSTEM_ARCHITECTURE_CAPABILITIES
+          {value.sectionLabel}
         </span>
       </div>
       <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
-        Value Proposition
+        {value.sectionTitle}
       </h2>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap w-full">
-
-      <!-- Card 1: Pixel-Perfect UI Systems (indigo) -->
-      <BlobCard
-        class="vp2-card bento-card col-span-1 md:col-span-8 rounded-xl p-8 flex flex-col gap-6 relative group min-h-[240px]"
-        pattern="grid"
-        blobs={[
-          { color: 'bg-indigo-500/30', position: '-top-20 -left-16', size: 'w-80 h-80', blur: 'blur-[90px]', anim: 'a', dur: '14s' },
-          { color: 'bg-indigo-400/20', position: 'bottom-0 right-8',  size: 'w-56 h-56', blur: 'blur-[65px]', anim: 'b', dur: '10s', delay: '-5s' },
-        ]}
-      >
-        <div class="flex flex-col gap-4 relative z-10 justify-center h-full">
-          <div class="flex items-center justify-between">
-            <div class="font-code-snippet text-code-snippet text-primary bg-surface/80 py-1 px-3 rounded w-fit border border-white/5 backdrop-blur-sm">01 // UI_SYSTEMS</div>
-            <span class="material-symbols-outlined text-primary/50 group-hover:text-primary transition-colors duration-300">design_services</span>
-          </div>
-          <div>
-            <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Pixel-Perfect UI Systems</h3>
-            <ul class="font-code-snippet text-code-snippet text-on-surface-variant flex flex-col gap-2">
-              <li class="flex items-center gap-2"><span class="text-primary">&gt;</span> 100% Design Token Compliance</li>
-              <li class="flex items-center gap-2"><span class="text-primary">&gt;</span> Scalable Modular Architecture</li>
-            </ul>
-          </div>
-        </div>
-      </BlobCard>
-
-      <!-- Card 2: Performance-First SPAs (teal) -->
-      <BlobCard
-        class="vp2-card bento-card col-span-1 md:col-span-4 rounded-xl p-8 flex flex-col gap-6 relative group min-h-[240px]"
-        pattern="lines"
-        blobs={[
-          { color: 'bg-teal-500/30', position: '-top-10 -right-10', size: 'w-60 h-60', blur: 'blur-[75px]', anim: 'b', dur: '12s' },
-          { color: 'bg-teal-400/20', position: 'bottom-0 left-0',   size: 'w-44 h-44', blur: 'blur-[55px]', anim: 'c', dur: '8s',  delay: '-3s' },
-        ]}
-      >
-        <div class="flex flex-col gap-4 relative z-10 h-full justify-center">
-          <div class="flex items-center justify-between">
-            <div class="font-code-snippet text-code-snippet text-secondary bg-surface/80 py-1 px-3 rounded w-fit border border-white/5 backdrop-blur-sm">02 // PERF</div>
-            <span class="material-symbols-outlined text-secondary/50 group-hover:text-secondary transition-colors duration-300">speed</span>
-          </div>
-          <div>
-            <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Performance-First SPAs</h3>
-            <ul class="font-code-snippet text-code-snippet text-on-surface-variant flex flex-col gap-2">
-              <li class="flex items-center gap-2"><span class="text-secondary">&gt;</span> Sub-second LCP Delivery</li>
-              <li class="flex items-center gap-2"><span class="text-secondary">&gt;</span> Optimized Bundle Budgets</li>
-            </ul>
-          </div>
-        </div>
-      </BlobCard>
-
-      <!-- Card 3: AI-Augmented Workflows (violet) -->
-      <BlobCard
-        class="vp2-card bento-card col-span-1 md:col-span-5 rounded-xl p-8 flex flex-col gap-6 relative group min-h-[240px]"
-        pattern="dots"
-        blobs={[
-          { color: 'bg-violet-500/25', position: '-bottom-16 -left-16', size: 'w-80 h-80', blur: 'blur-[85px]', anim: 'c', dur: '16s' },
-          { color: 'bg-violet-400/20', position: 'top-0 right-0',       size: 'w-52 h-52', blur: 'blur-[60px]', anim: 'a', dur: '11s', delay: '-6s' },
-        ]}
-      >
-        <div class="flex flex-col gap-4 relative z-10 h-full justify-center">
-          <div class="flex items-center justify-between">
-            <div class="font-code-snippet text-code-snippet text-tertiary bg-surface/80 py-1 px-3 rounded w-fit border border-white/5 backdrop-blur-sm">03 // AI_INTEGRATION</div>
-            <span class="material-symbols-outlined text-tertiary/50 group-hover:text-tertiary transition-colors duration-300">memory</span>
-          </div>
-          <div>
-            <h3 class="font-headline-md text-headline-md text-on-surface mb-2">AI-Augmented Workflows</h3>
-            <ul class="font-code-snippet text-code-snippet text-on-surface-variant flex flex-col gap-2">
-              <li class="flex items-center gap-2"><span class="text-tertiary">&gt;</span> Native LLM Integration</li>
-              <li class="flex items-center gap-2"><span class="text-tertiary">&gt;</span> Context-Aware UX Models</li>
-            </ul>
-          </div>
-        </div>
-      </BlobCard>
-
-      <!-- Card 4: Design-to-Code Delivery (blue) -->
-      <BlobCard
-        class="vp2-card bento-card col-span-1 md:col-span-7 rounded-xl p-8 flex flex-col gap-6 relative group min-h-[240px] vp2-blue-card"
-        pattern="brackets"
-        blobs={[
-          { color: 'bg-blue-500/25', position: '-top-16 right-0',  size: 'w-80 h-80', blur: 'blur-[90px]', anim: 'a', dur: '13s' },
-          { color: 'bg-blue-400/20', position: 'bottom-0 -left-8', size: 'w-60 h-60', blur: 'blur-[65px]', anim: 'b', dur: '9s',  delay: '-4s' },
-        ]}
-      >
-        <div class="flex flex-col gap-4 relative z-10 h-full justify-center">
-          <div class="flex items-center justify-between">
-            <div class="font-code-snippet text-code-snippet vp2-blue bg-surface/80 py-1 px-3 rounded w-fit border border-white/5 backdrop-blur-sm">04 // DELIVERY</div>
-            <span class="material-symbols-outlined vp2-blue-dim group-hover:vp2-blue transition-colors duration-300">rocket_launch</span>
-          </div>
-          <div>
-            <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Design-to-Code Delivery</h3>
-            <ul class="font-code-snippet text-code-snippet text-on-surface-variant flex flex-col gap-2">
-              <li class="flex items-center gap-2"><span class="vp2-blue">&gt;</span> Zero-Friction Deployment Pipelines</li>
-              <li class="flex items-center gap-2"><span class="vp2-blue">&gt;</span> Automated Visual Regression Testing</li>
-            </ul>
-          </div>
-        </div>
-      </BlobCard>
-
+      {cards.map((card, index) => {
+        const variant = variants[index % variants.length];
+        return (
+          <BlobCard
+            class={`vp2-card bento-card col-span-1 ${variant.span} rounded-xl p-8 flex flex-col gap-6 relative group min-h-[240px]`}
+            pattern={variant.pattern}
+            blobs={[{ color: variant.color, position: variant.position, size: 'w-80 h-80', blur: 'blur-[90px]', anim: 'a', dur: '14s' }]}
+          >
+            <div class="flex flex-col gap-4 relative z-10 justify-center h-full">
+              <div class="flex items-center justify-between">
+                <div class={`font-code-snippet text-code-snippet ${variant.text} bg-surface/80 py-1 px-3 rounded w-fit border border-white/5 backdrop-blur-sm`}>
+                  {String(index + 1).padStart(2, '0')} // CAPABILITY
+                </div>
+                <span class={`material-symbols-outlined ${variant.text} opacity-60`}>{variant.icon}</span>
+              </div>
+              <div>
+                <h3 class="font-headline-md text-headline-md text-on-surface mb-2">{card.title}</h3>
+                <ul class="font-code-snippet text-code-snippet text-on-surface-variant flex flex-col gap-2">
+                  {(card.points ?? []).map(point => <li class="flex items-center gap-2"><span class={variant.text}>&gt;</span> {point}</li>)}
+                </ul>
+              </div>
+            </div>
+          </BlobCard>
+        );
+      })}
     </div>
 
     <div class="vp2-status w-full border-t border-b border-outline-variant/20 flex flex-col md:flex-row justify-between items-center py-4 gap-4">
@@ -160,7 +97,7 @@ import BlobCard from '../components/BlobCard.astro';
 <script>
   import { fadeUp, staggerFadeUp } from '../scripts/animations.js';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever; without re-binding here, returning to this page
   // leaves the fresh DOM stuck at its CSS opacity:0 starting state.
   document.addEventListener('astro:page-load', () => {

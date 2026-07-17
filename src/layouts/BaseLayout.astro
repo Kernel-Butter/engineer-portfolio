@@ -15,7 +15,7 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
   <ClientRouter />
-  <!-- Kill Astro's built-in page crossfade — GSAP overlay handles all transitions -->
+  <!-- Kill Astro's built-in page crossfade - GSAP overlay handles all transitions -->
   <style>
     ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
     /* Hidden until preloader exits on first load; page-transition overlay reveals on SPA nav */
@@ -31,7 +31,7 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
   <Preloader />
   <SmoothScroll />
 
-  <!-- Page transition overlay — fade to black + terminal blink -->
+  <!-- Page transition overlay - fade to black + terminal blink -->
   <div id="pt-overlay" transition:persist aria-hidden="true"
        style="position:fixed;inset:0;z-index:500;pointer-events:none;visibility:hidden;background:#03030a;display:flex;align-items:center;justify-content:center;">
     <div style="display:flex;flex-direction:column;gap:10px;">
@@ -67,15 +67,6 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
   </script>
 
   <script>
-    import { initCMS } from '../scripts/cms.js';
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initCMS);
-    } else {
-      initCMS();
-    }
-  </script>
-
-  <script>
     import { gsap } from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -90,7 +81,7 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
 
     /* Astro's client-side nav only ever re-runs each page's own <script>
        modules once (the browser's module registry is keyed by URL and
-       survives the DOM swap) — but every section's ScrollTrigger-driven
+       survives the DOM swap) - but every section's ScrollTrigger-driven
        reveal is set up as a top-level call in that script. Without this,
        a section visited a second time keeps its stale ScrollTrigger bound
        to the OLD (now-detached) DOM, while the fresh DOM sits at its CSS
@@ -102,9 +93,9 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
       ScrollTrigger.getAll().forEach(st => st.kill());
     });
 
-    /* PHASE 1 — fade to black + "NAVIGATING" line */
+    /* PHASE 1 - fade to black + "NAVIGATING" line */
     document.addEventListener('astro:before-preparation', () => {
-      /* Skip if the preloader hasn't completed its first run yet — avoids a black
+      /* Skip if the preloader hasn't completed its first run yet - avoids a black
          flash over the preloader if Astro fires this event during initialisation. */
       if (sessionStorage.getItem('preloader_done') !== '1') return;
 
@@ -125,14 +116,14 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
         .to({},      { duration: 0.18 });
     });
 
-    /* PHASE 2 — "DONE" line + fade out overlay, slide new page up */
+    /* PHASE 2 - "DONE" line + fade out overlay, slide new page up */
     document.addEventListener('astro:page-load', () => {
       const main    = document.getElementById('main-content');
       const overlay = document.getElementById('pt-overlay')!;
       const line2   = document.getElementById('pt-line2')!;
 
       if (!_active) {
-        // Full page load — preloader's onComplete handles reveal and portfolio:ready.
+        // Full page load - preloader's onComplete handles reveal and portfolio:ready.
         // Never interfere here; firing portfolio:ready early would burn Hero's { once:true }
         // listener before the preloader exits.
         return;
@@ -155,8 +146,8 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
           .to({},      { duration: 0.28 })
           .to(overlay, { opacity: 0, duration: 0.30, ease: 'power2.out' });
 
-        /* fromTo only sets y:32 at tween-start — overlay is still opaque then.
-           clearProps strips the inline transform once settled — otherwise it
+        /* fromTo only sets y:32 at tween-start - overlay is still opaque then.
+           clearProps strips the inline transform once settled - otherwise it
            lingers at translate3d(0,0,0) and creates a new containing block,
            breaking position:fixed for any descendant (e.g. a fixed nav rail)
            on every page reached via a client-side transition. */

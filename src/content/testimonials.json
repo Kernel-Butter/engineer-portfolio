@@ -1,0 +1,9 @@
+{
+  "sectionTitle": "SOCIAL_PROOF",
+  "items": [
+    { "name": "Marcus R.", "initials": "MR", "role": "VP ENGINEERING @ NEURAL_SYNC", "quote": "The architectural decisions made during the core refactor didn't just solve our scaling issues; they laid a foundation we'll be building on for the next five years. Precision engineering meets uncompromising execution.", "tags": ["SYSTEM_ARCH", "RUST"] },
+    { "name": "Elena K.", "initials": "EK", "role": "FOUNDER @ DATAVOID", "quote": "Delivered a complex WebGL visualization engine weeks ahead of schedule. The code was practically poetry.", "tags": ["FRONTEND"] },
+    { "name": "David C.", "initials": "DC", "role": "CTO @ QUANTUM_LEAP", "quote": "An absolute machine. Turned our chaotic microservices into a streamlined, high-performance cluster.", "tags": ["DEVOPS"] },
+    { "name": "Sarah J.", "initials": "SJ", "role": "LEAD SEC_OPS @ SHIELD_NET", "quote": "When it comes to securing critical infrastructure, there is zero margin for error. The auditing and subsequent patching implemented were flawless. It's rare to find someone who understands deep systems-level security and can communicate it clearly to stakeholders.", "tags": [] }
+  ]
+}

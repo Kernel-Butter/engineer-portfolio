@@ -46,10 +46,10 @@
 <script>
   import { scrambleText } from '../scripts/animations.js';
 
-  // astro:page-load (not top-level) — Nav lives inside #main-content, which
+  // astro:page-load (not top-level) - Nav lives inside #main-content, which
   // Astro's client-side nav fully replaces on every navigation, but this
   // module only ever executes once. Without re-binding here, the fresh nav
-  // (a brand-new set of <a> elements) has zero click listeners attached —
+  // (a brand-new set of <a> elements) has zero click listeners attached -
   // clicks just fall through to the browser's native instant hash-jump
   // instead of Lenis's smooth eased scroll.
   document.addEventListener('astro:page-load', () => {
@@ -58,7 +58,7 @@
 
     // Nav section links are "/#id" so they work as real navigation from any
     // page (not just the homepage). Only intercept for a smooth in-page
-    // scroll when we're already on "/" and the target actually exists here —
+    // scroll when we're already on "/" and the target actually exists here -
     // otherwise let the link navigate normally to "/" + hash.
     document.querySelectorAll<HTMLAnchorElement>('a[href^="/#"], a[href^="#"]').forEach(link => {
       link.addEventListener('click', e => {
@@ -67,7 +67,7 @@
         const hashIndex = href.indexOf('#');
         if (hashIndex === -1) return;
         const id = href.slice(hashIndex);
-        if (id === '#' || location.pathname !== '/') return; // not on homepage — let it navigate
+        if (id === '#' || location.pathname !== '/') return; // not on homepage - let it navigate
 
         const target = document.querySelector<HTMLElement>(id);
         if (!target) return;

@@ -144,7 +144,7 @@ const transitions = [
 
             {t.id === 'combo' && (
               <>
-                {/* Dark boot overlay — sits between dissolve-out and hex-reveal */}
+                {/* Dark boot overlay - sits between dissolve-out and hex-reveal */}
                 <div class="ts-combo-boot">
                   {[
                     'UNLOAD /home ......... 200ms',
@@ -158,14 +158,14 @@ const transitions = [
                   ))}
                 </div>
 
-                {/* Hex dissolve cells — cover Page A, blink out to reveal boot */}
+                {/* Hex dissolve cells - cover Page A, blink out to reveal boot */}
                 <div class="ts-combo-blocks">
                   {Array.from({ length: 40 }).map((_, i) => (
                     <div class="ts-cb-cell" data-cbcell={i}></div>
                   ))}
                 </div>
 
-                {/* Hex reveal cells — cover Page B, blink out from center */}
+                {/* Hex reveal cells - cover Page B, blink out from center */}
                 <div class="ts-combo-hex">
                   {Array.from({ length: 40 }).map((_, i) => (
                     <div class="ts-hex-cell" data-hcell={i}></div>
@@ -563,7 +563,7 @@ const transitions = [
 
         const hexCols = 8, hexRows = 5;
 
-        // Position BOTH grids identically — offset-row hex layout
+        // Position BOTH grids identically - offset-row hex layout
         [cbCells, hexCells].forEach(group => {
           group.forEach((cell, idx) => {
             const col     = idx % hexCols;
@@ -626,7 +626,7 @@ const transitions = [
           tl.to(line, { opacity: 1, duration: .02, ease: 'none' }, 0.084 + i * 0.063);
         });
 
-        // ③ Brief hold — all boot text visible
+        // ③ Brief hold - all boot text visible
         tl.to({}, { duration: .13 });
 
         // ④ Page B rises above the boot overlay, hex cells already cover it

@@ -1,4 +1,6 @@
 ---
+import content from '../content/index.js';
+const { standards } = content;
 const vitals = [
   { label: 'LCP', full: 'Largest Contentful Paint', note: 'Checked before ship' },
   { label: 'INP', full: 'Interaction to Next Paint', note: 'Checked before ship' },
@@ -19,13 +21,13 @@ const a11yRows = [
     <div class="std-header flex flex-col gap-4">
       <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-sm border border-outline-variant/30 self-start">
         <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-        <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">HOW I WORK</span>
+        <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">{standards.sectionLabel}</span>
       </div>
       <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">
-        Engineering Standards
+        {standards.sectionTitle}
       </h2>
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-        Practices I hold consistently across projects — not live telemetry, just what I actually do before something ships.
+        {standards.sectionSubtitle}
       </p>
     </div>
 
@@ -139,14 +141,14 @@ const a11yRows = [
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { fadeUp, staggerFadeUp, countUp } from '../scripts/animations.js';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever; without re-binding here, returning to this page
   // leaves the fresh DOM stuck at its CSS opacity:0 starting state.
   document.addEventListener('astro:page-load', () => {
     fadeUp('#standards .std-header', '#standards');
     staggerFadeUp('#standards .std-card', '#standards .grid');
 
-    // Circle circumference (r=45) is 282.7 — offset for 90% fill is 282.7 * 0.1
+    // Circle circumference (r=45) is 282.7 - offset for 90% fill is 282.7 * 0.1
     const LH_SCORE = 90;
     const LH_OFFSET = 282.7 * (1 - LH_SCORE / 100);
 

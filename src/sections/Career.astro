@@ -1,14 +1,23 @@
 ---
-const roles = [
+import content from '../content/index.js';
+const { career } = content;
+const roles = (career.roles ?? []).map((role, index) => ({
+  ...role,
+  reverse: index % 2 === 1,
+  bullets: role.bullets ?? [],
+  chips: (role.chips ?? []).map((label, chipIndex) => ({ label, accent: index === 0 && chipIndex === 0 })),
+}));
+/*
+const legacyRoles = [
   {
-    period: 'JAN 2026 — PRESENT',
+    period: 'JAN 2026 - PRESENT',
     location: 'Dubai, UAE (Remote)',
     title: 'Frontend Software Engineer',
     company: 'THE WHITE BOUTIQUE',
     icon: 'shopping_cart',
     reverse: false,
     bullets: [
-      'Built the end-to-end checkout journey in Next.js and TypeScript — cart state (Zustand), order creation, address/map selection, and real-time Supabase inventory sync — reaching a 95%+ checkout completion rate.',
+      'Built the end-to-end checkout journey in Next.js and TypeScript - cart state (Zustand), order creation, address/map selection, and real-time Supabase inventory sync - reaching a 95%+ checkout completion rate.',
       'Integrated four payment gateways (Stripe, Noon Payments, Apple Pay, Google Pay) behind a unified layer with consistent error handling and transaction logging.',
       'Shipped SEO-optimized product pages using SSR and ISR, serving 50,000+ monthly product pages.',
     ],
@@ -19,8 +28,8 @@ const roles = [
     ],
   },
   {
-    period: 'JUL 2024 — DEC 2025',
-    location: 'Remote — US & Intl. clients',
+    period: 'JUL 2024 - DEC 2025',
+    location: 'Remote - US & Intl. clients',
     title: 'Frontend Developer',
     company: 'TOPDOT (US: DOTLOGICS)',
     icon: 'sports_esports',
@@ -28,7 +37,7 @@ const roles = [
     bullets: [
       'Developed interactive web-based games with Vanilla JavaScript, Canvas API, and GSAP, alongside pixel-perfect responsive sites for architecture firms, restaurant chains, and SaaS platforms.',
       'Built animation-intensive UIs with GSAP scroll animations, parallax effects, and smooth page transitions.',
-      'Maintained 90%+ Google Lighthouse scores through Web Vitals monitoring — cut delivery time by roughly 30% by adopting AI-assisted development workflows while keeping code-review standards.',
+      'Maintained 90%+ Google Lighthouse scores through Web Vitals monitoring - cut delivery time by roughly 30% by adopting AI-assisted development workflows while keeping code-review standards.',
     ],
     chips: [
       { label: 'JavaScript', accent: false },
@@ -37,7 +46,7 @@ const roles = [
     ],
   },
   {
-    period: 'APR 2023 — DEC 2023',
+    period: 'APR 2023 - DEC 2023',
     location: 'Lahore, Pakistan',
     title: 'Associate Software Engineer',
     company: 'ABSOLUIT',
@@ -53,7 +62,7 @@ const roles = [
       { label: 'GraphQL', accent: false },
     ],
   },
-];
+]; */
 ---
 
 <section id="experience" class="py-section-padding px-margin-mobile md:px-margin-desktop">
@@ -63,14 +72,12 @@ const roles = [
     <div class="exp-header mb-24 text-center md:text-left">
       <div class="flex items-center gap-3 mb-4 justify-center md:justify-start">
         <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-        <span data-cms="career.sectionLabel" class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">// CHRONOLOGICAL_RECORD</span>
+        <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">{career.sectionLabel}</span>
       </div>
       <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">
-        <span class="text-secondary opacity-50 font-code-snippet text-code-snippet mr-2">07 //</span><span data-cms="career.sectionTitle">EXPERIENCE</span>
+        <span class="text-secondary opacity-50 font-code-snippet text-code-snippet mr-2">07 //</span><span>{career.sectionTitle}</span>
       </h2>
-      <p data-cms="career.sectionSubtitle" class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
-        A chronological record of frontend engineering roles across e-commerce, agency, and product work.
-      </p>
+      <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">{career.sectionSubtitle}</p>
     </div>
 
     <!-- Timeline -->
@@ -139,7 +146,7 @@ const roles = [
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { fadeUp, drawSvgLine } from '../scripts/animations.js';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever; without re-binding here, returning to this page
   // leaves the fresh DOM stuck at its CSS opacity:0 starting state.
   document.addEventListener('astro:page-load', () => {
@@ -153,7 +160,7 @@ const roles = [
   document.querySelectorAll('#experience .exp-entry').forEach(entry => {
     const card = entry.querySelector('.glass-card');
     const node = entry.querySelector('.timeline-node');
-    const meta = entry.querySelector('.timeline-node ~ div'); // date/location — opposite side to card
+    const meta = entry.querySelector('.timeline-node ~ div'); // date/location - opposite side to card
     const isRight = !entry.classList.contains('md:flex-row-reverse');
 
     // Date/location slides out from the line toward its side (opposite direction to card)

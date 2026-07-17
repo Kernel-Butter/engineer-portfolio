@@ -39,9 +39,9 @@ const featuredRepos = [...ownRepos]
   .slice(0, 3);
 
 const metrics = [
-  { label: 'PUBLIC_REPOS', value: user ? String(user.public_repos) : '—', accent: false },
-  { label: 'FOLLOWERS',    value: user ? String(user.followers)    : '—', accent: false },
-  { label: 'STARS_EARNED', value: user ? String(starsEarned)       : '—', accent: true  },
+  { label: 'PUBLIC_REPOS', value: user ? String(user.public_repos) : '-', accent: false },
+  { label: 'FOLLOWERS',    value: user ? String(user.followers)    : '-', accent: false },
+  { label: 'STARS_EARNED', value: user ? String(starsEarned)       : '-', accent: true  },
 ];
 ---
 
@@ -64,7 +64,7 @@ const metrics = [
 
     <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
 
-      <!-- Heatmap — 8 cols -->
+      <!-- Heatmap - 8 cols -->
       <div class="gh-card bento-card rounded-xl p-8 md:col-span-8 flex flex-col justify-between min-h-[300px]">
         <div class="flex justify-between items-start mb-6">
           <h3 class="font-headline-md text-headline-md text-primary">Contribution Grid</h3>
@@ -85,7 +85,7 @@ const metrics = [
         </div>
       </div>
 
-      <!-- Metrics — 4 cols -->
+      <!-- Metrics - 4 cols -->
       <div class="gh-card bento-card rounded-xl p-8 md:col-span-4 flex flex-col gap-6">
         <h3 class="font-headline-md text-headline-md text-secondary">System Metrics</h3>
         <div class="flex flex-col gap-4">
@@ -100,7 +100,7 @@ const metrics = [
         </div>
       </div>
 
-      <!-- Featured repos — 12 cols -->
+      <!-- Featured repos - 12 cols -->
       <div class="gh-card bento-card rounded-xl p-8 md:col-span-12">
         <div class="flex justify-between items-center mb-6 border-b border-outline-variant/20 pb-4">
           <h3 class="font-headline-md text-headline-md text-on-surface">Featured Nodes</h3>

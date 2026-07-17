@@ -16,7 +16,7 @@
 </section>
 
 <script>
-// astro:page-load (not top-level) — Astro's client-side nav only executes
+// astro:page-load (not top-level) - Astro's client-side nav only executes
 // this module once ever, but the canvas element is recreated fresh on
 // every visit to this page. Without re-binding here, returning to this
 // page a second time leaves a blank canvas.
@@ -29,7 +29,7 @@ const elFold   = document.getElementById('mg-fold')!;
 // ── Config ────────────────────────────────────────────────────────────────────
 const CELL      = 54;           // cell size px
 const RADIUS    = 230;          // cursor active radius
-const MAX_FOLD  = Math.PI * 0.44; // ~80° — just under 90° so we never see the back face
+const MAX_FOLD  = Math.PI * 0.44; // ~80° - just under 90° so we never see the back face
 const FOV       = 700;          // perspective strength
 const LERP      = 0.13;         // fold lerp speed
 const LERP_SIDE = 0.18;         // side-flip lerp (which triangle opens)
@@ -144,7 +144,7 @@ function drawCell(cell: Cell) {
   const flatB  = useTR ? BR : BR;
   const flatFV = useTR ? BL : TL;
 
-  // Draw flat triangle — very faint
+  // Draw flat triangle - very faint
   const flatAlpha = norm * 0.06;
   ctx.beginPath();
   ctx.moveTo(flatA[0], flatA[1]);

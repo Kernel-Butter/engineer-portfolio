@@ -1,5 +1,6 @@
 ---
-// TODO: replace with real posts once written — see conversation with Hamza (2026-07-12).
+import content from '../content/index.js';
+const { writing } = content;
 ---
 
 <section id="writing" class="py-section-padding px-margin-mobile md:px-margin-desktop">
@@ -9,13 +10,13 @@
     <div class="wr-header flex flex-col gap-4">
       <div class="flex items-center gap-3">
         <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-        <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">// LOG_FILES</span>
+        <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">{writing.sectionLabel}</span>
       </div>
       <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary glow-text">
-        LOG.FILES //
+        {writing.sectionTitle}
       </h2>
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-        Write-ups on rendering pipelines, checkout architecture, and system design — coming soon.
+        {writing.sectionSubtitle}
       </p>
     </div>
 
@@ -23,7 +24,7 @@
     <div class="wr-card glass-panel rounded-xl p-12 flex flex-col items-center justify-center text-center gap-4 min-h-[200px]">
       <span class="material-symbols-outlined text-outline-variant text-4xl">draft</span>
       <p class="font-code-snippet text-code-snippet text-on-surface-variant">
-        &gt; No entries logged yet. First write-up in progress.
+        {writing.emptyMessage}
       </p>
     </div>
 
@@ -33,7 +34,7 @@
 <script>
   import { fadeUp, staggerFadeUp } from '../scripts/animations.js';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever; without re-binding here, returning to this page
   // leaves the fresh DOM stuck at its CSS opacity:0 starting state.
   document.addEventListener('astro:page-load', () => {

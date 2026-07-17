@@ -1,9 +1,11 @@
 ---
 import BlobCard from '../components/BlobCard.astro';
+import content from '../content/index.js';
+const { contact } = content;
 
 const socials = [
-  { label: 'GitHub',   icon: 'code', hoverColor: 'hover:text-primary',   cmsKey: 'contact.githubHref',   href: 'https://github.com/Kernel-Butter' },
-  { label: 'LinkedIn', icon: 'work', hoverColor: 'hover:text-secondary', cmsKey: 'contact.linkedinHref', href: 'https://linkedin.com/in/hamzabhutta' },
+  { label: 'GitHub',   icon: 'code', hoverColor: 'hover:text-primary', href: contact.githubHref },
+  { label: 'LinkedIn', icon: 'work', hoverColor: 'hover:text-secondary', href: contact.linkedinHref },
 ];
 ---
 
@@ -15,31 +17,29 @@ const socials = [
 
   <div class="w-full max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-12 gap-bento-gap items-stretch">
 
-    <!-- Left — Headline & links (5 cols) -->
+    <!-- Left - Headline & links (5 cols) -->
     <div class="ct-left md:col-span-5 flex flex-col justify-center gap-8 pr-0 md:pr-12">
 
       <div class="flex flex-col gap-4">
         <!-- Status badge -->
         <span class="inline-flex items-center gap-2 self-start px-3 py-1 rounded bg-[#171717] text-tertiary font-label-sm text-label-sm border border-tertiary/20 shadow-[0_0_10px_rgba(78,222,163,0.1)]">
           <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
-          <span data-cms="contact.statusBadge">STATUS: AVAILABLE</span>
+          <span>{contact.statusBadge}</span>
         </span>
 
         <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tighter uppercase drop-shadow-[0_0_15px_rgba(192,193,255,0.2)]">
-          <span data-cms="contact.headlineLine1">LET'S BUILD</span><br />
-          <span data-cms="contact.headlineLine2">THE FUTURE.</span>
+          <span>{contact.headlineLine1}</span><br />
+          <span>{contact.headlineLine2}</span>
         </h2>
 
-        <p data-cms="contact.subheadline" class="font-body-lg text-body-lg text-on-surface-variant max-w-md">
-          Open to remote frontend roles with a European product team. Friction-free booking below.
-        </p>
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">{contact.subheadline}</p>
       </div>
 
       <!-- Divider hint -->
       <div class="border-t border-outline-variant/20 pt-8 space-y-4 font-code-snippet text-code-snippet text-outline">
         <p class="flex items-center gap-3">
           <span class="material-symbols-outlined text-secondary" style="font-variation-settings:'FILL' 1">terminal</span>
-          <span data-cms="contact.hint" class="text-on-surface-variant">Hiring me is easy. Here is exactly how to start.</span>
+          <span class="text-on-surface-variant">{contact.hint}</span>
         </p>
       </div>
 
@@ -47,7 +47,6 @@ const socials = [
       <div class="flex gap-4">
         {socials.map(s => (
           <a
-            data-cms-href={s.cmsKey}
             href={s.href}
             target="_blank"
             rel="noopener noreferrer"
@@ -60,7 +59,7 @@ const socials = [
       </div>
     </div>
 
-    <!-- Right — Booking + form (7 cols) -->
+    <!-- Right - Booking + form (7 cols) -->
     <div class="ct-right md:col-span-7 flex flex-col gap-bento-gap">
 
       <!-- Book a call card -->
@@ -73,12 +72,12 @@ const socials = [
       >
         <div class="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
         <div class="relative z-10 text-center md:text-left">
-          <h3 data-cms="contact.bookCallTitle" class="font-headline-md text-headline-md text-on-surface mb-2">Book a Technical Discovery</h3>
-          <p data-cms="contact.bookCallSubtitle" class="font-code-snippet text-code-snippet text-outline">30-min deep dive into your architecture.</p>
+          <h3 class="font-headline-md text-headline-md text-on-surface mb-2">{contact.bookCallTitle}</h3>
+          <p class="font-code-snippet text-code-snippet text-outline">{contact.bookCallSubtitle}</p>
         </div>
         <a
           id="schedule-btn"
-          href="mailto:hamzaabhutta@gmail.com?subject=Technical%20Discovery%20Call"
+          href={contact.bookCallHref}
           class="ct-magnetic relative z-10 w-full md:w-auto px-8 py-4 bg-primary text-on-primary font-headline-md text-headline-md font-bold rounded-lg hover:shadow-[0_0_20px_rgba(192,193,255,0.4)] flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden transition-shadow duration-300"
         >
           <span class="material-symbols-outlined">calendar_month</span>
@@ -94,7 +93,7 @@ const socials = [
       <div class="ct-card bento-card rounded-xl p-8 flex-grow">
         <h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
           <span class="material-symbols-outlined text-tertiary">mail</span>
-          <span data-cms="contact.formTitle">Direct Transmission</span>
+          <span>{contact.formTitle}</span>
         </h3>
 
         <form id="contact-form" class="space-y-6" novalidate>
@@ -148,7 +147,7 @@ const socials = [
 <script>
   import { fadeUp, staggerFadeUp, magneticButton, rippleHover, clickBurst } from '../scripts/animations.js';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever; without re-binding here, returning to this page
   // leaves the fresh DOM stuck at its CSS opacity:0 starting state, and the
   // button/form listeners below would still be bound to elements from the
@@ -174,7 +173,7 @@ const socials = [
       status.textContent = '> TRANSMISSION QUEUED...';
       status.style.opacity = '1';
       status.classList.replace('text-outline', 'text-tertiary');
-      // Simulated success — replace with real send logic
+      // Simulated success - replace with real send logic
       setTimeout(() => {
         status.textContent = '> SIGNAL RECEIVED. WILL RESPOND WITHIN 24H.';
         status.classList.replace('text-tertiary', 'text-secondary');

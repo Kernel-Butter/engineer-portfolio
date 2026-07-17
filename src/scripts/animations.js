@@ -60,7 +60,7 @@ export function drawSvgLine(lineId, trigger, {
 /**
  * Slide a list of elements in from alternating sides as each enters view.
  * @param {Element[]} elements  - array of DOM elements (use gsap.utils.toArray)
- * @param {Function} [reverseCheck] - (el, i) => boolean — true means slide from right
+ * @param {Function} [reverseCheck] - (el, i) => boolean - true means slide from right
  */
 export function slideFromSides(elements, {
   xOffset = 40,

@@ -1,5 +1,5 @@
 ---
-// LatticeSphere — PBD cloth physics sphere
+// LatticeSphere - PBD cloth physics sphere
 // Position-Based Dynamics: Verlet integration, spring constraints
 // Back-cap cut (20%), free boundary → wave reflection chaos, inward click dent
 ---
@@ -14,7 +14,7 @@
   import { RenderPass }     from 'three/addons/postprocessing/RenderPass.js';
   import { mergeVertices }  from 'three/addons/utils/BufferGeometryUtils.js';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever, but the canvas element is recreated fresh on
   // every visit to this page. Without re-binding here, returning to this
   // page a second time leaves a blank canvas.
@@ -37,7 +37,7 @@
   camera.position.set(0, 0, 6.5);
 
   /* ══════════════════════════════════════════════════════════════
-     CLOTH PHYSICS — Position-Based Dynamics
+     CLOTH PHYSICS - Position-Based Dynamics
      ══════════════════════════════════════════════════════════════ */
 
   const DETAIL   = 3;     // icosahedron subdivision → ~642 verts, 1280 triangles
@@ -49,8 +49,8 @@
   const ITER     = 8;
   const DT       = 0.22;
 
-  /* Physics geometry — compact indexed icosphere; all spring constraints run here.
-     IcosahedronGeometry (like all PolyhedronGeometry) ships non-indexed —
+  /* Physics geometry - compact indexed icosphere; all spring constraints run here.
+     IcosahedronGeometry (like all PolyhedronGeometry) ships non-indexed -
      mergeVertices welds the duplicate corner vertices into a proper shared-
      vertex index, which the spring/neighbour system below depends on. */
   const geo     = mergeVertices(new THREE.IcosahedronGeometry(RADIUS, DETAIL));
@@ -58,7 +58,7 @@
   const N       = posAttr.count;
   const physIdx = (geo.index as THREE.BufferAttribute).array;
 
-  /* Render geometry — non-indexed copy so each triangle corner gets a unique
+  /* Render geometry - non-indexed copy so each triangle corner gets a unique
      vertex and we can stamp barycentric coords (1,0,0)/(0,1,0)/(0,0,1). */
   const renderGeo    = geo.toNonIndexed();
   const renderPosArr = renderGeo.attributes.position as THREE.BufferAttribute;
@@ -73,7 +73,7 @@
   renderGeo.setAttribute('bary', new THREE.BufferAttribute(baryArr, 3));
 
 
-  /* Explicit velocity array — key to proper slow-motion.
+  /* Explicit velocity array - key to proper slow-motion.
      Velocity persists frame-to-frame (only DAMP removes it),
      so wave energy doesn't vanish in 3 frames like it did with Verlet + SPEED_SCALE. */
   const pos    = new Float32Array(posAttr.array); /* current positions  */
@@ -81,7 +81,7 @@
   const rest   = new Float32Array(posAttr.array); /* rest shape (constant)            */
   const posOld = new Float32Array(N * 3);          /* positions at frame start (for vel update) */
 
-  /* ── Springs: ALL vertices participate — no frozen boundary ──────
+  /* ── Springs: ALL vertices participate - no frozen boundary ──────
      Back-cap vertices are invisible (discarded by shader) but still
      simulated. The cut edge therefore has all its springs intact and
      waves flow freely across the boundary instead of getting stuck. */
@@ -110,7 +110,7 @@
      here velocity lives in its own array and only loses DAMP per frame.
      Wave energy therefore persists and travels; DT just slows position steps. */
   function clothStep() {
-    /* 1 — Save positions, apply forces, integrate */
+    /* 1 - Save positions, apply forces, integrate */
     for (let i = 0; i < N; i++) {
       posOld[i*3]   = pos[i*3];
       posOld[i*3+1] = pos[i*3+1];
@@ -132,7 +132,7 @@
       pos[i*3+2] += vel[i*3+2] * DT;
     }
 
-    /* 2 — Satisfy spring constraints (position projection) */
+    /* 2 - Satisfy spring constraints (position projection) */
     for (let iter = 0; iter < ITER; iter++) {
       for (const { a, b, len } of springs) {
         const ax = pos[a*3], ay = pos[a*3+1], az = pos[a*3+2];
@@ -146,7 +146,7 @@
       }
     }
 
-    /* 3 — Derive velocity from constrained positions (standard PBD update).
+    /* 3 - Derive velocity from constrained positions (standard PBD update).
        Spring corrections are baked into the new velocity → wave energy
        transfers to neighbours and propagates across the surface. */
     for (let i = 0; i < N; i++) {
@@ -167,7 +167,7 @@
     renderGeo.computeVertexNormals();
   }
 
-  /* ── Click impulse — big INWARD dent ─────────────────────────── */
+  /* ── Click impulse - big INWARD dent ─────────────────────────── */
   const hitSphere = new THREE.Mesh(
     new THREE.SphereGeometry(RADIUS, 32, 32),
     new THREE.MeshBasicMaterial({ visible: false })
@@ -212,12 +212,12 @@
   });
 
   /* ══════════════════════════════════════════════════════════════
-     RENDERING — geodesic triangular lattice
+     RENDERING - geodesic triangular lattice
      Barycentric coords detect triangle edges; restPos attribute
      keeps the hemisphere clip fixed while the mesh deforms.
      ══════════════════════════════════════════════════════════════ */
 
-  /* Vertex shader — passes bary coord and local-space z for hemisphere clip.
+  /* Vertex shader - passes bary coord and local-space z for hemisphere clip.
      Using position.z (built-in Three.js attribute) avoids a custom restPos
      attribute that may not bind on all drivers. Clip boundary shifts slightly
      with physics deformation but is imperceptible at the equator. */
