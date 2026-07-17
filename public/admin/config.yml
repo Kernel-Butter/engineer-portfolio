@@ -278,51 +278,54 @@ collections:
               - { label: Show booking card, name: booking, widget: boolean, required: false, default: true }
               - { label: Show contact form, name: contactForm, widget: boolean, required: false, default: true }
 
-  - name: projectsPageSettings
-    label: Projects Page / Section 01 - Header
-    icon: tune
-    divider: true
-    files:
-      - name: projectsPageSettings
-        label: Section 01 - Header
-        file: src/content/projects-page.json
-        format: json
-        fields:
-          - { label: Page label, name: sectionLabel, widget: string, required: false }
-          - { label: Page title, name: sectionTitle, widget: string, required: false }
-          - { label: Page introduction, name: sectionSubtitle, widget: text, required: false }
-
-  - name: projects
-    label: Projects Page / Project Sections
-    label_singular: Project Section
+  - name: projectsPage
+    label: Projects Page
+    label_singular: Page Section
     icon: work
+    divider: true
     folder: src/content/projects
     create: true
     extension: json
     format: json
-    identifier_field: name
-    summary: "Section {{order}} - {{name}}"
+    identifier_field: label
+    summary: "Section {{order}} - {{label}}"
     slug: "{{slug}}"
     fields:
-      - { label: Section number, name: order, widget: number, required: false, value_type: int, min: 2, hint: Header is Section 01. Project sections start from Section 02. }
-      - { label: Show project, name: visible, widget: boolean, required: false, default: true }
-      - { label: URL slug, name: slug, widget: string, required: false, hint: Use lowercase words separated by hyphens }
-      - { label: Project name, name: name, widget: string, required: false }
-      - { label: Client, name: client, widget: string, required: false }
-      - { label: Category, name: category, widget: string, required: false }
-      - { label: Period, name: period, widget: string, required: false }
-      - { label: Project image, name: image, widget: image, required: false }
-      - { label: Image description, name: imageAlt, widget: string, required: false }
-      - { label: Technologies, name: tech, widget: list, required: false, field: { label: Technology, name: item, widget: string, required: false } }
-      - { label: Description, name: description, widget: text, required: false }
-      - { label: Highlights, name: highlights, widget: list, required: false, field: { label: Highlight, name: item, widget: text, required: false } }
-      - { label: Live website URL, name: href, widget: string, required: false }
-      - { label: Featured project, name: featured, widget: boolean, required: false, default: false }
-      - label: Project type
-        name: type
-        widget: select
+      - { label: Section number, name: order, widget: number, required: false, value_type: int, min: 1, hint: Section 01 is the page header. Projects follow from Section 02. }
+      - { label: Section label, name: label, widget: string, required: false, hint: Used in the CMS section list }
+      - label: Section content
+        name: section
+        widget: object
         required: false
-        options:
-          - { label: Employment, value: employment }
-          - { label: Agency, value: agency }
-          - { label: Personal, value: personal }
+        typeKey: type
+        types:
+          - name: header
+            label: Header Section
+            fields:
+              - { label: Page label, name: sectionLabel, widget: string, required: false }
+              - { label: Page title, name: sectionTitle, widget: string, required: false }
+              - { label: Page introduction, name: sectionSubtitle, widget: text, required: false }
+          - name: project
+            label: Project Section
+            fields:
+              - { label: Show project, name: visible, widget: boolean, required: false, default: true }
+              - { label: URL slug, name: slug, widget: string, required: false, hint: Use lowercase words separated by hyphens }
+              - { label: Project name, name: name, widget: string, required: false }
+              - { label: Client, name: client, widget: string, required: false }
+              - { label: Category, name: category, widget: string, required: false }
+              - { label: Period, name: period, widget: string, required: false }
+              - { label: Project image, name: image, widget: image, required: false }
+              - { label: Image description, name: imageAlt, widget: string, required: false }
+              - { label: Technologies, name: tech, widget: list, required: false, field: { label: Technology, name: item, widget: string, required: false } }
+              - { label: Description, name: description, widget: text, required: false }
+              - { label: Highlights, name: highlights, widget: list, required: false, field: { label: Highlight, name: item, widget: text, required: false } }
+              - { label: Live website URL, name: href, widget: string, required: false }
+              - { label: Featured project, name: featured, widget: boolean, required: false, default: false }
+              - label: Project type
+                name: projectType
+                widget: select
+                required: false
+                options:
+                  - { label: Employment, value: employment }
+                  - { label: Agency, value: agency }
+                  - { label: Personal, value: personal }

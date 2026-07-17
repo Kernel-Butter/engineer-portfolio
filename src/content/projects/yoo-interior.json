@@ -1,25 +1,29 @@
 {
   "order": 7,
-  "visible": true,
-  "slug": "yoo-interior",
-  "name": "YOO Interior",
-  "client": "YOO Interior (Mimar Holding)",
-  "category": "Interior Design / Luxury",
-  "period": "2024 - 2025",
-  "image": "/projects/yoo-interior.jpg",
-  "tech": [
-    "HTML5",
-    "CSS3",
-    "JavaScript",
-    "GSAP",
-    "ScrollTrigger"
-  ],
-  "description": "Portfolio site for a luxury interior design firm with projects at Peninsula Hotel, St. Regis, Louis Vuitton, and Turkish Airlines.",
-  "highlights": [
-    "Implemented smooth scroll animations and refined transitions fitting the luxury brand positioning",
-    "Built an immersive project portfolio with high-quality imagery and clean typographic layout"
-  ],
-  "href": "https://yoointerior.com",
-  "featured": true,
-  "type": "agency"
+  "label": "YOO Interior",
+  "section": {
+    "type": "project",
+    "visible": true,
+    "slug": "yoo-interior",
+    "name": "YOO Interior",
+    "client": "YOO Interior (Mimar Holding)",
+    "category": "Interior Design / Luxury",
+    "period": "2024 - 2025",
+    "image": "/projects/yoo-interior.jpg",
+    "tech": [
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "GSAP",
+      "ScrollTrigger"
+    ],
+    "description": "Portfolio site for a luxury interior design firm with projects at Peninsula Hotel, St. Regis, Louis Vuitton, and Turkish Airlines.",
+    "highlights": [
+      "Implemented smooth scroll animations and refined transitions fitting the luxury brand positioning",
+      "Built an immersive project portfolio with high-quality imagery and clean typographic layout"
+    ],
+    "href": "https://yoointerior.com",
+    "featured": true,
+    "projectType": "agency"
+  }
 }

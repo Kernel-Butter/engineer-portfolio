@@ -9,7 +9,6 @@ import standards from './standards.json';
 import testimonials from './testimonials.json';
 import contact from './contact.json';
 import pageLayout from './page-layout.json';
-import projectsPage from './projects-page.json';
 
 export default {
   hero,
@@ -23,5 +22,4 @@ export default {
   testimonials,
   contact,
   pageLayout,
-  projectsPage,
 };

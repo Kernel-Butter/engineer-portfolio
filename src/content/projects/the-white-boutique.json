@@ -1,23 +1,27 @@
 {
   "order": 5,
-  "visible": true,
-  "slug": "the-white-boutique",
-  "name": "The White Boutique",
-  "client": "The White Boutique",
-  "category": "E-Commerce",
-  "period": "Jan 2026 - Present",
-  "image": "/projects/twb-storefront.jpg",
-  "tech": [
-    "Next.js",
-    "TypeScript",
-    "Tailwind CSS"
-  ],
-  "description": "The customer-facing storefront - flowers, catering, and events - with SEO-optimized SSR/ISR product pages.",
-  "highlights": [
-    "Shipped SEO-optimized product pages using server-side rendering and incremental static regeneration",
-    "Shared checkout architecture with the catering platform"
-  ],
-  "href": "https://twb.ae",
-  "featured": false,
-  "type": "employment"
+  "label": "The White Boutique",
+  "section": {
+    "type": "project",
+    "visible": true,
+    "slug": "the-white-boutique",
+    "name": "The White Boutique",
+    "client": "The White Boutique",
+    "category": "E-Commerce",
+    "period": "Jan 2026 - Present",
+    "image": "/projects/twb-storefront.jpg",
+    "tech": [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS"
+    ],
+    "description": "The customer-facing storefront - flowers, catering, and events - with SEO-optimized SSR/ISR product pages.",
+    "highlights": [
+      "Shipped SEO-optimized product pages using server-side rendering and incremental static regeneration",
+      "Shared checkout architecture with the catering platform"
+    ],
+    "href": "https://twb.ae",
+    "featured": false,
+    "projectType": "employment"
+  }
 }

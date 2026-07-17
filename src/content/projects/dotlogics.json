@@ -1,24 +1,28 @@
 {
   "order": 8,
-  "visible": true,
-  "slug": "dotlogics",
-  "name": "Dotlogics",
-  "client": "Dotlogics (Topdot US)",
-  "category": "Agency / Portfolio",
-  "period": "2024 - 2025",
-  "image": "/projects/dotlogics.jpg",
-  "tech": [
-    "Vanilla JavaScript",
-    "GSAP",
-    "ScrollTrigger"
-  ],
-  "description": "Main marketing site for the New York digital agency I worked through - scroll-driven storytelling on the homepage.",
-  "highlights": [
-    "Implemented GSAP ScrollTrigger sequences for scroll-driven section transitions on the homepage",
-    "Built a pixel-perfect responsive layout matching design specs across all breakpoints",
-    "Optimized animation performance to maintain 60 FPS on low-end devices"
-  ],
-  "href": "https://www.dotlogics.com",
-  "featured": false,
-  "type": "agency"
+  "label": "Dotlogics",
+  "section": {
+    "type": "project",
+    "visible": true,
+    "slug": "dotlogics",
+    "name": "Dotlogics",
+    "client": "Dotlogics (Topdot US)",
+    "category": "Agency / Portfolio",
+    "period": "2024 - 2025",
+    "image": "/projects/dotlogics.jpg",
+    "tech": [
+      "Vanilla JavaScript",
+      "GSAP",
+      "ScrollTrigger"
+    ],
+    "description": "Main marketing site for the New York digital agency I worked through - scroll-driven storytelling on the homepage.",
+    "highlights": [
+      "Implemented GSAP ScrollTrigger sequences for scroll-driven section transitions on the homepage",
+      "Built a pixel-perfect responsive layout matching design specs across all breakpoints",
+      "Optimized animation performance to maintain 60 FPS on low-end devices"
+    ],
+    "href": "https://www.dotlogics.com",
+    "featured": false,
+    "projectType": "agency"
+  }
 }

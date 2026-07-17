@@ -1,24 +1,28 @@
 {
   "order": 3,
-  "visible": true,
-  "slug": "twb-admin",
-  "name": "TWB Admin Panel",
-  "client": "The White Boutique",
-  "category": "Dashboard",
-  "period": "Jan 2026 - Present",
-  "image": null,
-  "tech": [
-    "React",
-    "TypeScript",
-    "Supabase"
-  ],
-  "description": "Internal dashboard for staff to manage live orders, products, and inventory in real time. Not public - internal tool under NDA.",
-  "highlights": [
-    "Built a tabbed modal workflow for editing live orders - catering items, packages, flowers with expandable rows - with in-place add, replace, and delete",
-    "Added category search and filtering across the live order catalog",
-    "Replaced manual day-to-day operations with a centralized, real-time interface"
-  ],
-  "href": null,
-  "featured": true,
-  "type": "employment"
+  "label": "TWB Admin Panel",
+  "section": {
+    "type": "project",
+    "visible": true,
+    "slug": "twb-admin",
+    "name": "TWB Admin Panel",
+    "client": "The White Boutique",
+    "category": "Dashboard",
+    "period": "Jan 2026 - Present",
+    "image": null,
+    "tech": [
+      "React",
+      "TypeScript",
+      "Supabase"
+    ],
+    "description": "Internal dashboard for staff to manage live orders, products, and inventory in real time. Not public - internal tool under NDA.",
+    "highlights": [
+      "Built a tabbed modal workflow for editing live orders - catering items, packages, flowers with expandable rows - with in-place add, replace, and delete",
+      "Added category search and filtering across the live order catalog",
+      "Replaced manual day-to-day operations with a centralized, real-time interface"
+    ],
+    "href": null,
+    "featured": true,
+    "projectType": "employment"
+  }
 }

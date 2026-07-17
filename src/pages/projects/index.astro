@@ -1,11 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import projectsPage from '../../content/projects-page.json';
 const projectModules = import.meta.glob('../../content/projects/*.json', { eager: true });
-const PROJECTS = Object.values(projectModules)
+const pageSections = Object.values(projectModules)
   .map(module => module.default)
-  .filter(project => project.visible !== false)
   .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+const header = pageSections.find(entry => entry.section?.type === 'header')?.section ?? {};
+const PROJECTS = pageSections
+  .filter(entry => entry.section?.type === 'project' && entry.section.visible !== false)
+  .map(entry => entry.section);
 ---
 
 <BaseLayout title="All Projects // SYS.ENGINEER">
@@ -17,13 +19,13 @@ const PROJECTS = Object.values(projectModules)
     </a>
     <div class="flex items-center gap-3 mb-4">
       <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-      <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">{projectsPage.sectionLabel}</span>
+      <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">{header.sectionLabel}</span>
     </div>
     <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">
-      {projectsPage.sectionTitle}
+      {header.sectionTitle}
     </h1>
     <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-      {PROJECTS.length} projects - {projectsPage.sectionSubtitle}
+      {PROJECTS.length} projects - {header.sectionSubtitle}
     </p>
   </div>
 

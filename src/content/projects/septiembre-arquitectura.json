@@ -1,25 +1,29 @@
 {
   "order": 13,
-  "visible": true,
-  "slug": "septiembre-arquitectura",
-  "name": "Septiembre Arquitectura",
-  "client": "Septiembre Arquitectura",
-  "category": "Architecture / Portfolio",
-  "period": "2024 - 2025",
-  "image": "/projects/septiembre.jpg",
-  "tech": [
-    "HTML5",
-    "CSS3",
-    "JavaScript",
-    "GSAP",
-    "ScrollTrigger"
-  ],
-  "description": "Minimalist portfolio for a Barcelona and Mexico-based architecture studio, with scroll-driven visual storytelling.",
-  "highlights": [
-    "Built a hero section with animation and scroll-driven visual storytelling",
-    "Implemented a scrollable project grid with smooth thumbnail-to-detail transitions"
-  ],
-  "href": "https://www.septiembrearquitectura.com",
-  "featured": true,
-  "type": "agency"
+  "label": "Septiembre Arquitectura",
+  "section": {
+    "type": "project",
+    "visible": true,
+    "slug": "septiembre-arquitectura",
+    "name": "Septiembre Arquitectura",
+    "client": "Septiembre Arquitectura",
+    "category": "Architecture / Portfolio",
+    "period": "2024 - 2025",
+    "image": "/projects/septiembre.jpg",
+    "tech": [
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "GSAP",
+      "ScrollTrigger"
+    ],
+    "description": "Minimalist portfolio for a Barcelona and Mexico-based architecture studio, with scroll-driven visual storytelling.",
+    "highlights": [
+      "Built a hero section with animation and scroll-driven visual storytelling",
+      "Implemented a scrollable project grid with smooth thumbnail-to-detail transitions"
+    ],
+    "href": "https://www.septiembrearquitectura.com",
+    "featured": true,
+    "projectType": "agency"
+  }
 }

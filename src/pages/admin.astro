@@ -24,13 +24,14 @@ export const prerender = true;
 
         const Preview = createClass({
           render() {
-            const data = this.props.entry.get('data')?.toJS?.() ?? {};
+            const rawData = this.props.entry.get('data')?.toJS?.() ?? {};
+            const data = rawData.section?.type ? rawData.section : rawData;
             const asset = path => {
               const item = path && this.props.getAsset(path);
               return item?.url ?? item?.toString?.() ?? path;
             };
             const isLayout = Array.isArray(data.sections);
-            const heading = isLayout ? 'Home Page Layout' : data.sectionTitle || [data.headlinePrefix, data.headlineAccent].filter(Boolean).join(' ') || [data.headlineLine1, data.headlineLine2].filter(Boolean).join(' ') || 'Section preview';
+            const heading = isLayout ? 'Home Page Layout' : data.sectionTitle || data.name || [data.headlinePrefix, data.headlineAccent].filter(Boolean).join(' ') || [data.headlineLine1, data.headlineLine2].filter(Boolean).join(' ') || 'Section preview';
             const intro = data.sectionSubtitle || data.subheadline || '';
             const groups = list(data.sections || data.projects || data.items || data.roles || data.categories || data.cards).filter(item => isLayout || item.visible !== false);
 
@@ -81,7 +82,7 @@ export const prerender = true;
           }
         });
 
-        ['pageLayout', 'hero', 'valueProposition', 'projects', 'techStack', 'career', 'aiWorkflow', 'writing', 'standards', 'testimonials', 'contact', 'projectsPageSettings']
+        ['pageLayout', 'hero', 'valueProposition', 'projects', 'techStack', 'career', 'aiWorkflow', 'writing', 'standards', 'testimonials', 'contact', 'projectsPage']
           .forEach(name => CMS.registerPreviewTemplate(name, Preview));
       })();
     </script>
