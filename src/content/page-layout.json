@@ -8,7 +8,7 @@
     { "section": "aiWorkflow", "visible": true },
     { "section": "writing", "visible": true },
     { "section": "standards", "visible": true },
-    { "section": "testimonials", "visible": true },
+    { "section": "testimonials", "visible": false },
     { "section": "contact", "visible": true }
   ]
 }

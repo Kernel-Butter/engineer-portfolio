@@ -20,12 +20,18 @@ collections:
         fields:
           - { label: Browser and social title, name: siteTitle, widget: string, required: false }
           - { label: Search and social description, name: siteDescription, widget: text, required: false }
+          - { label: Full name, name: fullName, widget: string, required: false }
+          - { label: Professional title, name: professionalTitle, widget: string, required: false }
+          - { label: Location, name: location, widget: string, required: false }
+          - { label: Timezone, name: timezone, widget: string, required: false, hint: "Example: PKT (UTC+5)" }
+          - { label: Professional summary, name: professionalSummary, widget: text, required: false }
+          - { label: Profile photograph, name: profileImage, widget: image, required: false }
           - { label: Navigation and footer brand, name: brandLabel, widget: string, required: false }
           - { label: Hire button label, name: hireLabel, widget: string, required: false }
           - { label: Hire button link, name: hireHref, widget: string, required: false }
           - { label: GitHub URL, name: githubHref, widget: string, required: false }
           - { label: LinkedIn URL, name: linkedinHref, widget: string, required: false }
-          - { label: CV URL or uploaded file, name: cvHref, widget: string, required: false }
+          - { label: CV file, name: cvHref, widget: file, required: false, hint: Upload a PDF. The CV link appears automatically when a file is selected. }
           - { label: Contact email, name: contactEmail, widget: string, required: false }
           - { label: Footer text, name: footerText, widget: string, required: false }
           - { label: Social sharing image, name: socialImage, widget: image, required: false }
