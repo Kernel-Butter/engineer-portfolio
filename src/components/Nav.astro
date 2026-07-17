@@ -28,23 +28,15 @@ const showHire = visibleSections.has('contact') && header.hireLabel;
     </div>
 
     <div class="flex items-center gap-4">
-      <div class="hidden md:flex gap-2 text-on-surface-variant">
-        <button class="hover:text-secondary transition-colors duration-300">
-          <span class="material-symbols-outlined">terminal</span>
-        </button>
-        <button class="hover:text-secondary transition-colors duration-300">
-          <span class="material-symbols-outlined">code</span>
-        </button>
-      </div>
       {showHire && <a id="nav-hire" href={header.hireHref || '/#contact'} class="bg-primary text-on-primary font-label-sm text-label-sm px-4 py-2 rounded uppercase hover:bg-secondary transition-colors duration-300">{header.hireLabel}</a>}
-      <button class="md:hidden text-primary" @click="open = !open">
+      <button class="md:hidden text-primary" type="button" aria-label="Toggle navigation menu" aria-controls="mobile-navigation" :aria-expanded="open.toString()" @click="open = !open">
         <span class="material-symbols-outlined" x-text="open ? 'close' : 'menu'">menu</span>
       </button>
     </div>
 
   </div>
 
-  <div x-show="open" x-transition
+  <div id="mobile-navigation" x-show="open" x-transition
        class="md:hidden border-t border-white/10 bg-surface-dim/95 px-margin-mobile py-4 flex flex-col gap-4">
     {navItems.map(item => <a href={item.href} @click="open=false" class="text-on-surface-variant font-code-snippet text-code-snippet hover:text-secondary transition-colors">{item.label}</a>)}
     {header.showExperimentsLink && <a href="/experiments" @click="open=false" class="text-tertiary/70 font-code-snippet text-code-snippet hover:text-tertiary transition-colors self-start border border-tertiary/20 px-2 py-0.5 rounded text-[11px] uppercase tracking-widest">{header.experimentsLabel}</a>}

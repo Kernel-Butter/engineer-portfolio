@@ -2,11 +2,5 @@
   "sectionLabel": "// CASE_STUDIES",
   "sectionTitle": "Featured Projects",
   "sectionSubtitle": "Production e-commerce and internal tooling: checkout architecture, multi-gateway payments, and offline-first data sync.",
-  "visibility": { "header": true, "viewAll": true },
-  "items": [
-    { "name": "TWB Catering", "chips": ["Next.js", "TypeScript", "Zustand"], "description": "Full checkout journey for a live commercial catering platform: cart, order creation, real-time inventory sync, and multi-gateway payments.", "category": "E-Commerce", "image": "/projects/twb-catering.jpg", "imageAlt": "TWB Catering website screenshot", "href": "https://twb.ae/catering" },
-    { "name": "Ware Malcomb", "chips": ["HTML5", "CSS3", "JavaScript"], "description": "Corporate portfolio site for a major North American architecture and engineering firm serving healthcare, industrial, and commercial sectors.", "category": "Architecture / Corporate", "image": "/projects/ware-malcomb.jpg", "imageAlt": "Ware Malcomb website screenshot", "href": "https://waremalcomb.com" },
-    { "name": "YOO Interior", "chips": ["HTML5", "CSS3", "JavaScript"], "description": "Portfolio site for a luxury interior design firm with projects at Peninsula Hotel, St. Regis, Louis Vuitton, and Turkish Airlines.", "category": "Interior Design / Luxury", "image": "/projects/yoo-interior.jpg", "imageAlt": "YOO Interior website screenshot", "href": "https://yoointerior.com" },
-    { "name": "Septiembre Arquitectura", "chips": ["HTML5", "CSS3", "JavaScript"], "description": "Minimalist portfolio for a Barcelona and Mexico-based architecture studio, with scroll-driven visual storytelling.", "category": "Architecture / Portfolio", "image": "/projects/septiembre.jpg", "imageAlt": "Septiembre Arquitectura website screenshot", "href": "https://www.septiembrearquitectura.com" }
-  ]
+  "visibility": { "header": true, "viewAll": true }
 }

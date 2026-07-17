@@ -4,7 +4,6 @@
   "section": {
     "type": "project",
     "visible": true,
-    "slug": "twb-admin",
     "name": "TWB Admin Panel",
     "client": "The White Boutique",
     "category": "Dashboard",

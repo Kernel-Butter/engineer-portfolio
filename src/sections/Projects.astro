@@ -1,7 +1,12 @@
 ---
 import content from '../content/index.js';
 const { projects } = content;
-const projectItems = (projects.items ?? []).filter(project => project.visible !== false);
+const projectModules = import.meta.glob('../content/projects/*.json', { eager: true });
+const projectItems = Object.values(projectModules)
+  .map(module => module.default)
+  .filter(entry => entry.section?.type === 'project' && entry.section.visible !== false && entry.section.featured)
+  .sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+  .map(entry => ({ ...entry.section, chips: entry.section.tech ?? [] }));
 const show = { header: true, viewAll: true, ...projects.visibility };
 ---
 

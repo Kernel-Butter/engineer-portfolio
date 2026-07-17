@@ -1,13 +1,14 @@
 ---
 import BlobCard from '../components/BlobCard.astro';
 import content from '../content/index.js';
-const { contact } = content;
+const { contact, global } = content;
+const contactDetails = global.contact ?? {};
 const show = { status: true, headline: true, introduction: true, hint: true, socials: true, booking: true, contactForm: true, ...contact.visibility };
 
 const socials = [
-  { label: 'GitHub',   icon: 'code', hoverColor: 'hover:text-primary', href: contact.githubHref },
-  { label: 'LinkedIn', icon: 'work', hoverColor: 'hover:text-secondary', href: contact.linkedinHref },
-];
+  { label: 'GitHub',   icon: 'code', hoverColor: 'hover:text-primary', href: contactDetails.githubHref },
+  { label: 'LinkedIn', icon: 'work', hoverColor: 'hover:text-secondary', href: contactDetails.linkedinHref },
+].filter(social => social.href);
 ---
 
 <section id="contact" class="py-section-padding px-margin-mobile md:px-margin-desktop relative overflow-hidden">
@@ -97,13 +98,13 @@ const socials = [
           <span>{contact.formTitle}</span>
         </h3>
 
-        <form id="contact-form" class="space-y-6" novalidate>
+        <form id="contact-form" class="space-y-6" data-recipient={contactDetails.contactEmail}>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
               <label class="font-label-sm text-label-sm text-outline uppercase block" for="ct-name">Initiator</label>
               <input
-                id="ct-name" name="name" type="text"
+                id="ct-name" name="name" type="text" required autocomplete="name"
                 placeholder="YOUR NAME"
                 class="ct-input w-full px-4 py-3 rounded-md font-code-snippet text-code-snippet text-on-surface placeholder:text-outline-variant"
               />
@@ -111,7 +112,7 @@ const socials = [
             <div class="space-y-2">
               <label class="font-label-sm text-label-sm text-outline uppercase block" for="ct-email">Return Address</label>
               <input
-                id="ct-email" name="email" type="email"
+                id="ct-email" name="email" type="email" required autocomplete="email"
                 placeholder="YOUR@EMAIL.COM"
                 class="ct-input w-full px-4 py-3 rounded-md font-code-snippet text-code-snippet text-on-surface placeholder:text-outline-variant"
               />
@@ -121,14 +122,14 @@ const socials = [
           <div class="space-y-2">
             <label class="font-label-sm text-label-sm text-outline uppercase block" for="ct-message">Payload</label>
             <textarea
-              id="ct-message" name="message" rows="4"
+              id="ct-message" name="message" rows="4" required
               placeholder="DESCRIBE THE SCOPE..."
               class="ct-input w-full px-4 py-3 rounded-md font-code-snippet text-code-snippet text-on-surface placeholder:text-outline-variant resize-none"
             ></textarea>
           </div>
 
           <div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
-            <span id="ct-status" class="font-code-snippet text-code-snippet text-outline text-xs opacity-0 transition-opacity duration-300"></span>
+            <span id="ct-status" role="status" aria-live="polite" class="font-code-snippet text-code-snippet text-outline text-xs opacity-0 transition-opacity duration-300"></span>
             <button
               type="submit"
               class="px-6 py-3 border border-secondary text-secondary font-code-snippet text-code-snippet rounded hover:bg-secondary/10 transition-colors flex items-center gap-2 group/btn"
@@ -165,21 +166,30 @@ const socials = [
       clickBurst(btn);
     }
 
-    // Form submit (hook up to EmailJS / backend later)
-    const form   = document.getElementById('contact-form');
+    // No backend is required: validate locally and open the visitor's email
+    // client with a complete, prefilled message. Never claim a message was
+    // delivered when the browser has not actually sent one.
+    const form   = document.getElementById('contact-form') as HTMLFormElement | null;
     const status = document.getElementById('ct-status');
     form?.addEventListener('submit', e => {
       e.preventDefault();
-      if (!status) return;
-      status.textContent = '> TRANSMISSION QUEUED...';
+      if (!status || !form?.reportValidity()) return;
+      const formData = new FormData(form);
+      const name = String(formData.get('name') ?? '').trim();
+      const email = String(formData.get('email') ?? '').trim();
+      const message = String(formData.get('message') ?? '').trim();
+      const recipient = form.dataset.recipient;
+      if (!recipient) {
+        status.textContent = '> EMAIL ADDRESS IS NOT CONFIGURED.';
+        status.style.opacity = '1';
+        return;
+      }
+      const subject = encodeURIComponent(`Portfolio inquiry from ${name}`);
+      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);
+      status.textContent = '> OPENING YOUR EMAIL APPLICATION...';
       status.style.opacity = '1';
       status.classList.replace('text-outline', 'text-tertiary');
-      // Simulated success - replace with real send logic
-      setTimeout(() => {
-        status.textContent = '> SIGNAL RECEIVED. WILL RESPOND WITHIN 24H.';
-        status.classList.replace('text-tertiary', 'text-secondary');
-        (form as HTMLFormElement).reset();
-      }, 1200);
+      window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
     });
   });
 </script>

@@ -1,0 +1,9 @@
+{
+  "name": "Hamza Bhutta — Frontend Software Engineer",
+  "short_name": "Hamza Bhutta",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#03030a",
+  "theme_color": "#03030a",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

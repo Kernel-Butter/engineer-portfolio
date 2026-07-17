@@ -10,6 +10,8 @@ import '../styles/global.scss';
 const { header = {}, contact = {}, footer = {}, seo = {} } = global;
 const { title = seo.siteTitle, description = seo.siteDescription } = Astro.props;
 const currentYear = new Date().getFullYear();
+const canonicalURL = seo.siteUrl ? new URL(Astro.url.pathname, seo.siteUrl).toString() : undefined;
+const socialImageURL = seo.socialImage && seo.siteUrl ? new URL(seo.socialImage, seo.siteUrl).toString() : seo.socialImage;
 ---
 <!DOCTYPE html>
 <html class="dark" lang="en">
@@ -21,13 +23,29 @@ const currentYear = new Date().getFullYear();
   <meta property="og:title" content={title} />
   {description && <meta property="og:description" content={description} />}
   <meta property="og:type" content="website" />
-  {seo.socialImage && <meta property="og:image" content={seo.socialImage} />}
+  {canonicalURL && <link rel="canonical" href={canonicalURL} />}
+  {canonicalURL && <meta property="og:url" content={canonicalURL} />}
+  {socialImageURL && <meta property="og:image" content={socialImageURL} />}
+  <meta name="twitter:card" content={socialImageURL ? 'summary_large_image' : 'summary'} />
+  <meta name="twitter:title" content={title} />
+  {description && <meta name="twitter:description" content={description} />}
+  {socialImageURL && <meta name="twitter:image" content={socialImageURL} />}
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#03030a" />
   <ClientRouter />
   <!-- Kill Astro's built-in page crossfade - GSAP overlay handles all transitions -->
   <style>
     ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
     /* Hidden until preloader exits on first load; page-transition overlay reveals on SPA nav */
     #main-content { opacity: 0; }
+    .skip-link { position: fixed; left: 1rem; top: 1rem; z-index: 10000; transform: translateY(-200%); }
+    .skip-link:focus { transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+      #pt-overlay { display: none !important; }
+      #main-content, #main-content * { opacity: 1 !important; transform: none !important; }
+    }
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -35,6 +53,8 @@ const currentYear = new Date().getFullYear();
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 </head>
 <body class="antialiased">
+
+  <a href="#page-content" class="skip-link bg-primary text-on-primary px-4 py-2 rounded font-code-snippet">SKIP_TO_CONTENT</a>
 
   <Preloader />
   <SmoothScroll />
@@ -50,7 +70,7 @@ const currentYear = new Date().getFullYear();
 
   <div id="main-content">
     <Nav />
-    <slot />
+    <main id="page-content" tabindex="-1"><slot /></main>
     <footer class="bg-surface-container-lowest border-t border-outline-variant/20 py-12">
       <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto gap-gutter">
         <div class="font-headline-md text-headline-md text-primary font-bold tracking-tighter">

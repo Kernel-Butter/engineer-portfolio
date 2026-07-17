@@ -39,17 +39,27 @@ const preloader = global.preloader ?? {};
 
   gsap.registerPlugin(ScrollTrigger);
 
-  initPreloader(() => {
+  const revealContent = (immediate = false) => {
     // Preloader done - brief pause lets the fade-out finish before Hero animates in.
     gsap.to('#main-content', {
       opacity: 1,
       autoAlpha: 1,
-      duration: 0.6,
+      duration: immediate ? 0 : 0.6,
       ease: 'power2.out',
       onComplete() {
         ScrollTrigger.refresh();
         document.dispatchEvent(new CustomEvent('portfolio:ready'));
       },
     });
-  });
+  };
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const preloader = document.getElementById('preloader');
+    if (preloader) preloader.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    sessionStorage.setItem('preloader_done', '1');
+    revealContent(true);
+  } else {
+    initPreloader(() => revealContent());
+  }
 </script>
