@@ -1,0 +1,27 @@
+{
+  "order": 10,
+  "label": "Godfather's Pizza",
+  "section": {
+    "type": "project",
+    "visible": true,
+    "name": "Godfather's Pizza",
+    "client": "Godfather's Pizza",
+    "category": "Food & Beverage",
+    "period": "2024 - 2025",
+    "image": "/projects/godfathers-pizza.jpg",
+    "tech": [
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "Responsive Design"
+    ],
+    "description": "Menu page for a national quick-service pizza chain, built mobile-first for pickup and delivery ordering.",
+    "highlights": [
+      "Built a responsive, mobile-first menu with intuitive category navigation",
+      "Reduced ordering confusion across pickup and delivery flows with clear information hierarchy"
+    ],
+    "href": "https://www.godfathers.com",
+    "featured": false,
+    "projectType": "agency"
+  }
+}

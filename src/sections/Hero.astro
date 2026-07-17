@@ -1,5 +1,9 @@
 ---
 import ThinkRingV2 from './ThinkRingV2.astro';
+import content from '../content/index.js';
+const { hero, global } = content;
+const identity = global.identity ?? {};
+const show = { eyebrow: true, introduction: true, tagline: true, cta: true, status: true, ...hero.visibility };
 ---
 <section id="hero" class="relative w-full h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-background">
 
@@ -10,36 +14,35 @@ import ThinkRingV2 from './ThinkRingV2.astro';
   <div class="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col justify-center h-full pt-20">
     <div class="max-w-4xl">
 
-      <div class="eyebrow flex items-center gap-3 mb-6">
+      {show.eyebrow && <div class="eyebrow flex items-center gap-3 mb-6">
+        {identity.profileImage && <img src={identity.profileImage} alt={identity.fullName || 'Profile photograph'} class="w-10 h-10 rounded-full object-cover border border-primary/40" />}
         <div class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#44e2cd] animate-pulse"></div>
         <span data-cms="hero.eyebrow" class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">
-          SYS.STATUS: ONLINE // READY
+          {[identity.fullName, hero.eyebrow].filter(Boolean).join(' // ')}
         </span>
-      </div>
+      </div>}
 
       <h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-8">
-        <span data-cms="hero.headlinePrefix">ENGINEERING </span><span data-cms="hero.headlineAccent" class="text-primary">EXPERIENCE.</span>
+        <span>{hero.headlinePrefix?.trim()}</span>{' '}<span class="text-primary">{hero.headlineAccent?.trim()}</span>
       </h1>
 
-      <p class="subheadline font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-12 border-l-2 border-primary/30 pl-6 py-2 bg-surface-container/20 backdrop-blur-sm">
-        <span data-cms="hero.subheadline">Frontend Software Engineer specializing in React, Next.js, and TypeScript. Currently own the end-to-end checkout architecture for a Dubai-based e-commerce platform.</span>
-        <br />
-        <span data-cms="hero.tagline" class="text-primary font-code-snippet text-code-snippet mt-4 block">
-          I sell engineered experience &mdash; not just websites.
-        </span>
-      </p>
+      {(show.introduction || show.tagline) && <p class="subheadline font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-12 border-l-2 border-primary/30 pl-6 py-2 bg-surface-container/20 backdrop-blur-sm">
+        {show.introduction && <span>{hero.subheadline}</span>}
+        {show.introduction && show.tagline && <br />}
+        {show.tagline && <span class="text-primary font-code-snippet text-code-snippet mt-4 block">{hero.tagline}</span>}
+      </p>}
 
       <div class="cta-row flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-        <a id="hero-cta" data-cms-href="hero.ctaHref" href="#contact"
+        {show.cta && <a id="hero-cta" href={hero.ctaHref}
            class="relative bg-primary text-on-primary font-code-snippet text-code-snippet px-8 py-4 rounded flex items-center gap-2 overflow-hidden hover:shadow-[0_0_20px_rgba(68,226,205,0.4)] transition-shadow duration-300">
-          <span data-cms="hero.ctaLabel">INITIATE_DEPLOYMENT</span>
+          <span>{hero.ctaLabel}</span>
           <span class="material-symbols-outlined text-[18px]">rocket_launch</span>
           <span id="hero-shimmer" class="absolute inset-0 pointer-events-none" style="background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,0.22) 50%,transparent 62%);transform:translateX(-100%)"></span>
-        </a>
-        <div class="flex items-center gap-4 text-on-surface-variant font-code-snippet text-code-snippet">
+        </a>}
+        {show.status && <div class="flex items-center gap-4 text-on-surface-variant font-code-snippet text-code-snippet">
           <span class="material-symbols-outlined text-outline">memory</span>
-          <span data-cms="hero.statusLabel">FRONTEND_ENGINEER · 3+ YRS</span>
-        </div>
+          <span>{[identity.professionalTitle, hero.statusLabel, identity.location, identity.timezone].filter(Boolean).join(' · ')}</span>
+        </div>}
       </div>
 
     </div>
@@ -68,7 +71,7 @@ import ThinkRingV2 from './ThinkRingV2.astro';
   import { gsap } from 'gsap';
   import { magneticButton, shimmerHover } from '../scripts/animations.js';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever; without re-binding here, returning to this page
   // leaves the fresh Hero elements permanently at their gsap.set-hidden
   // state (nothing left alive to reveal them), and the CTA's magnetic/

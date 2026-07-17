@@ -1,0 +1,35 @@
+{
+  "sectionLabel": "SYSTEM_ARCHITECTURE_CAPABILITIES",
+  "sectionTitle": "Value Proposition",
+  "visibility": { "header": true, "statusBar": true },
+  "cards": [
+    {
+      "title": "Pixel-Perfect UI Systems",
+      "points": [
+        "100% Design Token Compliance",
+        "Scalable Modular Architecture"
+      ]
+    },
+    {
+      "title": "Performance-First SPAs",
+      "points": [
+        "Sub-second LCP Delivery",
+        "Optimized Bundle Budgets"
+      ]
+    },
+    {
+      "title": "AI-Augmented Workflows",
+      "points": [
+        "Native LLM Integration",
+        "Context-Aware UX Models"
+      ]
+    },
+    {
+      "title": "Design-to-Code Delivery",
+      "points": [
+        "Zero-Friction Deployment Pipelines",
+        "Automated Visual Regression Testing"
+      ]
+    }
+  ]
+}

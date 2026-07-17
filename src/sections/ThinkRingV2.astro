@@ -1,13 +1,13 @@
 ---
-// ThinkRing — Rain World Guardian Halo
+// ThinkRing - Rain World Guardian Halo
 // Pure 2D Canvas · warm amber/gold · 7 concentric ring bands
 // Each band: inner/outer border, radial sector dividers, glyph per sector
 // Magnifier ovals orbit across the stack · flower-of-life center
 
 interface Props {
-  // Standalone (default): establishes its own height — used on the
+  // Standalone (default): establishes its own height - used on the
   // /experiments page where the parent panel has no defined height.
-  // fill: absolute inset:0 over a positioned parent — used as Hero's
+  // fill: absolute inset:0 over a positioned parent - used as Hero's
   // background layer, where Hero itself provides the sized container.
   fill?: boolean;
 }
@@ -22,10 +22,10 @@ const wrapStyle = fill
 </div>
 
 <script>
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever, but the canvas element is recreated fresh on
   // every visit to this page. Without re-binding here, returning to this
-  // page a second time leaves a blank canvas — the old RAF loop (from the
+  // page a second time leaves a blank canvas - the old RAF loop (from the
   // first visit) is already cancelled via the cleanup below, and nothing
   // starts a new one for the fresh canvas.
   document.addEventListener('astro:page-load', () => {
@@ -118,7 +118,7 @@ const wrapStyle = fill
     },
   ];
 
-  /* ── Deform arc — ink roughness + smooth mouse pull ─────────── */
+  /* ── Deform arc - ink roughness + smooth mouse pull ─────────── */
   function deformArc(cx: number, cy: number, r: number, seed: number, rough: number, pullStr: number, mouseA: number) {
     const steps = Math.max(72, Math.ceil(r * 0.7));
     ctx.beginPath();
@@ -161,7 +161,7 @@ const wrapStyle = fill
     return `rgba(${a[0]+(b[0]-a[0])*t|0},${a[1]+(b[1]-a[1])*t|0},${a[2]+(b[2]-a[2])*t|0},${alpha})`;
   }
 
-  // Impact — hot glow + falling particles at cursor hit point
+  // Impact - hot glow + falling particles at cursor hit point
   interface Particle { x:number; y:number; vx:number; vy:number; }
   interface Impact   { x:number; y:number; life:number; particles:Particle[]; }
   const impacts: Impact[] = [];
@@ -176,7 +176,7 @@ const wrapStyle = fill
     });
   }
 
-  // Spark system — thunder from center to cursor, with branches
+  // Spark system - thunder from center to cursor, with branches
   interface Spark { pts: {x:number;y:number}[]; branches: {x:number;y:number}[][]; life: number; }
   const sparks: Spark[] = [];
   let sparkTimer = 0;   // frames until next burst
@@ -220,7 +220,7 @@ const wrapStyle = fill
     if (Math.random() < 0.30) addImpact(tx, ty); // ~1 in 3 strikes triggers impact
   }
 
-  /* ── Belt eye — almond in sector, pupil follows mouse ─────── */
+  /* ── Belt eye - almond in sector, pupil follows mouse ─────── */
   function drawEye(ex: number, ey: number, eyeW: number, eyeH: number, eyeRot: number, col: string) {
     const ga  = Math.atan2(mouseY - ey, mouseX - ex);
     const la  = ga - eyeRot;
@@ -247,7 +247,7 @@ const wrapStyle = fill
     ctx.restore();
   }
 
-  /* ── Rings — mixed properties generated randomly at startup ──── */
+  /* ── Rings - mixed properties generated randomly at startup ──── */
   // pick exactly 1–2 rings to have a drifting center
   const wobbleIndices = new Set<number>();
   while (wobbleIndices.size < 2) wobbleIndices.add(_ri(1, 5));
@@ -301,7 +301,7 @@ const wrapStyle = fill
      Center orbits at distance = its own radius, so near edge always
      grazes the center while far edge reaches 2r outward into the rings. */
   /* r = base orbit radius, speed = orbit speed, ps = pulse speed, pa = pulse amplitude */
-  /* Grazing circles — orbit slowed, size pulses in opposite phases (0 vs π) */
+  /* Grazing circles - orbit slowed, size pulses in opposite phases (0 vs π) */
   const GRAZERS = [
     { r: 0.19, speed:  0.008, ps: 0.45, pa: 0.06, phase: 0          }, // ~14s cycle
     { r: 0.25, speed: -0.003, ps: 0.28, pa: 0.07, phase: Math.PI    }, // ~22s cycle
@@ -310,7 +310,7 @@ const wrapStyle = fill
   ];
   const grazerA = [0.4, Math.PI * 0.85, Math.PI * 0.2, Math.PI * 1.6];
 
-  /* ── Static palette (petal only — others computed per frame) ── */
+  /* ── Static palette (petal only - others computed per frame) ── */
   const C_PETAL = 'rgba(212,162,36, 0.48)';
 
   /* ── Render ───────────────────────────────────────────────────── */
@@ -336,7 +336,7 @@ const wrapStyle = fill
     const C_GLYPH   = iRGB(AMB, LAV, colorT, 0.86);
     const C_MAG     = iRGB([255,215,65], [200,210,255], colorT, 0.72);
 
-    // Thunder burst — infrequent, cursor must be on canvas (norm < 3)
+    // Thunder burst - infrequent, cursor must be on canvas (norm < 3)
     sparkTimer = Math.max(0, sparkTimer - 1);
     if (sparkTimer === 0 && norm < 3.0) {
       const proximity = Math.max(0, 1 - norm / 3.0);
@@ -376,17 +376,17 @@ const wrapStyle = fill
         ? 0.05 + Math.max(0, 1 - norm / 1.6) * 0.60   // dim at rest, lights up as cursor nears center
         : 0.16;
 
-      /* Wobbling center — 1-2 rings drift very slowly off-axis */
+      /* Wobbling center - 1-2 rings drift very slowly off-axis */
       const wcx = rd.wobble ? cx + Math.cos(rd.wobbleA) * rd.wobbleR * R : cx;
       const wcy = rd.wobble ? cy + Math.sin(rd.wobbleA) * rd.wobbleR * R : cy;
 
-      /* Outer border — per-ring decision, deformed stroke */
+      /* Outer border - per-ring decision, deformed stroke */
       if (rd.outerBorder) {
         deformArc(wcx, wcy, oR, rd.seed + 10, rd.rough * 0.7, pullStr, mouseA);
         ctx.strokeStyle = C_RING_HI; ctx.lineWidth = 1.3; ctx.stroke();
       }
 
-      /* Inner border — deformed stroke */
+      /* Inner border - deformed stroke */
       deformArc(wcx, wcy, iR, rd.seed, rd.rough, pullStr, mouseA);
       ctx.strokeStyle = C_RING; ctx.lineWidth = 0.9; ctx.stroke();
 
@@ -423,7 +423,7 @@ const wrapStyle = fill
       if (rd.ghost) ctx.globalAlpha = 1.0;
     }
 
-    /* ── Outer glyph ring — 3-4 bare characters + 1 eye ─────────── */
+    /* ── Outer glyph ring - 3-4 bare characters + 1 eye ─────────── */
     {
       const rot = angles[RINGS.length];
       const mR  = R * 1.04;
@@ -447,7 +447,7 @@ const wrapStyle = fill
       }
     }
 
-    /* ── Grazing circles — radius pulses independently per circle ── */
+    /* ── Grazing circles - radius pulses independently per circle ── */
     for (let gi = 0; gi < GRAZERS.length; gi++) {
       const g  = GRAZERS[gi];
       const a  = grazerA[gi];
@@ -473,7 +473,7 @@ const wrapStyle = fill
       ctx.strokeStyle = `rgba(${sr},${sg},255,${sp.life * 0.88})`;
       ctx.lineWidth   = 1.2 + sp.life;
       ctx.stroke();
-      // Branches — thinner, dimmer
+      // Branches - thinner, dimmer
       for (const bPts of sp.branches) {
         ctx.beginPath();
         ctx.moveTo(bPts[0].x, bPts[0].y);

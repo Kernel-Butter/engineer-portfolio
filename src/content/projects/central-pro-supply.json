@@ -1,0 +1,27 @@
+{
+  "order": 11,
+  "label": "Central Pro Supply",
+  "section": {
+    "type": "project",
+    "visible": true,
+    "name": "Central Pro Supply",
+    "client": "Central Pro Supply",
+    "category": "B2B / Corporate",
+    "period": "2024 - 2025",
+    "image": "/projects/central-pros.jpg",
+    "tech": [
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "GSAP"
+    ],
+    "description": "Business site for a landscape supply company serving irrigation, turf, and outdoor industry contractors.",
+    "highlights": [
+      "Built a responsive site with service catalog, product categories, and partner brand showcases",
+      "Implemented UI animations and scroll effects to elevate brand presentation"
+    ],
+    "href": "https://centralpros.com",
+    "featured": false,
+    "projectType": "agency"
+  }
+}

@@ -36,7 +36,7 @@ const categories = [
 
     <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap w-full md:h-[600px]">
 
-      <!-- Three.js canvas — 8 cols -->
+      <!-- Three.js canvas - 8 cols -->
       <div class="stk-panel bento-card col-span-1 md:col-span-8 rounded-xl h-[400px] md:h-full relative flex items-center justify-center group cursor-crosshair overflow-hidden">
         <div id="stk-canvas" class="absolute inset-0 opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
         <div class="absolute bottom-4 left-4 z-10 pointer-events-none">
@@ -47,7 +47,7 @@ const categories = [
         </div>
       </div>
 
-      <!-- Category chips — 4 cols -->
+      <!-- Category chips - 4 cols -->
       <div class="col-span-1 md:col-span-4 flex flex-col gap-bento-gap md:h-full">
         {categories.map(cat => (
           <div class="stk-panel bento-card p-6 rounded-xl flex-1 flex flex-col justify-center">
@@ -74,7 +74,7 @@ const categories = [
   import * as THREE from 'three';
   import { fadeUp, staggerFadeUp, onEnterOnce } from '../scripts/animations.js';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever; without re-binding here, returning to this page
   // leaves the fresh DOM stuck at its CSS opacity:0 starting state and a
   // blank canvas.

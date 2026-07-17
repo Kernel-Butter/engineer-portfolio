@@ -1,8 +1,9 @@
 ---
 import BlobCard from '../components/BlobCard.astro';
 import type { BlobConfig } from '../components/BlobCard.astro';
+import content from '../content/index.js';
 
-const testimonials: Array<{
+const testimonialTemplates: Array<{
   id: number; span: number; name: string; initials: string; role: string;
   quote: string; tags: { label: string; color: string; dot?: string }[];
   avatarGrad: string; ringColor: string; large: boolean;
@@ -56,24 +57,39 @@ const testimonials: Array<{
     ],
   },
 ];
+
+const testimonials = (content.testimonials.items ?? []).filter(item => item.visible !== false).map((item, index) => {
+  const template = testimonialTemplates[index % testimonialTemplates.length];
+  return {
+    ...template,
+    ...item,
+    id: index + 1,
+    tags: (item.tags ?? []).map((label, tagIndex) => ({
+      label,
+      color: template.tags[tagIndex]?.color ?? 'text-primary border-outline-variant/30',
+      dot: template.tags[tagIndex]?.dot,
+    })),
+  };
+});
+const show = { header: true, testimonialGrid: true, ...content.testimonials.visibility };
 ---
 
 <section id="testimonials" class="py-section-padding px-margin-mobile md:px-margin-desktop">
   <div class="w-full max-w-container-max mx-auto flex flex-col gap-16">
 
     <!-- Header -->
-    <header class="tm-header flex flex-col gap-4">
+    {show.header && <header class="tm-header flex flex-col gap-4">
       <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">
-        <span class="text-secondary opacity-50 font-code-snippet">//</span> SOCIAL_PROOF
+        <span class="text-secondary opacity-50 font-code-snippet">//</span> {content.testimonials.sectionTitle}
       </h2>
       <p class="font-code-snippet text-code-snippet text-secondary max-w-2xl leading-relaxed">
         &gt; Executing query: SELECT * FROM endorsements WHERE impact &gt; 9000;<br />
         &gt; {testimonials.length} rows returned. Rendering data modules...
       </p>
-    </header>
+    </header>}
 
     <!-- Bento grid -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+    {show.testimonialGrid && <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
 
       {testimonials.map(t => (
         <BlobCard
@@ -132,7 +148,7 @@ const testimonials: Array<{
         </BlobCard>
       ))}
 
-    </div>
+    </div>}
   </div>
 </section>
 

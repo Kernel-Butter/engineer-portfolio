@@ -5,21 +5,37 @@ import ValueProp from '../sections/ValuePropV2.astro';
 import Projects from '../sections/Projects.astro';
 import TechStack from '../sections/TechStackV2.astro';
 import Career from '../sections/Career.astro';
-// import Github from '../sections/Github.astro'; // hidden for now — component untouched
+// import Github from '../sections/Github.astro'; // hidden for now - component untouched
 import AiWorkflow from '../sections/AiWorkflow.astro';
 import Writing from '../sections/Writing.astro';
 import Standards from '../sections/Standards.astro';
+import Testimonials from '../sections/Testimonials.astro';
 import Contact from '../sections/Contact.astro';
+import layout from '../content/page-layout.json';
+
+const sectionRegistry = {
+  hero: Hero,
+  valueProposition: ValueProp,
+  projects: Projects,
+  techStack: TechStack,
+  career: Career,
+  aiWorkflow: AiWorkflow,
+  writing: Writing,
+  standards: Standards,
+  testimonials: Testimonials,
+  contact: Contact,
+};
+
+const seen = new Set();
+const sections = (layout.sections ?? []).filter(item => {
+  if (!item.visible || !sectionRegistry[item.section] || seen.has(item.section)) return false;
+  seen.add(item.section);
+  return true;
+});
 ---
 <BaseLayout>
-  <Hero />
-  <ValueProp />
-  <Projects />
-  <TechStack />
-  <Career />
-  {/* <Github /> — hidden for now, component untouched */}
-  <AiWorkflow />
-  <Writing />
-  <Standards />
-  <Contact />
+  {sections.map(item => {
+    const Section = sectionRegistry[item.section];
+    return <Section />;
+  })}
 </BaseLayout>

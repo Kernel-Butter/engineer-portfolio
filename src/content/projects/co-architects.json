@@ -1,0 +1,27 @@
+{
+  "order": 15,
+  "label": "CO Architects",
+  "section": {
+    "type": "project",
+    "visible": true,
+    "name": "CO Architects",
+    "client": "CO Architects",
+    "category": "Architecture / Corporate",
+    "period": "2024 - 2025",
+    "image": "/projects/co-architects.jpg",
+    "tech": [
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "GSAP"
+    ],
+    "description": "Portfolio site for a firm specializing in large-scale civic, healthcare, and academic buildings.",
+    "highlights": [
+      "Built a large-format hero imagery layout with smooth scroll navigation and project filtering",
+      "Delivered a performant, accessible UI matching the firm's institutional positioning"
+    ],
+    "href": "https://coarchitects.com",
+    "featured": false,
+    "projectType": "agency"
+  }
+}

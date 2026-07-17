@@ -1,0 +1,6 @@
+{
+  "sectionLabel": "HOW I WORK",
+  "sectionTitle": "Engineering Standards",
+  "sectionSubtitle": "Practices I hold consistently across projects, not live telemetry, just what I actually do before something ships.",
+  "visibility": { "header": true, "standardsGrid": true }
+}

@@ -2,7 +2,7 @@ export const experiments = [
   {
     slug:     'think-ring',
     title:    'THINK_RING',
-    desc:     'Rain World Guardian halo — 7 concentric ring bands of Thai-abugida glyphs rotating in alternating directions, grazing circles with opposite-phase size pulsing, rough ink strokes.',
+    desc:     'Rain World Guardian halo - 7 concentric ring bands of Thai-abugida glyphs rotating in alternating directions, grazing circles with opposite-phase size pulsing, rough ink strokes.',
     category: 'WEBGL',
     icon:     'blur_on',
     accent:   '#c0c1ff',
@@ -14,7 +14,7 @@ export const experiments = [
   {
     slug:     'think-ring-ii',
     title:    'THINK_RING_II',
-    desc:     'Rain World Guardian halo — duplicate canvas with fresh random seed. Each load generates a new layout of ring bands, empty sectors, wobble offsets and glyph counts.',
+    desc:     'Rain World Guardian halo - duplicate canvas with fresh random seed. Each load generates a new layout of ring bands, empty sectors, wobble offsets and glyph counts.',
     category: 'WEBGL',
     icon:     'blur_circular',
     accent:   '#d4a820',
@@ -44,8 +44,8 @@ export const experiments = [
     accent:   '#44e2cd',
     bg:       'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(68,226,205,.13) 0%, transparent 70%)',
     variants: [
-      { key: 'AiWorkflow',         label: 'V1 — Terminal Nodes',  subtitle: 'Linear step-by-step node diagram',       status: 'archived' },
-      { key: 'AiWorkflowPipeline', label: 'V2 — Pipeline Graph',  subtitle: 'Animated DAG with data-flow arrows',     status: 'stable'   },
+      { key: 'AiWorkflow',         label: 'V1 - Terminal Nodes',  subtitle: 'Linear step-by-step node diagram',       status: 'archived' },
+      { key: 'AiWorkflowPipeline', label: 'V2 - Pipeline Graph',  subtitle: 'Animated DAG with data-flow arrows',     status: 'stable'   },
     ],
   },
   {
@@ -57,8 +57,8 @@ export const experiments = [
     accent:   '#4edea3',
     bg:       'radial-gradient(ellipse 100% 80% at 50% 50%, rgba(78,222,163,.11) 0%, transparent 70%)',
     variants: [
-      { key: 'TechStack',   label: 'V1 — Constellation',    subtitle: 'Anonymous star-field with hover labels',  status: 'archived' },
-      { key: 'TechStackV2', label: 'V2 — Dev Cycle Graph',  subtitle: 'Labeled circular domain rings',           status: 'stable'   },
+      { key: 'TechStack',   label: 'V1 - Constellation',    subtitle: 'Anonymous star-field with hover labels',  status: 'archived' },
+      { key: 'TechStackV2', label: 'V2 - Dev Cycle Graph',  subtitle: 'Labeled circular domain rings',           status: 'stable'   },
     ],
   },
   {
@@ -70,8 +70,8 @@ export const experiments = [
     accent:   '#c0c1ff',
     bg:       'radial-gradient(ellipse 70% 60% at 30% 50%, rgba(192,193,255,.1) 0%, transparent 65%), radial-gradient(ellipse 50% 50% at 75% 50%, rgba(192,193,255,.07) 0%, transparent 60%)',
     variants: [
-      { key: 'ValueProp',   label: 'V1 — Prose Cards',      subtitle: 'Three-column prose with icon glyphs',    status: 'archived' },
-      { key: 'ValuePropV2', label: 'V2 — Bento Patterns',   subtitle: 'Asymmetric bento with blob animations',  status: 'stable'   },
+      { key: 'ValueProp',   label: 'V1 - Prose Cards',      subtitle: 'Three-column prose with icon glyphs',    status: 'archived' },
+      { key: 'ValuePropV2', label: 'V2 - Bento Patterns',   subtitle: 'Asymmetric bento with blob animations',  status: 'stable'   },
     ],
   },
   {

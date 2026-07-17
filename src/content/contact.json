@@ -1,0 +1,12 @@
+{
+  "statusBadge": "STATUS: AVAILABLE",
+  "headlineLine1": "LET'S BUILD",
+  "headlineLine2": "THE FUTURE.",
+  "subheadline": "Open to remote frontend roles with ambitious product teams worldwide. Start a conversation below.",
+  "hint": "Hiring me is easy. Here is exactly how to start.",
+  "bookCallTitle": "Start a Conversation",
+  "bookCallSubtitle": "Tell me about the role, product, or frontend challenge.",
+  "bookCallHref": "mailto:hamzaabhutta@gmail.com?subject=Technical%20Discovery%20Call",
+  "formTitle": "Direct Transmission",
+  "visibility": { "status": true, "headline": true, "introduction": true, "hint": true, "socials": true, "booking": true, "contactForm": true }
+}

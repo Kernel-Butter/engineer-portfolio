@@ -1,0 +1,30 @@
+{
+  "order": 2,
+  "label": "TWB Catering",
+  "section": {
+    "type": "project",
+    "visible": true,
+    "name": "TWB Catering",
+    "client": "The White Boutique",
+    "category": "E-Commerce",
+    "period": "Jan 2026 - Present",
+    "image": "/projects/twb-catering.jpg",
+    "tech": [
+      "Next.js",
+      "TypeScript",
+      "Zustand",
+      "Supabase",
+      "Tailwind CSS"
+    ],
+    "description": "Full checkout journey for a live commercial catering platform - cart, order creation, real-time inventory sync, and multi-gateway payments.",
+    "highlights": [
+      "Architected end-to-end checkout with Zustand cart state and real-time Supabase inventory sync, reaching a 95%+ checkout completion rate",
+      "Integrated Stripe, Noon Payments, Apple Pay, and Google Pay behind a unified layer with consistent error handling and transaction logging",
+      "Built SSR/ISR product routing serving 50,000+ monthly product pages",
+      "Maintained 90%+ Google Lighthouse scores through Web Vitals monitoring"
+    ],
+    "href": "https://twb.ae/catering",
+    "featured": true,
+    "projectType": "employment"
+  }
+}

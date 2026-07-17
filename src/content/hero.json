@@ -1,0 +1,11 @@
+{
+  "eyebrow": "AVAILABLE_FOR_FRONTEND_ROLES",
+  "headlinePrefix": "FRONTEND",
+  "headlineAccent": "ENGINEER.",
+  "subheadline": "I build high-performance e-commerce products and interactive web experiences with React, Next.js, and TypeScript.",
+  "tagline": "Production systems. Polished interfaces. Measurable performance.",
+  "ctaLabel": "VIEW_PROJECTS",
+  "ctaHref": "#projects",
+  "statusLabel": "3+ YRS · REACT / NEXT.JS / TYPESCRIPT",
+  "visibility": { "eyebrow": true, "introduction": true, "tagline": true, "cta": true, "status": true }
+}

@@ -1,5 +1,5 @@
 ---
-// ThinkRing — Rain World Guardian Halo
+// ThinkRing - Rain World Guardian Halo
 // Pure 2D Canvas · warm amber/gold · 7 concentric ring bands
 // Each band: inner/outer border, radial sector dividers, glyph per sector
 // Magnifier ovals orbit across the stack · flower-of-life center
@@ -10,7 +10,7 @@
 </div>
 
 <script>
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever, but the canvas element is recreated fresh on
   // every visit to this page. Without re-binding here, returning to this
   // page a second time leaves a blank canvas.
@@ -84,7 +84,7 @@
     },
   ];
 
-  /* ── Rough arc — deterministic sine noise gives hand-drawn ink feel ─ */
+  /* ── Rough arc - deterministic sine noise gives hand-drawn ink feel ─ */
   function roughArc(cx: number, cy: number, r: number, seed: number, rough: number) {
     const steps = Math.max(72, Math.ceil(r * 0.7));
     ctx.beginPath();
@@ -101,7 +101,7 @@
     ctx.closePath();
   }
 
-  /* ── Rings — mixed properties generated randomly at startup ──── */
+  /* ── Rings - mixed properties generated randomly at startup ──── */
   const _rf = (a: number, b: number) => a + Math.random() * (b - a);
   const _ri = (a: number, b: number) => a + Math.floor(Math.random() * (b - a + 1));
 
@@ -145,7 +145,7 @@
      Center orbits at distance = its own radius, so near edge always
      grazes the center while far edge reaches 2r outward into the rings. */
   /* r = base orbit radius, speed = orbit speed, ps = pulse speed, pa = pulse amplitude */
-  /* Grazing circles — orbit slowed, size pulses in opposite phases (0 vs π) */
+  /* Grazing circles - orbit slowed, size pulses in opposite phases (0 vs π) */
   const GRAZERS = [
     { r: 0.19, speed:  0.008, ps: 0.45, pa: 0.06, phase: 0          }, // ~14s cycle
     { r: 0.25, speed: -0.003, ps: 0.28, pa: 0.07, phase: Math.PI    }, // ~22s cycle
@@ -187,17 +187,17 @@
       const mR    = (iR + oR) * .5;
       const bw    = oR - iR;
 
-      /* Wobbling center — 1-2 rings drift very slowly off-axis */
+      /* Wobbling center - 1-2 rings drift very slowly off-axis */
       const wcx = rd.wobble ? cx + Math.cos(rd.wobbleA) * rd.wobbleR * R : cx;
       const wcy = rd.wobble ? cy + Math.sin(rd.wobbleA) * rd.wobbleR * R : cy;
 
-      /* Outer border — per-ring decision, rough stroke */
+      /* Outer border - per-ring decision, rough stroke */
       if (rd.outerBorder) {
         roughArc(wcx, wcy, oR, rd.seed + 10, rd.rough * 0.7);
         ctx.strokeStyle = C_RING_HI; ctx.lineWidth = 1.3; ctx.stroke();
       }
 
-      /* Inner border — rough stroke */
+      /* Inner border - rough stroke */
       roughArc(wcx, wcy, iR, rd.seed, rd.rough);
       ctx.strokeStyle = C_RING; ctx.lineWidth = 0.9; ctx.stroke();
 
@@ -226,7 +226,7 @@
       }
     }
 
-    /* ── Outer glyph ring — 3-4 bare characters, no borders or lines ── */
+    /* ── Outer glyph ring - 3-4 bare characters, no borders or lines ── */
     {
       const count  = 3 + Math.floor(Math.random() * 2); // won't re-randomize, see below
       const rot    = angles[RINGS.length];
@@ -245,7 +245,7 @@
       }
     }
 
-    /* ── Grazing circles — radius pulses independently per circle ── */
+    /* ── Grazing circles - radius pulses independently per circle ── */
     for (let gi = 0; gi < GRAZERS.length; gi++) {
       const g  = GRAZERS[gi];
       const a  = grazerA[gi];

@@ -1,4 +1,7 @@
 ---
+import content from '../content/index.js';
+const ai = content.aiWorkflow;
+const show = { header: true, terminal: true, metricCard: true, ...ai.visibility };
 ---
 
 <section id="ai-workflow" class="py-section-padding px-margin-mobile md:px-margin-desktop relative overflow-hidden">
@@ -9,24 +12,24 @@
   <div class="w-full max-w-container-max mx-auto z-10 relative flex flex-col gap-16">
 
     <!-- Header -->
-    <div class="ai-header text-center">
+    {show.header && <div class="ai-header text-center">
       <div class="flex items-center justify-center gap-3 mb-4">
         <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
-        <span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest">// LLM_INTEGRATION</span>
+        <span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest">{ai.sectionLabel}</span>
       </div>
       <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">
-        AI-Augmented Workflow
+        {ai.sectionTitle}
       </h2>
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
-        AI-assisted development for boilerplate, scaffolding, and structural shells — while keeping the same code-review bar for anything that ships.
+        {ai.sectionSubtitle}
       </p>
-    </div>
+    </div>}
 
     <!-- Bento grid -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
 
-      <!-- Terminal — 8 cols -->
-      <div class="ai-card glass-panel rounded-xl col-span-1 md:col-span-8 p-6 flex flex-col gap-4 overflow-hidden">
+      <!-- Terminal - 8 cols -->
+      {show.terminal && <div class="ai-card glass-panel rounded-xl col-span-1 md:col-span-8 p-6 flex flex-col gap-4 overflow-hidden">
         <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3 mb-1">
           <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-[#ff5f56]"></span>
@@ -59,17 +62,17 @@
             Task complete.
           </div>
         </div>
-      </div>
+      </div>}
 
-      <!-- Metrics — 4 cols -->
-      <div class="ai-card glass-panel rounded-xl col-span-1 md:col-span-4 p-6 flex flex-col justify-center items-center text-center gap-6">
+      <!-- Metrics - 4 cols -->
+      {show.metricCard && <div class="ai-card glass-panel rounded-xl col-span-1 md:col-span-4 p-6 flex flex-col justify-center items-center text-center gap-6">
         <div class="font-headline-md text-headline-md text-secondary border border-secondary/20 rounded-full px-6 py-3 bg-secondary/5">
-          ~30% Faster Delivery
+          {ai.metric}
         </div>
         <div>
-          <h3 class="font-headline-md text-headline-md text-primary mb-2">Delivery Accelerated</h3>
+          <h3 class="font-headline-md text-headline-md text-primary mb-2">{ai.metricTitle}</h3>
           <p class="font-body-md text-body-md text-on-surface-variant">
-            Adopted AI-assisted workflows for boilerplate generation and structural scaffolding — cutting delivery time by roughly 30% while keeping code-review standards.
+            {ai.metricDescription}
           </p>
         </div>
         <div class="w-full">
@@ -78,7 +81,7 @@
           </div>
           <span class="font-code-snippet text-label-sm text-tertiary mt-2 block">30% Faster Shipping</span>
         </div>
-      </div>
+      </div>}
 
     </div>
   </div>
@@ -88,7 +91,7 @@
   import { gsap } from 'gsap';
   import { fadeUp, staggerFadeUp, animateBar, onEnterOnce } from '../scripts/animations.js';
 
-  // astro:page-load (not top-level) — Astro's client-side nav only executes
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
   // this module once ever; without re-binding here, returning to this page
   // leaves the fresh DOM stuck at its CSS opacity:0 starting state.
   document.addEventListener('astro:page-load', () => {

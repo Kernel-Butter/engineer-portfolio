@@ -1,0 +1,6 @@
+{
+  "sectionLabel": "// CASE_STUDIES",
+  "sectionTitle": "Featured Projects",
+  "sectionSubtitle": "Production e-commerce and internal tooling: checkout architecture, multi-gateway payments, and offline-first data sync.",
+  "visibility": { "header": true, "viewAll": true }
+}

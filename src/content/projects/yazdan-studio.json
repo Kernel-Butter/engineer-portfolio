@@ -1,0 +1,27 @@
+{
+  "order": 14,
+  "label": "Yazdan Studio",
+  "section": {
+    "type": "project",
+    "visible": true,
+    "name": "Yazdan Studio",
+    "client": "Yazdan Studio",
+    "category": "Design / Portfolio",
+    "period": "2024 - 2025",
+    "image": "/projects/yazdan-studio.jpg",
+    "tech": [
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "GSAP"
+    ],
+    "description": "Animation-intensive portfolio for a creative design studio.",
+    "highlights": [
+      "Implemented GSAP-based scroll and entrance animations throughout the site",
+      "Built a pixel-perfect responsive layout matching the studio's creative brand direction"
+    ],
+    "href": "https://yazdanistudio.com/home",
+    "featured": false,
+    "projectType": "agency"
+  }
+}

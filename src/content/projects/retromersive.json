@@ -1,0 +1,27 @@
+{
+  "order": 12,
+  "label": "Retromersive",
+  "section": {
+    "type": "project",
+    "visible": true,
+    "name": "Retromersive",
+    "client": "Mersive Technologies",
+    "category": "Tech / SaaS",
+    "period": "2024 - 2025",
+    "image": "/projects/retromersive.jpg",
+    "tech": [
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "GSAP"
+    ],
+    "description": "Animation-heavy marketing site for a screen-sharing collaboration product, blending retro visuals with modern interaction.",
+    "highlights": [
+      "Built scroll- and hover-triggered animation sequences using GSAP",
+      "Integrated animated GIF and video content sections with responsive fallbacks"
+    ],
+    "href": "https://retromersive.com",
+    "featured": false,
+    "projectType": "agency"
+  }
+}
