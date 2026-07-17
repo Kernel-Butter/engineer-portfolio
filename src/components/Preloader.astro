@@ -1,5 +1,6 @@
 ---
-import global from '../content/global.json';
+import global from '../content/global/index.js';
+const preloader = global.preloader ?? {};
 ---
 <div id="preloader" transition:persist>
   <canvas id="particle-canvas"></canvas>
@@ -7,15 +8,15 @@ import global from '../content/global.json';
 
     <div class="text-center mb-8">
       <h1 class="font-headline-lg text-headline-lg text-primary tracking-tighter uppercase glitch-text"
-          data-text={global.header?.brandLabel}>{global.header?.brandLabel}</h1>
+          data-text={preloader.brandLabel}>{preloader.brandLabel}</h1>
       <p id="status-message" class="font-code-snippet text-code-snippet text-tertiary mt-2 tracking-widest opacity-80">
-        Initializing System...
+        {preloader.statusMessage}
       </p>
     </div>
 
     <div class="w-full max-w-md">
       <div class="progress-data mb-2 text-primary font-code-snippet text-label-sm">
-        <span id="loading-file">boot_sequence.sh</span>
+        <span id="loading-file">{preloader.loadingFile}</span>
         <span id="progress-percent">00.0%</span>
       </div>
       <div class="progress-track rounded-full">

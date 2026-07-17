@@ -9,7 +9,7 @@ import standards from './standards.json';
 import testimonials from './testimonials.json';
 import contact from './contact.json';
 import pageLayout from './page-layout.json';
-import global from './global.json';
+import global from './global/index.js';
 
 export default {
   hero,

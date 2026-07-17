@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import global from '../../content/global.json';
+import global from '../../content/global/index.js';
 const projectModules = import.meta.glob('../../content/projects/*.json', { eager: true });
 const pageSections = Object.values(projectModules)
   .map(module => module.default)

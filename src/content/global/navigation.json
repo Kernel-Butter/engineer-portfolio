@@ -1,0 +1,13 @@
+{
+  "brandLabel": "HAMZA.BHUTTA",
+  "hireLabel": "HIRE_ME",
+  "hireHref": "/#contact",
+  "showExperimentsLink": true,
+  "experimentsLabel": "LAB",
+  "navigation": [
+    { "section": "techStack", "label": "STK", "visible": true },
+    { "section": "projects", "label": "PRJ", "visible": true },
+    { "section": "career", "label": "EXP", "visible": true },
+    { "section": "standards", "label": "MET", "visible": true }
+  ]
+}
