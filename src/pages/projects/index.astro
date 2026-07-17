@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { PROJECTS } from '../../data/projects.js';
+import projectsPage from '../../content/projects-page.json';
+const PROJECTS = (projectsPage.projects ?? []).filter(project => project.visible !== false);
 ---
 
 <BaseLayout title="All Projects // SYS.ENGINEER">
@@ -12,13 +13,13 @@ import { PROJECTS } from '../../data/projects.js';
     </a>
     <div class="flex items-center gap-3 mb-4">
       <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-      <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">// ALL_CASE_STUDIES</span>
+      <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">{projectsPage.sectionLabel}</span>
     </div>
     <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">
-      Everything I&rsquo;ve Shipped
+      {projectsPage.sectionTitle}
     </h1>
     <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-      {PROJECTS.length} projects - production e-commerce, internal tooling, and agency work spanning checkout systems to architecture studio portfolios.
+      {PROJECTS.length} projects - {projectsPage.sectionSubtitle}
     </p>
   </div>
 
@@ -82,7 +83,7 @@ import { PROJECTS } from '../../data/projects.js';
           {p.image ? (
             <img
               src={p.image}
-              alt={`${p.name} screenshot`}
+              alt={p.imageAlt || `${p.name} screenshot`}
               loading="lazy"
               class="reel-img absolute inset-0 w-full h-[120%] -top-[10%] object-cover object-top"
             />
@@ -119,7 +120,7 @@ import { PROJECTS } from '../../data/projects.js';
             <p class="reel-fade font-body-lg text-body-lg text-white/85 mb-6">{p.description}</p>
 
             <div class="reel-fade flex flex-wrap gap-2 mb-6">
-              {p.tech.map(t => (
+              {(p.tech ?? []).map(t => (
                 <span class="px-3 py-1 rounded font-label-sm text-label-sm bg-white/10 text-white/90 border border-white/15">{t}</span>
               ))}
             </div>

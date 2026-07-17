@@ -32,7 +32,7 @@ export const prerender = true;
             const isLayout = Array.isArray(data.sections);
             const heading = isLayout ? 'Home Page Layout' : data.sectionTitle || [data.headlinePrefix, data.headlineAccent].filter(Boolean).join(' ') || [data.headlineLine1, data.headlineLine2].filter(Boolean).join(' ') || 'Section preview';
             const intro = data.sectionSubtitle || data.subheadline || '';
-            const groups = list(data.sections || data.items || data.roles || data.categories || data.cards).filter(item => isLayout || item.visible !== false);
+            const groups = list(data.sections || data.projects || data.items || data.roles || data.categories || data.cards).filter(item => isLayout || item.visible !== false);
 
             return h('main', { style: { minHeight: '100%', padding: '48px 36px', background: '#0b0b0b', color: '#d7d8df', fontFamily: 'Inter, system-ui, sans-serif' } },
               h('section', { style: { maxWidth: '920px', margin: '0 auto' } },
@@ -57,11 +57,11 @@ export const prerender = true;
                     item.location && h('p', { style: { color: '#777b86', fontSize: '12px', margin: '0 0 10px' } }, text(item.location)),
                     item.company && item.title && h('p', { style: { color: '#d7d8df', fontSize: '13px', margin: '0 0 10px' } }, text(item.company)),
                     h('p', { style: { color: '#a6a8b0', lineHeight: '1.55', margin: 0 } }, text(item.description || item.quote)),
-                    (item.points || item.bullets) && h('ul', { style: { color: '#a6a8b0', lineHeight: '1.55', paddingLeft: '18px' } },
-                      ...list(item.points || item.bullets).map((point, pointIndex) => h('li', { key: pointIndex, style: { marginBottom: '6px' } }, text(point)))
+                    (item.points || item.bullets || item.highlights) && h('ul', { style: { color: '#a6a8b0', lineHeight: '1.55', paddingLeft: '18px' } },
+                      ...list(item.points || item.bullets || item.highlights).map((point, pointIndex) => h('li', { key: pointIndex, style: { marginBottom: '6px' } }, text(point)))
                     ),
-                    (item.chips || item.tags) && h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '16px' } },
-                      ...list(item.chips || item.tags).map((chip, chipIndex) => h('span', { key: chipIndex, style: { padding: '5px 8px', border: '1px solid #ffffff18', borderRadius: '5px', fontSize: '11px' } }, text(chip)))
+                    (item.chips || item.tags || item.tech) && h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '16px' } },
+                      ...list(item.chips || item.tags || item.tech).map((chip, chipIndex) => h('span', { key: chipIndex, style: { padding: '5px 8px', border: '1px solid #ffffff18', borderRadius: '5px', fontSize: '11px' } }, text(chip)))
                     ),
                     item.href && h('a', { href: item.href, style: { display: 'inline-block', color: '#44e2cd', marginTop: '14px', fontSize: '12px' } }, text(item.href))
                   ))
@@ -81,7 +81,7 @@ export const prerender = true;
           }
         });
 
-        ['pageLayout', 'hero', 'valueProposition', 'projects', 'techStack', 'career', 'aiWorkflow', 'writing', 'standards', 'testimonials', 'contact']
+        ['pageLayout', 'hero', 'valueProposition', 'projects', 'techStack', 'career', 'aiWorkflow', 'writing', 'standards', 'testimonials', 'contact', 'projectsPage']
           .forEach(name => CMS.registerPreviewTemplate(name, Preview));
       })();
     </script>
