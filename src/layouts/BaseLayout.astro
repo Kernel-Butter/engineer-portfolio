@@ -3,10 +3,12 @@ import { ClientRouter } from 'astro:transitions';
 import Nav from '../components/Nav.astro';
 import Preloader from '../components/Preloader.astro';
 import SmoothScroll from '../components/SmoothScroll.astro';
+import global from '../content/global.json';
 import '../styles/tailwind.css';
 import '../styles/global.scss';
 
-const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
+const { title = global.siteTitle, description = global.siteDescription } = Astro.props;
+const currentYear = new Date().getFullYear();
 ---
 <!DOCTYPE html>
 <html class="dark" lang="en">
@@ -14,6 +16,11 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
+  {description && <meta name="description" content={description} />}
+  <meta property="og:title" content={title} />
+  {description && <meta property="og:description" content={description} />}
+  <meta property="og:type" content="website" />
+  {global.socialImage && <meta property="og:image" content={global.socialImage} />}
   <ClientRouter />
   <!-- Kill Astro's built-in page crossfade - GSAP overlay handles all transitions -->
   <style>
@@ -46,15 +53,16 @@ const { title = 'SYS.ENGINEER // PORTFOLIO' } = Astro.props;
     <footer class="bg-surface-container-lowest border-t border-outline-variant/20 py-12">
       <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto gap-gutter">
         <div class="font-headline-md text-headline-md text-primary font-bold tracking-tighter">
-          SYS.ENGINEER
+          {global.brandLabel}
         </div>
         <div class="font-code-snippet text-code-snippet text-on-surface-variant opacity-60 text-center">
-          ©2026 SYS.ENGINEER // STATUS: AVAILABLE_FOR_WORK
+          ©{currentYear} {global.footerText}
         </div>
         <nav class="flex flex-wrap justify-center gap-6">
-          <a href="https://github.com/Kernel-Butter" target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">GITHUB</a>
-          <a href="https://linkedin.com/in/hamzabhutta" target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">LINKEDIN</a>
-          <a href="#" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">CV_DL</a>
+          {global.githubHref && <a href={global.githubHref} target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">GITHUB</a>}
+          {global.linkedinHref && <a href={global.linkedinHref} target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">LINKEDIN</a>}
+          {global.cvHref && <a href={global.cvHref} target="_blank" rel="noopener noreferrer" class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">CV_DL</a>}
+          {global.contactEmail && <a href={`mailto:${global.contactEmail}`} class="font-code-snippet text-code-snippet text-on-surface-variant hover:text-primary underline underline-offset-4 transition-colors">EMAIL</a>}
         </nav>
       </div>
     </footer>

@@ -33,7 +33,7 @@ export const prerender = true;
             const isLayout = Array.isArray(data.sections);
             const heading = isLayout ? 'Home Page Layout' : data.sectionTitle || data.name || [data.headlinePrefix, data.headlineAccent].filter(Boolean).join(' ') || [data.headlineLine1, data.headlineLine2].filter(Boolean).join(' ') || 'Section preview';
             const intro = data.sectionSubtitle || data.subheadline || '';
-            const groups = list(data.sections || data.projects || data.items || data.roles || data.categories || data.cards).filter(item => isLayout || item.visible !== false);
+            const groups = list(data.sections || data.navigation || data.projects || data.items || data.roles || data.categories || data.cards).filter(item => isLayout || item.visible !== false);
 
             return h('main', { style: { minHeight: '100%', padding: '48px 36px', background: '#0b0b0b', color: '#d7d8df', fontFamily: 'Inter, system-ui, sans-serif' } },
               h('section', { style: { maxWidth: '920px', margin: '0 auto' } },
@@ -54,7 +54,7 @@ export const prerender = true;
                   ...groups.map((item, index) => h('article', { key: index, style: { border: '1px solid #ffffff18', background: '#151515', borderRadius: '12px', padding: '20px', overflow: 'hidden' } },
                     item.image && h('img', { src: asset(item.image), alt: text(item.imageAlt), style: { width: 'calc(100% + 40px)', height: '150px', objectFit: 'cover', margin: '-20px -20px 18px' } }),
                     h('div', { style: { color: item.visible === false ? '#ff7777' : '#44e2cd', font: '12px ui-monospace, monospace', marginBottom: '8px' } }, text(isLayout ? (item.visible === false ? 'HIDDEN' : 'VISIBLE') : item.icon || item.initials || item.period || item.category || item.label || item.role)),
-                    h('h2', { style: { color: '#c0c1ff', fontSize: '20px', margin: '0 0 10px' } }, text(item.section || item.name || item.title || item.company)),
+                    h('h2', { style: { color: '#c0c1ff', fontSize: '20px', margin: '0 0 10px' } }, text(item.label || item.section || item.name || item.title || item.company)),
                     item.location && h('p', { style: { color: '#777b86', fontSize: '12px', margin: '0 0 10px' } }, text(item.location)),
                     item.company && item.title && h('p', { style: { color: '#d7d8df', fontSize: '13px', margin: '0 0 10px' } }, text(item.company)),
                     h('p', { style: { color: '#a6a8b0', lineHeight: '1.55', margin: 0 } }, text(item.description || item.quote)),
@@ -72,8 +72,8 @@ export const prerender = true;
                   h('p', { style: { color: '#a6a8b0' } }, text(data.bookCallSubtitle))
                 ),
                 data.hint && h('p', { style: { color: '#44e2cd', marginTop: '24px' } }, text(data.hint)),
-                (data.githubHref || data.linkedinHref || data.bookCallHref) && h('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '18px', fontSize: '12px' } },
-                  ...[data.githubHref, data.linkedinHref, data.bookCallHref].filter(Boolean).map((url, index) => h('span', { key: index, style: { color: '#a6a8b0' } }, text(url)))
+                (data.githubHref || data.linkedinHref || data.cvHref || data.bookCallHref || data.contactEmail) && h('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '18px', fontSize: '12px' } },
+                  ...[data.githubHref, data.linkedinHref, data.cvHref, data.bookCallHref, data.contactEmail].filter(Boolean).map((url, index) => h('span', { key: index, style: { color: '#a6a8b0' } }, text(url)))
                 ),
                 data.formTitle && h('h2', { style: { color: '#c0c1ff', marginTop: '28px' } }, text(data.formTitle)),
                 data.emptyMessage && h('div', { style: { border: '1px solid #ffffff18', borderRadius: '12px', padding: '40px', textAlign: 'center', color: '#a6a8b0' } }, text(data.emptyMessage))
@@ -82,7 +82,7 @@ export const prerender = true;
           }
         });
 
-        ['pageLayout', 'hero', 'valueProposition', 'projects', 'techStack', 'career', 'aiWorkflow', 'writing', 'standards', 'testimonials', 'contact', 'projects_page']
+        ['global', 'pageLayout', 'hero', 'valueProposition', 'projects', 'techStack', 'career', 'aiWorkflow', 'writing', 'standards', 'testimonials', 'contact', 'projects_page']
           .forEach(name => CMS.registerPreviewTemplate(name, Preview));
       })();
     </script>
