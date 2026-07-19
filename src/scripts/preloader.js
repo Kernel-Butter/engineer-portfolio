@@ -10,6 +10,19 @@ export async function initPreloader(onComplete) {
     file:      document.getElementById('loading-file'),
   };
 
+  // ── Brand label reveal ────────────────────────────────────────────────────
+  // Characters are pre-split in the Astro template (CMS-safe — any brandLabel
+  // value auto-splits on rebuild). GSAP staggers them in immediately so the
+  // name writes itself during the first second of the preloader window.
+  const brandChars = document.querySelectorAll('#preloader .brand-char');
+  if (brandChars.length) {
+    gsap.set(brandChars, { opacity: 0, y: 14, filter: 'blur(6px)' });
+    gsap.to(brandChars, {
+      opacity: 1, y: 0, filter: 'blur(0px)',
+      duration: 0.45, ease: 'power3.out', stagger: 0.055,
+    });
+  }
+
   const ASSETS = [
     '/projects/retromersive.jpg',
     '/projects/septiembre.jpg',
