@@ -22,7 +22,7 @@
       "Config-driven business-type schema adds new business types with zero code changes"
     ],
     "href": "https://xpensly.vercel.app",
-    "featured": true,
+    "featured": false,
     "projectType": "personal"
   }
 }

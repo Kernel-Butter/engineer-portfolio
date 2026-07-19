@@ -1,0 +1,218 @@
+---
+// Reference: src/components/animations/SamsungHelloEffect.tsx
+// SVG path-draw animation in Samsung Bold Tech style — rebuilt in GSAP for this stack.
+---
+
+<section id="samsung-hello-exp" class="min-h-screen flex flex-col items-center justify-center py-20 px-margin-mobile md:px-margin-desktop relative overflow-hidden">
+
+  <!-- Background grid -->
+  <div class="absolute inset-0 pointer-events-none"
+    style="background:repeating-linear-gradient(0deg,rgba(192,193,255,.03) 0px,rgba(192,193,255,.03) 1px,transparent 1px,transparent 48px),repeating-linear-gradient(90deg,rgba(192,193,255,.03) 0px,rgba(192,193,255,.03) 1px,transparent 1px,transparent 48px)">
+  </div>
+
+  <!-- Header -->
+  <div class="relative z-10 text-center mb-12">
+    <div class="font-code-snippet text-[10px] text-secondary uppercase tracking-[.25em] mb-3">// ANIMATION_REFERENCE</div>
+    <h2 class="font-headline-md text-headline-md text-on-surface mb-2">Samsung Bold Tech — Path Draw</h2>
+    <p class="font-body-sm text-body-sm text-on-surface-variant/50 max-w-md">
+      SVG stroke-dashoffset animation with spring-style sequencing. Angular geometric letterforms.
+    </p>
+  </div>
+
+  <!-- Language toggle -->
+  <div class="relative z-10 flex gap-2 mb-10">
+    <button
+      class="sh-lang-btn active font-code-snippet text-[10px] uppercase tracking-widest px-4 py-2 rounded border transition-all duration-200"
+      data-lang="en"
+      style="border-color:rgba(192,193,255,.4);color:#c0c1ff;background:rgba(192,193,255,.08)"
+    >HELLO</button>
+    <button
+      class="sh-lang-btn font-code-snippet text-[10px] uppercase tracking-widest px-4 py-2 rounded border transition-all duration-200"
+      data-lang="viet"
+      style="border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.3);background:transparent"
+    >XIN CHÀO</button>
+  </div>
+
+  <!-- SVG stage -->
+  <div class="relative z-10 w-full flex items-center justify-center" style="min-height:180px">
+
+    <!-- English: "hello" — viewBox 800×250, strokeWidth 18 -->
+    <svg
+      id="sh-svg-en"
+      class="sh-svg w-full max-w-2xl"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 800 250"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="18"
+    >
+      <title>hello</title>
+      <!-- h -->
+      <path data-anim-path data-delay="0"    data-dur="0.5" d="M40 60L40 190"   stroke-linecap="square" stroke-linejoin="miter"/>
+      <path data-anim-path data-delay="0.3"  data-dur="0.4" d="M40 125L100 125" stroke-linecap="square" stroke-linejoin="miter"/>
+      <path data-anim-path data-delay="0.6"  data-dur="0.5" d="M100 60L100 190" stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- e -->
+      <path data-anim-path data-delay="1.0"  data-dur="0.5" d="M150 60L150 190"  stroke-linecap="square" stroke-linejoin="miter"/>
+      <path data-anim-path data-delay="1.3"  data-dur="0.4" d="M150 60L210 60"   stroke-linecap="square" stroke-linejoin="miter"/>
+      <path data-anim-path data-delay="1.6"  data-dur="0.4" d="M150 125L190 125" stroke-linecap="square" stroke-linejoin="miter"/>
+      <path data-anim-path data-delay="1.9"  data-dur="0.4" d="M150 190L210 190" stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- l -->
+      <path data-anim-path data-delay="2.3"  data-dur="0.6" d="M260 60L260 190L300 190" stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- l -->
+      <path data-anim-path data-delay="2.8"  data-dur="0.6" d="M340 60L340 190L380 190" stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- o -->
+      <path data-anim-path data-delay="3.3"  data-dur="0.8" d="M450 90L490 110L490 170L450 190L420 170L420 110L450 90" stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- corner brackets -->
+      <path data-anim-path data-delay="4.0"  data-dur="0.5" d="M20 40L20 20L40 20"     stroke-linecap="square" stroke-linejoin="miter" stroke="#3b82f6" stroke-width="3"/>
+      <path data-anim-path data-delay="4.2"  data-dur="0.5" d="M500 40L520 20L520 40"  stroke-linecap="square" stroke-linejoin="miter" stroke="#3b82f6" stroke-width="3"/>
+      <path data-anim-path data-delay="4.4"  data-dur="0.5" d="M20 210L20 230L40 230"  stroke-linecap="square" stroke-linejoin="miter" stroke="#3b82f6" stroke-width="3"/>
+      <path data-anim-path data-delay="4.6"  data-dur="0.5" d="M500 210L520 230L520 210" stroke-linecap="square" stroke-linejoin="miter" stroke="#3b82f6" stroke-width="3"/>
+    </svg>
+
+    <!-- Vietnamese: "xin chào" — viewBox 1400×300, strokeWidth 20 -->
+    <svg
+      id="sh-svg-viet"
+      class="sh-svg hidden w-full max-w-4xl"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 1400 300"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="20"
+    >
+      <title>xin chào</title>
+      <!-- x -->
+      <path data-anim-path data-delay="0"    data-dur="0.6" d="M40 80L90 130L140 180"  stroke-linecap="square" stroke-linejoin="miter"/>
+      <path data-anim-path data-delay="0.2"  data-dur="0.6" d="M140 80L90 130L40 180"  stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- i stem -->
+      <path data-anim-path data-delay="0.8"  data-dur="0.5" d="M200 90L200 180"        stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- i dot (rect animated via opacity) -->
+      <rect data-anim-rect data-delay="1.2"  data-dur="0.3" x="192" y="60" width="16" height="16" stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- n -->
+      <path data-anim-path data-delay="1.5"  data-dur="0.8" d="M250 180L250 90L290 90L330 130L330 180" stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- c -->
+      <path data-anim-path data-delay="2.3"  data-dur="0.7" d="M430 120L390 90L390 180L430 150" stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- h -->
+      <path data-anim-path data-delay="3.0"  data-dur="0.5" d="M520 60L520 180"  stroke-linecap="square" stroke-linejoin="miter"/>
+      <path data-anim-path data-delay="3.3"  data-dur="0.4" d="M520 125L580 125" stroke-linecap="square" stroke-linejoin="miter"/>
+      <path data-anim-path data-delay="3.6"  data-dur="0.5" d="M580 60L580 180"  stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- à body -->
+      <path data-anim-path data-delay="4.2"  data-dur="0.7" d="M650 180L680 90L710 180"  stroke-linecap="square" stroke-linejoin="miter"/>
+      <path data-anim-path data-delay="4.6"  data-dur="0.4" d="M665 140L695 140"         stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- à accent mark -->
+      <path data-anim-path data-delay="4.9"  data-dur="0.4" d="M700 50L720 30"   stroke-linecap="square" stroke-linejoin="miter" stroke="#60a5fa"/>
+      <!-- o -->
+      <path data-anim-path data-delay="5.3"  data-dur="0.9" d="M780 90L820 110L820 160L780 180L760 160L760 110L780 90" stroke-linecap="square" stroke-linejoin="miter"/>
+      <!-- futuristic accent lines -->
+      <path data-anim-path data-delay="6.0"  data-dur="2.0" d="M50 50L1350 50"   stroke-linecap="square" stroke="#22d3ee" stroke-width="2"/>
+      <path data-anim-path data-delay="6.2"  data-dur="2.0" d="M50 220L1350 220" stroke-linecap="square" stroke="#22d3ee" stroke-width="2"/>
+    </svg>
+
+  </div>
+
+  <!-- Replay + meta -->
+  <div class="relative z-10 mt-10 flex flex-col items-center gap-4">
+    <button
+      id="sh-replay"
+      class="group flex items-center gap-2 font-code-snippet text-[10px] uppercase tracking-widest px-4 py-2 rounded border border-outline-variant/25 text-on-surface-variant/50 hover:text-primary hover:border-primary/40 transition-all duration-200"
+    >
+      <span class="material-symbols-outlined text-[14px] group-hover:rotate-180 transition-transform duration-500">refresh</span>
+      REPLAY
+    </button>
+    <div class="font-code-snippet text-[9px] text-on-surface-variant/20 uppercase tracking-widest">
+      stroke-dashoffset · GSAP · angular SVG letterforms
+    </div>
+  </div>
+
+</section>
+
+<style>
+  #samsung-hello-exp .sh-svg {
+    color: rgba(255, 255, 255, 0.9);
+    filter: drop-shadow(0 0 18px rgba(192, 193, 255, 0.2));
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+
+  document.addEventListener('astro:page-load', () => {
+    const section = document.getElementById('samsung-hello-exp');
+    if (!section) return;
+
+    let currentTl: gsap.core.Timeline | null = null;
+
+    function animateSvg(svgEl: SVGSVGElement) {
+      if (currentTl) currentTl.kill();
+
+      const tl = gsap.timeline();
+
+      // Path elements — animate via stroke-dashoffset
+      svgEl.querySelectorAll<SVGGeometryElement>('[data-anim-path]').forEach(el => {
+        const delay = parseFloat((el as HTMLElement).dataset.delay ?? '0');
+        const dur   = parseFloat((el as HTMLElement).dataset.dur   ?? '0.6');
+
+        // getTotalLength() returns the path length in user units
+        const len = el.getTotalLength?.() ?? 200;
+
+        gsap.set(el, { strokeDasharray: len, strokeDashoffset: len, opacity: 0 });
+        tl.to(el, {
+          strokeDashoffset: 0,
+          opacity: 1,
+          duration: dur,
+          ease: 'power2.out',
+        }, delay);
+      });
+
+      // Rect elements (i-dot) — animate via opacity only
+      svgEl.querySelectorAll<SVGRectElement>('[data-anim-rect]').forEach(el => {
+        const delay = parseFloat((el as HTMLElement).dataset.delay ?? '0');
+        const dur   = parseFloat((el as HTMLElement).dataset.dur   ?? '0.3');
+
+        gsap.set(el, { opacity: 0, scale: 0, transformOrigin: 'center center' });
+        tl.to(el, {
+          opacity: 1,
+          scale: 1,
+          duration: dur,
+          ease: 'back.out(2)',
+        }, delay);
+      });
+
+      currentTl = tl;
+    }
+
+    function getActiveSvg() {
+      return section.querySelector<SVGSVGElement>('.sh-svg:not(.hidden)');
+    }
+
+    function play() {
+      const svg = getActiveSvg();
+      if (svg) animateSvg(svg);
+    }
+
+    // Language toggle
+    section.querySelectorAll<HTMLElement>('.sh-lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang!;
+
+        section.querySelectorAll<HTMLElement>('.sh-lang-btn').forEach(b => {
+          const isActive = b.dataset.lang === lang;
+          b.style.borderColor  = isActive ? 'rgba(192,193,255,.4)' : 'rgba(255,255,255,.1)';
+          b.style.color        = isActive ? '#c0c1ff'              : 'rgba(255,255,255,.3)';
+          b.style.background   = isActive ? 'rgba(192,193,255,.08)': 'transparent';
+          b.classList.toggle('active', isActive);
+        });
+
+        section.querySelectorAll<HTMLElement>('.sh-svg').forEach(s => s.classList.add('hidden'));
+        section.querySelector<HTMLElement>(`#sh-svg-${lang}`)?.classList.remove('hidden');
+
+        play();
+      });
+    });
+
+    // Replay
+    section.querySelector('#sh-replay')?.addEventListener('click', play);
+
+    // Auto-play on load
+    play();
+  });
+</script>

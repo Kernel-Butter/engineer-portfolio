@@ -1,5 +1,5 @@
 {
-  "order": 12,
+  "order": 3,
   "label": "Retromersive",
   "section": {
     "type": "project",
@@ -21,7 +21,7 @@
       "Integrated animated GIF and video content sections with responsive fallbacks"
     ],
     "href": "https://retromersive.com",
-    "featured": false,
+    "featured": true,
     "projectType": "agency"
   }
 }

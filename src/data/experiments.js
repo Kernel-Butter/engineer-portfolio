@@ -99,6 +99,30 @@ export const experiments = [
     ],
   },
   {
+    slug:     'samsung-hello',
+    title:    'SAMSUNG_HELLO',
+    desc:     'SVG path-draw animation spelling "hello" and "xin chào" in a Samsung Bold Tech aesthetic. Angular geometric letterforms with sequenced stroke-dashoffset reveals and spring-style easing.',
+    category: 'ANIMATION',
+    icon:     'draw',
+    accent:   '#c0c1ff',
+    bg:       'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(192,193,255,.13) 0%, rgba(60,50,120,.08) 55%, transparent 85%)',
+    variants: [
+      { key: 'SamsungHello', label: 'Path Draw — Hello', subtitle: 'Stroke-dashoffset · angular SVG letterforms · language toggle', status: 'experimental' },
+    ],
+  },
+  {
+    slug:     'variable-font-proximity',
+    title:    'VARIABLE_FONT_PROXIMITY',
+    desc:     'Each character\'s font-weight interpolates from thin (wght 100) to bold (wght 900) based on cursor distance. Quadratic proximity mapping within a configurable radius.',
+    category: 'UI_COMPONENT',
+    icon:     'text_fields',
+    accent:   '#4edea3',
+    bg:       'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(78,222,163,.12) 0%, transparent 70%)',
+    variants: [
+      { key: 'VariableFontProximity', label: 'Cursor Proximity Weight', subtitle: 'Inter Variable · wght 100–900 · per-character interpolation', status: 'experimental' },
+    ],
+  },
+  {
     slug:     'page-transitions',
     title:    'PAGE_TRANSITIONS',
     desc:     'Five candidate page transition animations shown side-by-side as live looping previews.',

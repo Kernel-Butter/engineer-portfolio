@@ -1,0 +1,173 @@
+---
+// Reference: src/components/animations/VariableFontCursorProximity.tsx
+// Cursor-proximity font-weight interpolation — rebuilt in vanilla JS for this stack.
+// Requires a variable font with wght axis. Loads Inter Variable inline.
+---
+
+<!-- Load Inter as a true variable font (full 100–900 wght axis) for this section -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&display=swap" />
+
+<section id="vfp-exp" class="min-h-screen flex flex-col items-center justify-center py-20 px-margin-mobile md:px-margin-desktop relative overflow-hidden select-none">
+
+  <!-- Subtle radial bg -->
+  <div class="absolute inset-0 pointer-events-none"
+    style="background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(78,222,163,.06) 0%,transparent 70%)">
+  </div>
+
+  <!-- Header -->
+  <div class="relative z-10 text-center mb-14">
+    <div class="font-code-snippet text-[10px] text-secondary uppercase tracking-[.25em] mb-3">// ANIMATION_REFERENCE</div>
+    <h2 class="font-headline-md text-headline-md text-on-surface mb-2">Variable Font · Cursor Proximity</h2>
+    <p class="font-body-sm text-body-sm text-on-surface-variant/50 max-w-md">
+      Each character's font-weight interpolates from thin → bold based on cursor distance within a configurable radius.
+    </p>
+  </div>
+
+  <!-- Proximity hint -->
+  <div class="relative z-10 flex items-center gap-2 mb-8 font-code-snippet text-[10px] text-on-surface-variant/30 uppercase tracking-widest">
+    <span class="material-symbols-outlined text-[14px]">mouse</span>
+    Move cursor over the text below
+  </div>
+
+  <!-- Interactive text stage -->
+  <div id="vfp-stage" class="relative z-10 w-full max-w-4xl flex flex-col items-center gap-6 cursor-default py-12 px-8 rounded-2xl border border-outline-variant/10"
+    style="background:rgba(255,255,255,.02)">
+
+    <div
+      class="vfp-line vfp-font text-on-surface"
+      style="font-size:clamp(2.5rem,6vw,5rem);line-height:1.1;letter-spacing:-0.02em"
+    >Frontend Engineer</div>
+
+    <div
+      class="vfp-line vfp-font text-on-surface/70"
+      style="font-size:clamp(1.5rem,3.5vw,3rem);line-height:1.2;letter-spacing:-0.01em"
+    >Building things for the web.</div>
+
+    <div
+      class="vfp-line vfp-font text-secondary"
+      style="font-size:clamp(1rem,2.5vw,2rem);line-height:1.3;letter-spacing:0.04em;font-family:'JetBrains Mono',monospace"
+      data-font="mono"
+    >HAMZA.BHUTTA_</div>
+
+  </div>
+
+  <!-- Radius controls -->
+  <div class="relative z-10 mt-10 flex flex-col items-center gap-4">
+    <div class="font-code-snippet text-[9px] text-on-surface-variant/30 uppercase tracking-widest mb-1">Influence Radius</div>
+    <div class="flex gap-2">
+      {['60', '120', '200'].map((r, i) => (
+        <button
+          class="vfp-radius-btn font-code-snippet text-[10px] uppercase tracking-widest px-4 py-2 rounded border transition-all duration-200"
+          data-radius={r}
+          style={i === 1
+            ? 'border-color:rgba(78,222,163,.45);color:#4edea3;background:rgba(78,222,163,.08)'
+            : 'border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.3);background:transparent'}
+        >{r === '60' ? 'TIGHT' : r === '120' ? 'MEDIUM' : 'WIDE'}</button>
+      ))}
+    </div>
+
+    <!-- Live weight readout -->
+    <div class="mt-2 font-code-snippet text-[9px] text-on-surface-variant/20 uppercase tracking-widest">
+      wght: <span id="vfp-readout">100</span> · radius: <span id="vfp-radius-readout">120</span>px
+    </div>
+
+    <div class="mt-2 font-code-snippet text-[9px] text-on-surface-variant/20 uppercase tracking-widest">
+      font-variation-settings · Inter Variable · wght 100–900
+    </div>
+  </div>
+
+</section>
+
+<style>
+  /* Variable font applied to the interactive lines */
+  #vfp-exp .vfp-font {
+    font-family: 'Inter', sans-serif;
+    font-variation-settings: 'wght' 100;
+    transition: font-variation-settings 0.05s linear;
+  }
+
+  #vfp-exp [data-font="mono"] {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Individual character spans — each gets its own font-variation-settings */
+  #vfp-exp .vfp-char {
+    display: inline-block;
+    font-variation-settings: 'wght' 100;
+    transition: font-variation-settings 0.06s ease-out;
+  }
+
+  #vfp-exp .vfp-char[data-mono] {
+    font-variation-settings: 'wght' 400;
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const section = document.getElementById('vfp-exp');
+    if (!section) return;
+
+    const stage    = document.getElementById('vfp-stage')!;
+    const readout  = document.getElementById('vfp-readout')!;
+    const radOut   = document.getElementById('vfp-radius-readout')!;
+
+    let RADIUS   = 120;
+    const MIN_W  = 100;
+    const MAX_W  = 900;
+
+    // Split each line into per-character spans
+    section.querySelectorAll<HTMLElement>('.vfp-line').forEach(line => {
+      const isMono = !!line.dataset.font;
+      line.innerHTML = (line.textContent ?? '').split('').map(c =>
+        c === ' '
+          ? '<span class="vfp-char">&nbsp;</span>'
+          : `<span class="vfp-char"${isMono ? ' data-mono' : ''}>${c}</span>`
+      ).join('');
+    });
+
+    const allChars = section.querySelectorAll<HTMLElement>('.vfp-char');
+
+    // Cursor move → interpolate wght per character
+    stage.addEventListener('mousemove', e => {
+      let maxWeight = MIN_W;
+
+      allChars.forEach(char => {
+        const r    = char.getBoundingClientRect();
+        const cx   = r.left + r.width  / 2;
+        const cy   = r.top  + r.height / 2;
+        const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+        const t    = Math.max(0, 1 - dist / RADIUS);
+        // Quadratic ease — more dramatic at close range
+        const w    = Math.round(MIN_W + t * t * (MAX_W - MIN_W));
+
+        char.style.fontVariationSettings = `'wght' ${w}`;
+        if (w > maxWeight) maxWeight = w;
+      });
+
+      readout.textContent = String(maxWeight);
+    });
+
+    // Reset on leave
+    stage.addEventListener('mouseleave', () => {
+      allChars.forEach(char => {
+        char.style.fontVariationSettings = `'wght' ${MIN_W}`;
+      });
+      readout.textContent = String(MIN_W);
+    });
+
+    // Radius buttons
+    section.querySelectorAll<HTMLElement>('.vfp-radius-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        RADIUS = parseInt(btn.dataset.radius ?? '120');
+        radOut.textContent = btn.dataset.radius ?? '120';
+
+        section.querySelectorAll<HTMLElement>('.vfp-radius-btn').forEach(b => {
+          const active = b === btn;
+          b.style.borderColor = active ? 'rgba(78,222,163,.45)' : 'rgba(255,255,255,.1)';
+          b.style.color       = active ? '#4edea3'              : 'rgba(255,255,255,.3)';
+          b.style.background  = active ? 'rgba(78,222,163,.08)' : 'transparent';
+        });
+      });
+    });
+  });
+</script>
