@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = '404 — Page Not Found';
+---
+<BaseLayout title={title}>
+  <section class="min-h-[70vh] flex flex-col items-center justify-center text-center px-margin-mobile md:px-margin-desktop gap-6">
+    <h1 class="font-headline-lg text-headline-lg text-primary tracking-tighter glitch-text" data-text="404">404</h1>
+    <p class="font-code-snippet text-code-snippet text-tertiary tracking-widest opacity-80">&gt; ROUTE_NOT_FOUND</p>
+    <a href="/" class="font-headline-md text-headline-md font-bold text-on-surface hover:text-secondary transition-colors duration-300 underline underline-offset-4">
+      Return home
+    </a>
+  </section>
+</BaseLayout>
