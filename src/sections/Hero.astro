@@ -67,37 +67,16 @@ const show = { eyebrow: true, introduction: true, tagline: true, cta: true, stat
   </div>
 </section>
 
-<style>
-  /* Smooth weight transition on each h1 character so cursor movement
-     doesn't produce frame-by-frame snapping between weight values. */
-  #hero .hero-vfp {
-    display: inline-block;
-    transition: font-variation-settings 0.09s ease-out;
-  }
-</style>
-
 <script>
   import { gsap } from 'gsap';
   import { magneticButton, shimmerHover } from '../scripts/animations.js';
 
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
+  // this module once ever; without re-binding here, returning to this page
+  // leaves the fresh Hero elements permanently at their gsap.set-hidden
+  // state (nothing left alive to reveal them), and the CTA's magnetic/
+  // shimmer hover effects would still be bound to the first visit's button.
   document.addEventListener('astro:page-load', () => {
-    // ── Split h1 into per-character spans (before GSAP hides the element) ──
-    // Reading textContent at runtime means any CMS change to headlinePrefix
-    // or headlineAccent is automatically reflected — no hardcoded strings here.
-    const h1 = document.querySelector<HTMLElement>('#hero h1');
-    if (h1) {
-      h1.querySelectorAll<HTMLElement>(':scope > span').forEach(span => {
-        const text = span.textContent ?? '';
-        // Preserve the span's class (e.g. text-primary on the accent word) so
-        // colour inheritance still reaches every child .hero-vfp span.
-        span.innerHTML = text.split('').map(c =>
-          c === ' '
-            ? '&nbsp;'
-            : `<span class="hero-vfp" style="font-variation-settings:'wght' 700">${c}</span>`
-        ).join('');
-      });
-    }
-
     // Hide elements immediately so they don't flash visible during #main-content fade-in
     gsap.set('#hero .eyebrow',     { opacity: 0, y: 10 });
     gsap.set('#hero h1',           { opacity: 0, y: 30 });
@@ -112,42 +91,7 @@ const show = { eyebrow: true, introduction: true, tagline: true, cta: true, stat
         .to('#hero .subheadline', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
         .to('#hero .cta-row',     { opacity: 1, y: 0, duration: 0.5 }, '-=0.3')
         .to('#hero .scroll-hint', { opacity: 1,        duration: 0.4 }, '-=0.2');
-
-      // ── Bind VFP after h1 finishes its entry animation (~700 ms) ─────────
-      // Proximity effect: chars near the cursor grow heavier (→ 800),
-      // chars far away soften (→ 200). Quadratic ease concentrates the
-      // effect at close range for a sharp "spotlight" feel.
-      setTimeout(bindHeroVFP, 700);
     }, { once: true });
-
-    function bindHeroVFP() {
-      const hero     = document.getElementById('hero');
-      const chars    = hero?.querySelectorAll<HTMLElement>('.hero-vfp');
-      if (!hero || !chars?.length) return;
-
-      const RADIUS = 160;
-      const MIN_W  = 200;
-      const MAX_W  = 800;
-      const BASE_W = 700;
-
-      hero.addEventListener('mousemove', e => {
-        chars.forEach(char => {
-          const r    = char.getBoundingClientRect();
-          const cx   = r.left + r.width  / 2;
-          const cy   = r.top  + r.height / 2;
-          const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-          const t    = Math.max(0, 1 - dist / RADIUS);
-          const w    = Math.round(MIN_W + t * t * (MAX_W - MIN_W));
-          char.style.fontVariationSettings = `'wght' ${w}`;
-        });
-      });
-
-      hero.addEventListener('mouseleave', () => {
-        chars.forEach(char => {
-          char.style.fontVariationSettings = `'wght' ${BASE_W}`;
-        });
-      });
-    }
 
     const heroCta     = document.getElementById('hero-cta') as HTMLElement | null;
     const heroShimmer = document.getElementById('hero-shimmer') as HTMLElement | null;

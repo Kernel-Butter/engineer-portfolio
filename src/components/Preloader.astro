@@ -7,13 +7,8 @@ const preloader = global.preloader ?? {};
   <div class="loader-content">
 
     <div class="text-center mb-8">
-      <!-- brand-char spans are split at build time from CMS brandLabel —
-           any change to the label in Sveltia automatically re-splits on rebuild. -->
-      <h1 class="font-headline-lg text-headline-lg text-primary tracking-tighter uppercase" aria-label={preloader.brandLabel}>
-        {(preloader.brandLabel ?? '').split('').map((char: string, i: number) => (
-          <span class="brand-char" style={`--char-i:${i}`}>{char}</span>
-        ))}
-      </h1>
+      <h1 class="font-headline-lg text-headline-lg text-primary tracking-tighter uppercase glitch-text"
+          data-text={preloader.brandLabel}>{preloader.brandLabel}</h1>
       <p id="status-message" class="font-code-snippet text-code-snippet text-tertiary mt-2 tracking-widest opacity-80">
         {preloader.statusMessage}
       </p>
