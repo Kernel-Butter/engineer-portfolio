@@ -48,6 +48,10 @@ const preloader = global.preloader ?? {};
       ease: 'power2.out',
       onComplete() {
         ScrollTrigger.refresh();
+        // Set before dispatch so late listeners (registered after this tick,
+        // e.g. inside an astro:page-load handler that hasn't fired yet) can
+        // check readiness instead of missing the event outright.
+        (window as any).__portfolioReady = true;
         document.dispatchEvent(new CustomEvent('portfolio:ready'));
       },
     });

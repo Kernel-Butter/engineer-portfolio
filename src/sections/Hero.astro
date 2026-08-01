@@ -84,14 +84,24 @@ const show = { eyebrow: true, introduction: true, tagline: true, cta: true, stat
     gsap.set('#hero .cta-row',     { opacity: 0, y: 20 });
     gsap.set('#hero .scroll-hint', { opacity: 0        });
 
-    document.addEventListener('portfolio:ready', () => {
+    const playEntrance = () => {
       gsap.timeline({ defaults: { ease: 'power3.out' } })
         .to('#hero .eyebrow',     { opacity: 1, y: 0, duration: 0.6 })
         .to('#hero h1',           { opacity: 1, y: 0, duration: 0.7 }, '-=0.3')
         .to('#hero .subheadline', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
         .to('#hero .cta-row',     { opacity: 1, y: 0, duration: 0.5 }, '-=0.3')
         .to('#hero .scroll-hint', { opacity: 1,        duration: 0.4 }, '-=0.2');
-    }, { once: true });
+    };
+
+    // Preloader can fire portfolio:ready synchronously on page load (e.g. the
+    // prefers-reduced-motion skip path) before this handler runs - check the
+    // flag it sets instead of only listening, or the event is missed and the
+    // hero stays stuck at its gsap.set-hidden opacity:0 forever.
+    if ((window as any).__portfolioReady) {
+      playEntrance();
+    } else {
+      document.addEventListener('portfolio:ready', playEntrance, { once: true });
+    }
 
     const heroCta     = document.getElementById('hero-cta') as HTMLElement | null;
     const heroShimmer = document.getElementById('hero-shimmer') as HTMLElement | null;

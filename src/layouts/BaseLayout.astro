@@ -135,6 +135,7 @@ const socialImageURL = seo.socialImage && seo.siteUrl ? new URL(seo.socialImage,
          flash over the preloader if Astro fires this event during initialisation. */
       if (sessionStorage.getItem('preloader_done') !== '1') return;
 
+      (window as any).__portfolioReady = false;
       _active     = true;
       _inDone     = false;
       _pendingOut = null;
@@ -174,6 +175,7 @@ const socialImageURL = seo.socialImage && seo.siteUrl ? new URL(seo.socialImage,
           onComplete() {
             _active = false;
             gsap.set(overlay, { visibility: 'hidden' });
+            (window as any).__portfolioReady = true;
             document.dispatchEvent(new CustomEvent('portfolio:ready'));
           }
         });

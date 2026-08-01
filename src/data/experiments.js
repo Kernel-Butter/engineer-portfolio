@@ -123,6 +123,18 @@ export const experiments = [
     ],
   },
   {
+    slug:     'heading-reveal-combo',
+    title:    'HEADING_REVEAL_COMBO',
+    desc:     'Scroll-triggered character blur/rise entrance, then cursor-proximity font-weight interpolation + baseline drift takes over once revealed. Toggles for drift and color-spotlight variants.',
+    category: 'UI_COMPONENT',
+    icon:     'draw',
+    accent:   '#4edea3',
+    bg:       'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(78,222,163,.12) 0%, transparent 70%)',
+    variants: [
+      { key: 'HeadingRevealLab', label: 'Reveal + Proximity + Drift', subtitle: 'Char reveal on scroll · proximity weight/lift on idle · toggles', status: 'experimental' },
+    ],
+  },
+  {
     slug:     'page-transitions',
     title:    'PAGE_TRANSITIONS',
     desc:     'Five candidate page transition animations shown side-by-side as live looping previews.',

@@ -1,0 +1,193 @@
+---
+// Reference: proximity-reveal-lab artifact
+// Combo test: scroll-triggered char blur/rise reveal, then cursor-proximity
+// font-weight interpolation + baseline drift takes over once revealed.
+---
+
+<!-- Load Inter as a true variable font (full 100–900 wght axis) — same approach as VariableFontProximity -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&display=swap" />
+
+<section id="hrl-exp" class="min-h-screen flex flex-col items-center py-20 px-margin-mobile md:px-margin-desktop relative overflow-hidden">
+
+  <!-- Header -->
+  <div class="relative z-10 text-center mb-10">
+    <div class="font-code-snippet text-[10px] text-secondary uppercase tracking-[.25em] mb-3">// ANIMATION_REFERENCE</div>
+    <h2 class="font-headline-md text-headline-md text-on-surface mb-2">Heading Reveal — Proximity + Drift</h2>
+    <p class="font-body-sm text-body-sm text-on-surface-variant/50 max-w-lg mx-auto">
+      Scroll each stage into view to trigger the character blur/rise entrance, then move the cursor across the heading — proximity weight interpolation and baseline lift take over once it's settled.
+    </p>
+  </div>
+
+  <!-- Toggles -->
+  <div class="relative z-10 flex flex-wrap justify-center gap-2 mb-14">
+    <button
+      class="hrl-toggle on font-code-snippet text-[10px] uppercase tracking-widest px-4 py-2 rounded border transition-all duration-200 inline-flex items-center gap-2"
+      data-toggle="drift"
+      style="border-color:rgba(78,222,163,.45);color:#4edea3;background:rgba(78,222,163,.08)"
+    ><span class="hrl-dot w-1.5 h-1.5 rounded-full" style="background:#4edea3"></span>Baseline drift</button>
+    <button
+      class="hrl-toggle font-code-snippet text-[10px] uppercase tracking-widest px-4 py-2 rounded border transition-all duration-200 inline-flex items-center gap-2"
+      data-toggle="color"
+      style="border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.3);background:transparent"
+    ><span class="hrl-dot w-1.5 h-1.5 rounded-full" style="background:rgba(255,255,255,.2)"></span>Color spotlight</button>
+  </div>
+
+  <!-- Stages -->
+  <div class="relative z-10 w-full max-w-4xl flex flex-col gap-14">
+
+    <div id="hrl-stage-1" class="hrl-stage relative flex flex-col items-center gap-6 py-16 px-6 rounded-2xl border border-outline-variant/15" style="background:rgba(255,255,255,.02)">
+      <span class="absolute top-4 left-6 font-code-snippet text-[9px] uppercase tracking-widest text-on-surface-variant/30">Stage_01 · Section H2</span>
+      <button class="hrl-replay absolute top-3 right-5 font-code-snippet text-[9px] uppercase tracking-widest px-2.5 py-1 rounded border border-outline-variant/20 text-on-surface-variant/40 hover:text-primary hover:border-primary/40 transition-colors duration-150" data-target="hrl-stage-1">Replay ↺</button>
+      <h3 class="hrl-heading text-on-surface" data-text="Frontend Engineer, Systems Thinking" style="font-family:'Inter',sans-serif;font-size:clamp(1.8rem,4.4vw,3.2rem);line-height:1.15;letter-spacing:-0.01em;text-align:center"></h3>
+      <div class="hrl-readout font-code-snippet text-[10px] uppercase tracking-widest text-on-surface-variant/30 flex gap-5" data-readout="hrl-stage-1">wght <span data-w>380</span> · lift <span data-l>0</span>px</div>
+    </div>
+
+    <div id="hrl-stage-2" class="hrl-stage relative flex flex-col items-center gap-6 py-16 px-6 rounded-2xl border border-outline-variant/15" style="background:rgba(255,255,255,.02)">
+      <span class="absolute top-4 left-6 font-code-snippet text-[9px] uppercase tracking-widest text-on-surface-variant/30">Stage_02 · Section H2</span>
+      <button class="hrl-replay absolute top-3 right-5 font-code-snippet text-[9px] uppercase tracking-widest px-2.5 py-1 rounded border border-outline-variant/20 text-on-surface-variant/40 hover:text-primary hover:border-primary/40 transition-colors duration-150" data-target="hrl-stage-2">Replay ↺</button>
+      <h3 class="hrl-heading text-on-surface" data-text="Building things for the web." style="font-family:'Inter',sans-serif;font-size:clamp(1.8rem,4.4vw,3.2rem);line-height:1.15;letter-spacing:-0.01em;text-align:center"></h3>
+      <div class="hrl-readout font-code-snippet text-[10px] uppercase tracking-widest text-on-surface-variant/30 flex gap-5" data-readout="hrl-stage-2">wght <span data-w>380</span> · lift <span data-l>0</span>px</div>
+    </div>
+
+    <div id="hrl-stage-3" class="hrl-stage relative flex flex-col items-center gap-6 py-16 px-6 rounded-2xl border border-outline-variant/15" style="background:rgba(255,255,255,.02)">
+      <span class="absolute top-4 left-6 font-code-snippet text-[9px] uppercase tracking-widest text-on-surface-variant/30">Stage_03 · Two-line closer</span>
+      <button class="hrl-replay absolute top-3 right-5 font-code-snippet text-[9px] uppercase tracking-widest px-2.5 py-1 rounded border border-outline-variant/20 text-on-surface-variant/40 hover:text-primary hover:border-primary/40 transition-colors duration-150" data-target="hrl-stage-3">Replay ↺</button>
+      <h3 class="hrl-heading text-on-surface" data-text="Let's build the" style="font-family:'Inter',sans-serif;font-size:clamp(1.5rem,3.6vw,2.6rem);line-height:1.15;letter-spacing:-0.01em;text-align:center"></h3>
+      <h3 class="hrl-heading text-primary" data-text="next thing together." style="font-family:'Inter',sans-serif;font-size:clamp(1.5rem,3.6vw,2.6rem);line-height:1.15;letter-spacing:-0.01em;text-align:center"></h3>
+      <div class="hrl-readout font-code-snippet text-[10px] uppercase tracking-widest text-on-surface-variant/30 flex gap-5" data-readout="hrl-stage-3">wght <span data-w>380</span> · lift <span data-l>0</span>px</div>
+    </div>
+
+  </div>
+
+  <p class="relative z-10 font-code-snippet text-[9px] text-on-surface-variant/25 uppercase tracking-widest mt-10 max-w-md text-center">
+    Weight axis needs a true variable font to be visible — falls back to a static weight where Inter Variable can't load; drift/color layers still work.
+  </p>
+
+</section>
+
+<style>
+  #hrl-exp .hrl-word { display: inline-block; white-space: nowrap; }
+  #hrl-exp .hrl-char {
+    display: inline-block;
+    font-variation-settings: 'wght' 380;
+    will-change: transform, opacity, filter, font-variation-settings;
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    const section = document.getElementById('hrl-exp');
+    if (!section) return;
+
+    const MIN_W = 100, MAX_W = 850, BASE_W = 380;
+    const RADIUS = 160;
+
+    let driftOn = true, colorOn = false;
+
+    section.querySelectorAll<HTMLButtonElement>('.hrl-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.toggle;
+        const on  = key === 'drift' ? (driftOn = !driftOn) : (colorOn = !colorOn);
+        const dot = btn.querySelector('.hrl-dot') as HTMLElement;
+        btn.style.borderColor = on ? 'rgba(78,222,163,.45)' : 'rgba(255,255,255,.1)';
+        btn.style.color       = on ? '#4edea3'              : 'rgba(255,255,255,.3)';
+        btn.style.background  = on ? 'rgba(78,222,163,.08)' : 'transparent';
+        if (dot) dot.style.background = on ? '#4edea3' : 'rgba(255,255,255,.2)';
+      });
+    });
+
+    // Split each heading into word > char spans, preserving natural wrapping.
+    section.querySelectorAll<HTMLElement>('.hrl-heading[data-text]').forEach(h => {
+      const text = h.dataset.text ?? '';
+      h.textContent = '';
+      text.split(' ').forEach((word, wi, arr) => {
+        const wSpan = document.createElement('span');
+        wSpan.className = 'hrl-word';
+        [...word].forEach(ch => {
+          const cSpan = document.createElement('span');
+          cSpan.className = 'hrl-char';
+          cSpan.textContent = ch;
+          wSpan.appendChild(cSpan);
+        });
+        h.appendChild(wSpan);
+        if (wi < arr.length - 1) h.appendChild(document.createTextNode(' '));
+      });
+    });
+
+    const stageTweens = new Map<Element, gsap.core.Tween>();
+
+    section.querySelectorAll<HTMLElement>('.hrl-stage').forEach(stage => {
+      const chars = stage.querySelectorAll('.hrl-char');
+
+      const tween = gsap.fromTo(chars,
+        { opacity: 0, y: 16, filter: 'blur(7px)' },
+        {
+          opacity: 1, y: 0, filter: 'blur(0px)',
+          duration: 0.55, ease: 'power3.out', stagger: 0.022,
+          scrollTrigger: { trigger: stage, start: 'top 75%', toggleActions: 'play none none reverse' },
+          onStart() { (stage as HTMLElement).dataset.revealed = 'false'; },
+          onComplete() { (stage as HTMLElement).dataset.revealed = 'true'; },
+        }
+      );
+      stageTweens.set(stage, tween);
+
+      const readout = section.querySelector(`[data-readout="${stage.id}"]`)!;
+      const wOut = readout.querySelector('[data-w]')!;
+      const lOut = readout.querySelector('[data-l]')!;
+
+      stage.addEventListener('mousemove', e => {
+        if (stage.dataset.revealed !== 'true') return;
+        const me = e as MouseEvent;
+        let maxW = BASE_W, maxLift = 0;
+
+        chars.forEach(c => {
+          const char = c as HTMLElement;
+          const r  = char.getBoundingClientRect();
+          const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+          const dist = Math.hypot(me.clientX - cx, me.clientY - cy);
+          const t = Math.max(0, 1 - dist / RADIUS);
+          const eased = t * t;
+          const w = Math.round(MIN_W + eased * (MAX_W - MIN_W));
+          char.style.fontVariationSettings = `'wght' ${w}`;
+
+          const lift = driftOn ? -Math.round(eased * 7) : 0;
+          char.style.transform = `translateY(${lift}px)`;
+          if (Math.abs(lift) > Math.abs(maxLift)) maxLift = lift;
+
+          char.style.color = colorOn && eased > 0.05
+            ? `color-mix(in srgb, #c0c1ff ${Math.round(eased * 100)}%, currentColor)`
+            : '';
+
+          if (w > maxW) maxW = w;
+        });
+
+        wOut.textContent = String(maxW);
+        lOut.textContent = String(maxLift);
+      });
+
+      stage.addEventListener('mouseleave', () => {
+        chars.forEach(c => {
+          const char = c as HTMLElement;
+          char.style.fontVariationSettings = `'wght' ${BASE_W}`;
+          char.style.transform = 'translateY(0)';
+          char.style.color = '';
+        });
+        wOut.textContent = String(BASE_W);
+        lOut.textContent = '0';
+      });
+    });
+
+    section.querySelectorAll<HTMLButtonElement>('.hrl-replay').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const stage = document.getElementById(btn.dataset.target ?? '');
+        const tween = stage && stageTweens.get(stage);
+        if (tween) tween.restart(true);
+      });
+    });
+  });
+</script>
