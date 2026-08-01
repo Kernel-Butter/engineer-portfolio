@@ -98,7 +98,11 @@ const socials = [
           <span>{contact.formTitle}</span>
         </h3>
 
-        <form id="contact-form" class="space-y-6" data-recipient={contactDetails.contactEmail}>
+        <form id="contact-form" class="space-y-6">
+
+          <!-- Honeypot - hidden from real visitors, bots tend to fill every field -->
+          <input type="text" name="company" tabindex="-1" autocomplete="off"
+                 class="absolute -left-[9999px] w-px h-px overflow-hidden" aria-hidden="true" />
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
@@ -166,30 +170,48 @@ const socials = [
       clickBurst(btn);
     }
 
-    // No backend is required: validate locally and open the visitor's email
-    // client with a complete, prefilled message. Never claim a message was
-    // delivered when the browser has not actually sent one.
-    const form   = document.getElementById('contact-form') as HTMLFormElement | null;
-    const status = document.getElementById('ct-status');
-    form?.addEventListener('submit', e => {
+    // Submits to /api/contact (a Vercel serverless function that sends via
+    // Resend) so the message actually lands in the inbox regardless of
+    // whether the visitor has a desktop mail client configured.
+    const form      = document.getElementById('contact-form') as HTMLFormElement | null;
+    const status    = document.getElementById('ct-status');
+    const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+
+    const setStatus = (text: string, tone: 'pending' | 'ok' | 'error') => {
+      if (!status) return;
+      status.textContent = text;
+      status.style.opacity = '1';
+      status.classList.remove('text-outline', 'text-tertiary', 'text-error');
+      status.classList.add(tone === 'ok' ? 'text-tertiary' : tone === 'error' ? 'text-error' : 'text-outline');
+    };
+
+    form?.addEventListener('submit', async e => {
       e.preventDefault();
       if (!status || !form?.reportValidity()) return;
+
       const formData = new FormData(form);
-      const name = String(formData.get('name') ?? '').trim();
-      const email = String(formData.get('email') ?? '').trim();
+      const name    = String(formData.get('name') ?? '').trim();
+      const email   = String(formData.get('email') ?? '').trim();
       const message = String(formData.get('message') ?? '').trim();
-      const recipient = form.dataset.recipient;
-      if (!recipient) {
-        status.textContent = '> EMAIL ADDRESS IS NOT CONFIGURED.';
-        status.style.opacity = '1';
-        return;
+      const company = String(formData.get('company') ?? ''); // honeypot
+
+      if (submitBtn) submitBtn.disabled = true;
+      setStatus('> TRANSMITTING...', 'pending');
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, message, company }),
+        });
+        if (!res.ok) throw new Error(`status ${res.status}`);
+        setStatus('> MESSAGE SENT. I’ll reply soon.', 'ok');
+        form.reset();
+      } catch (err) {
+        setStatus('> SEND FAILED - TRY EMAIL DIRECTLY.', 'error');
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
       }
-      const subject = encodeURIComponent(`Portfolio inquiry from ${name}`);
-      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);
-      status.textContent = '> OPENING YOUR EMAIL APPLICATION...';
-      status.style.opacity = '1';
-      status.classList.replace('text-outline', 'text-tertiary');
-      window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
     });
   });
 </script>
