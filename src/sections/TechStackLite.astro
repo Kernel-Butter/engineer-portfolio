@@ -1,0 +1,160 @@
+---
+// Zero-WebGL alternative to TechStackV2's Three.js + cannon-es constellation.
+// No requestAnimationFrame loop, no physics step, no per-frame DOM writes -
+// every node's motion is a CSS keyframe animation the compositor runs on its
+// own thread, so it costs nothing on the main thread regardless of how far
+// down the page the visitor has scrolled.
+const RINGS = [
+  { key: 'foundations', label: 'FOUNDATIONS', color: '#c0c1ff', radius: 17, items: ['HTML5', 'CSS3', 'JavaScript', 'TypeScript', 'Git'] },
+  { key: 'frameworks',  label: 'FRAMEWORKS',  color: '#44e2cd', radius: 32, items: ['React', 'Next.js', 'Astro', 'GSAP', 'Tailwind CSS', 'GraphQL'] },
+  { key: 'tooling',     label: 'TOOLING',     color: '#4edea3', radius: 46, items: ['Three.js', 'PostgreSQL', 'Jest', 'Cypress', 'Vercel', 'Lighthouse'] },
+];
+
+const nodes = RINGS.flatMap(ring =>
+  ring.items.map((label, i) => {
+    const angle = (i / ring.items.length) * Math.PI * 2 - Math.PI / 2;
+    const x = 50 + ring.radius * Math.cos(angle);
+    const y = 50 + ring.radius * Math.sin(angle);
+    return {
+      label, color: ring.color, x, y, ring: ring.key,
+      delay: (Math.random() * 4).toFixed(2),
+      dur:   (5 + Math.random() * 3).toFixed(2),
+    };
+  })
+);
+---
+
+<section id="tsl-exp" class="min-h-screen flex flex-col items-center justify-center py-20 px-margin-mobile md:px-margin-desktop relative overflow-hidden">
+
+  <div class="tsl-intro relative z-10 text-center mb-12 max-w-2xl">
+    <div class="font-code-snippet text-[10px] text-tertiary uppercase tracking-[.25em] mb-3">// PERFORMANCE_REFERENCE</div>
+    <h2 class="font-headline-md text-headline-md text-on-surface mb-3">Skill Constellation — CSS/SVG Only</h2>
+    <p class="font-body-sm text-body-sm text-on-surface-variant/50 max-w-lg mx-auto">
+      Same idea as the Dev Cycle Graph, rebuilt with zero WebGL and zero animation loop: positions are computed once at build time, motion is pure CSS keyframes the compositor handles off the main thread.
+    </p>
+    <div class="inline-flex items-center gap-2 mt-4 px-3 py-1.5 rounded-full border border-tertiary/25 bg-tertiary/5 font-code-snippet text-[9px] uppercase tracking-widest text-tertiary">
+      <span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+      0 KB three.js · 0 KB cannon-es · main-thread idle when off-screen
+    </div>
+  </div>
+
+  <div class="tsl-panel z-10 rounded-xl border border-outline-variant/15" style="background:radial-gradient(ellipse at center, rgba(78,222,163,.05) 0%, transparent 70%)">
+
+    <!-- Static SVG guides + connecting lines - drawn once, no per-frame updates -->
+    <svg class="tsl-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+      {RINGS.map(ring => (
+        <circle cx="50" cy="50" r={ring.radius} fill="none" stroke={ring.color} stroke-width="0.15" opacity="0.15" />
+      ))}
+      {nodes.map(n => (
+        <line x1="50" y1="50" x2={n.x} y2={n.y} stroke={n.color} stroke-width="0.12" opacity="0.12" />
+      ))}
+    </svg>
+
+    <!-- Core -->
+    <div class="tsl-core rounded-full flex items-center justify-center font-code-snippet text-[10px] font-bold tracking-widest"
+         style="background:rgba(3,3,6,.9);border:1px solid rgba(192,193,255,.4);color:#c0c1ff;box-shadow:0 0 20px rgba(192,193,255,.25)">
+      H.B
+    </div>
+
+    <!-- Nodes - each floats independently via its own CSS animation, no shared JS loop -->
+    {nodes.map(n => (
+      <div
+        class="tsl-node font-code-snippet text-[9.5px] font-bold uppercase tracking-wide whitespace-nowrap px-2 py-1 rounded border"
+        style={`left:${n.x}%;top:${n.y}%;--tsl-delay:${n.delay}s;--tsl-dur:${n.dur}s;color:${n.color};border-color:${n.color}55;background:rgba(3,3,6,.88);box-shadow:0 0 8px ${n.color}33`}
+        data-ring={n.ring}
+      >
+        {n.label}
+      </div>
+    ))}
+  </div>
+
+  <!-- Legend -->
+  <div class="relative z-10 flex flex-wrap justify-center gap-6 mt-10">
+    {RINGS.map(ring => (
+      <div class="flex items-center gap-2 font-code-snippet text-[10px] uppercase tracking-widest text-on-surface-variant/50">
+        <span class="w-2 h-2 rounded-full" style={`background:${ring.color};box-shadow:0 0 6px ${ring.color}`}></span>
+        {ring.label}
+      </div>
+    ))}
+  </div>
+
+</section>
+
+<style>
+  /* Positioning is plain CSS rather than Tailwind's absolute/relative/max-w-[]
+     utilities - this component's utility classes were landing in a layer that
+     lost the cascade against unlayered styles, so position ended up "static"
+     and everything rendered in normal document flow instead of on the ring. */
+  .tsl-panel {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+  }
+  .tsl-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .tsl-core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 52px;
+    height: 52px;
+    transform: translate(-50%, -50%);
+    animation: tsl-pulse 3.2s ease-in-out infinite;
+  }
+  .tsl-node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    animation: tsl-float var(--tsl-dur) ease-in-out var(--tsl-delay) infinite;
+    transition: border-color 0.2s, box-shadow 0.2s, z-index 0s;
+    will-change: transform;
+  }
+  .tsl-node:hover {
+    z-index: 10;
+    border-color: currentColor;
+    box-shadow: 0 0 16px currentColor;
+  }
+  @keyframes tsl-float {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+    50%      { transform: translate(-50%, -50%) translateY(-6px); }
+  }
+  @keyframes tsl-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(192,193,255,.25); }
+    50%      { box-shadow: 0 0 32px rgba(192,193,255,.5); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tsl-node, .tsl-core { animation: none; }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  // astro:page-load (not top-level) - Astro's client-side nav only executes
+  // this module once ever; without re-binding here, returning to this page
+  // leaves the fresh DOM stuck at its gsap.set-hidden state.
+  //
+  // Opacity-only reveal (no y-offset) because .tsl-node's transform is
+  // already owned by the continuous CSS float keyframe - animating GSAP's
+  // own `y` on top would fight that keyframe for the same property.
+  document.addEventListener('astro:page-load', () => {
+    gsap.set('#tsl-exp .tsl-intro', { opacity: 0, y: 20 });
+    gsap.set('#tsl-exp .tsl-node',  { opacity: 0 });
+
+    gsap.to('#tsl-exp .tsl-intro', {
+      opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+      scrollTrigger: { trigger: '#tsl-exp', start: 'top 80%', toggleActions: 'play none none reverse' },
+    });
+    gsap.to('#tsl-exp .tsl-node', {
+      opacity: 1, duration: 0.5, stagger: 0.03, ease: 'power2.out',
+      scrollTrigger: { trigger: '#tsl-exp .tsl-panel', start: 'top 75%', toggleActions: 'play none none reverse' },
+    });
+  });
+</script>

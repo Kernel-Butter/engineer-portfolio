@@ -57,8 +57,9 @@ export const experiments = [
     accent:   '#4edea3',
     bg:       'radial-gradient(ellipse 100% 80% at 50% 50%, rgba(78,222,163,.11) 0%, transparent 70%)',
     variants: [
-      { key: 'TechStack',   label: 'V1 - Constellation',    subtitle: 'Anonymous star-field with hover labels',  status: 'archived' },
-      { key: 'TechStackV2', label: 'V2 - Dev Cycle Graph',  subtitle: 'Labeled circular domain rings',           status: 'stable'   },
+      { key: 'TechStack',     label: 'V1 - Constellation',      subtitle: 'Anonymous star-field with hover labels',        status: 'archived'    },
+      { key: 'TechStackV2',   label: 'V2 - Dev Cycle Graph',    subtitle: 'Labeled circular domain rings',                 status: 'stable'      },
+      { key: 'TechStackLite', label: 'V3 - CSS/SVG Lite',       subtitle: 'Zero WebGL · no animation loop · perf-focused', status: 'experimental' },
     ],
   },
   {

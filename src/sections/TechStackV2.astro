@@ -137,7 +137,9 @@ const show = { header: true, visualization: true, categoryList: true, ...tech.vi
 
     let renderer;
     try {
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      // antialias off - this is a small decorative panel, not a hero visual;
+      // the softened edges aren't worth doubling the fragment shader cost.
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
     } catch {
       // WebGL can be unavailable in hardened browsers, remote sessions, or
       // power-saving environments. Keep the section usable instead of
@@ -146,7 +148,7 @@ const show = { header: true, visualization: true, categoryList: true, ...tech.vi
       return;
     }
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     container.appendChild(renderer.domElement);
 
     // ── Modal - expands canvas to full screen for more play area ───────────
@@ -166,7 +168,15 @@ const show = { header: true, visualization: true, categoryList: true, ...tech.vi
       });
     }
 
+    // Render loop pause/resume (defined further down, once the loop itself
+    // exists) needs to know when the fullscreen modal is open, since that
+    // can be true even while the small inline panel isn't intersecting.
+    let modalOpen = false;
+    let syncModalLoopState = () => {};
+
     function openModal() {
+      modalOpen = true;
+      syncModalLoopState();
       modalEl?.classList.remove('hidden');
       modalEl?.classList.add('flex');
       document.body.style.overflow = 'hidden';
@@ -177,6 +187,8 @@ const show = { header: true, visualization: true, categoryList: true, ...tech.vi
       }
     }
     function closeModal() {
+      modalOpen = false;
+      syncModalLoopState();
       container.appendChild(renderer.domElement);
       container.appendChild(labelOverlay);
       resizeTo(container);
@@ -244,7 +256,7 @@ const show = { header: true, visualization: true, categoryList: true, ...tech.vi
     ];
 
     // ── Stars ──────────────────────────────────────────────────────────────
-    const STAR_COUNT = 700;
+    const STAR_COUNT = 400;
     const starPos = new Float32Array(STAR_COUNT * 3);
     for (let i = 0; i < STAR_COUNT; i++) {
       const r  = 35 + Math.random() * 45;
@@ -262,7 +274,7 @@ const show = { header: true, visualization: true, categoryList: true, ...tech.vi
     // ── Ambient bubbles ────────────────────────────────────────────────────
     const ambShapes = [new THREE.IcosahedronGeometry(0.22,0), new THREE.OctahedronGeometry(0.20), new THREE.TetrahedronGeometry(0.25)];
     const ambColors = [0x44e2cd, 0xc0c1ff, 0x4edea3];
-    for (let i = 0; i < 55; i++) {
+    for (let i = 0; i < 30; i++) {
       const m = new THREE.Mesh(ambShapes[i % 3], new THREE.MeshBasicMaterial({ color:ambColors[i%3], wireframe:true, transparent:true, opacity:0.05+Math.random()*0.09 }));
       const r = 12 + Math.random() * 22;
       const th = Math.random() * Math.PI * 2, ph = Math.acos(2*Math.random()-1);
@@ -372,8 +384,12 @@ const show = { header: true, visualization: true, categoryList: true, ...tech.vi
     }
 
     // Attach cursor + wheel listeners to any host div (used for both
-    // the small section canvas and the expanded modal canvas)
-    function attachListeners(el) {
+    // the small section canvas and the expanded modal canvas).
+    // wheelZoom is opt-in: the inline panel sits inline in page flow, so
+    // capturing wheel there would hijack normal page scrolling the instant
+    // the cursor drifts over it. The modal is a dedicated fullscreen
+    // overlay (body scroll already locked) where wheel-to-zoom is expected.
+    function attachListeners(el, { wheelZoom = false } = {}) {
       el.addEventListener('mouseenter', () => { needsCursorInit = true; });
       el.addEventListener('mousemove', e => {
         if (activeHost !== el) return;
@@ -387,13 +403,15 @@ const show = { header: true, visualization: true, categoryList: true, ...tech.vi
         cursorNDC.set(999, 999); mouseX = 0; mouseY = 0;
         cursorLocalVel.set(0, 0, 0); needsCursorInit = true;
       });
-      el.addEventListener('wheel', e => {
-        e.preventDefault();
-        targetZ = THREE.MathUtils.clamp(targetZ - e.deltaY * 0.04, Z_MAX_ZOOM, Z_START);
-      }, { passive: false });
+      if (wheelZoom) {
+        el.addEventListener('wheel', e => {
+          e.preventDefault();
+          targetZ = THREE.MathUtils.clamp(targetZ - e.deltaY * 0.04, Z_MAX_ZOOM, Z_START);
+        }, { passive: false });
+      }
     }
     attachListeners(container);
-    if (modalCanvas) attachListeners(modalCanvas);
+    if (modalCanvas) attachListeners(modalCanvas, { wheelZoom: true });
 
     window.addEventListener('resize', () => {
       const w = activeHost.clientWidth, h = activeHost.clientHeight;
@@ -418,8 +436,16 @@ const show = { header: true, visualization: true, categoryList: true, ...tech.vi
     const wp  = new THREE.Vector3();
     const prj = new THREE.Vector3();
 
-    (function animate() {
-      requestAnimationFrame(animate);
+    // This rAF loop used to run forever once started - full physics step +
+    // two O(n^2) distance passes + 36 DOM label writes, every frame, even
+    // with the section scrolled far out of view or the tab backgrounded.
+    // That's continuous main-thread work competing with scroll compositing
+    // on every page, which is what actually caused the reported scroll jank.
+    // Pause/resume on visibility instead of letting it run unconditionally.
+    let rafId = null;
+
+    function animate() {
+      rafId = requestAnimationFrame(animate);
       const dt = Math.min(clock.getDelta(), 0.05);
       elapsed += dt;
       const t = elapsed;
@@ -548,6 +574,28 @@ const show = { header: true, visualization: true, categoryList: true, ...tech.vi
       });
 
       renderer.render(scene, camera);
-    })();
+    }
+
+    function startLoop() {
+      if (rafId !== null) return;
+      clock.getDelta(); // drop the paused-time gap so dt doesn't spike on resume
+      animate();
+    }
+    function stopLoop() {
+      if (rafId === null) return;
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+
+    let sectionVisible = false;
+    const syncLoop = () => { (sectionVisible || modalOpen) && !document.hidden ? startLoop() : stopLoop(); };
+
+    new IntersectionObserver(entries => {
+      sectionVisible = entries[0]?.isIntersecting ?? false;
+      syncLoop();
+    }, { threshold: 0.01 }).observe(container);
+
+    document.addEventListener('visibilitychange', syncLoop);
+    syncModalLoopState = syncLoop;
   }
 </script>
