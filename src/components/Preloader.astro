@@ -57,13 +57,10 @@ const preloader = global.preloader ?? {};
     });
   };
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const preloader = document.getElementById('preloader');
-    if (preloader) preloader.style.display = 'none';
-    document.body.style.overflow = 'auto';
-    sessionStorage.setItem('preloader_done', '1');
-    revealContent(true);
-  } else {
-    initPreloader(() => revealContent());
-  }
+  // Intentionally ignores prefers-reduced-motion: the brand wants every first
+  // visit to see the boot sequence. Page-to-page transitions and in-page
+  // scroll reveals elsewhere still respect the OS/browser preference - this
+  // is the one deliberate exception, and it's a linear progress bar rather
+  // than parallax/vestibular-triggering motion.
+  initPreloader(() => revealContent());
 </script>

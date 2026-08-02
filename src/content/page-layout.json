@@ -6,7 +6,7 @@
     { "section": "techStack", "visible": true },
     { "section": "career", "visible": true },
     { "section": "aiWorkflow", "visible": true },
-    { "section": "writing", "visible": true },
+    { "section": "writing", "visible": false },
     { "section": "standards", "visible": true },
     { "section": "testimonials", "visible": false },
     { "section": "contact", "visible": true }
