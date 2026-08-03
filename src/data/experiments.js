@@ -147,6 +147,18 @@ export const experiments = [
       { key: 'TransitionShowcase', label: 'All 5 Candidates', subtitle: 'Glitch · Scanline · Wipe · Flash · Dissolve', status: 'experimental' },
     ],
   },
+  {
+    slug:     'font-compare',
+    title:    'FONT_COMPARE',
+    desc:     'Same headline, body copy and code snippet rendered in 5 candidate font pairings, side by side.',
+    category: 'TYPOGRAPHY',
+    icon:     'text_fields',
+    accent:   '#ffc542',
+    bg:       'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255,197,66,.13) 0%, transparent 70%)',
+    variants: [
+      { key: 'FontCompare', label: 'Pairing Comparison', subtitle: 'JetBrains Mono/Inter · Geist · IBM Plex · Space Grotesk · Fira Code', status: 'experimental' },
+    ],
+  },
 ];
 
 export const statusMeta = {
