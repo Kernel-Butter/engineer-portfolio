@@ -188,17 +188,9 @@
         </span>
       </div>
 
-      <h1 class="htr-h1 font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-8">
+      <h1 class="htr-h1 font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-12">
         ENGINEERING <span class="text-primary">EXPERIENCE.</span>
       </h1>
-
-      <p class="htr-sub font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-12 border-l-2 border-primary/30 pl-6 py-2 bg-surface-container/20 backdrop-blur-sm">
-        Senior Frontend Engineer specializing in high-performance UI systems, WebGL, and AI-augmented delivery.
-        <br />
-        <span class="text-primary font-code-snippet text-code-snippet mt-4 block">
-          I sell engineered experience &mdash; not just websites.
-        </span>
-      </p>
 
       <div class="htr-cta flex flex-col sm:flex-row gap-6 items-start sm:items-center">
         <a href="#contact"
@@ -354,14 +346,12 @@
   /* ── ENTRANCE ANIMATION ── */
   gsap.set('#hero-telemetry .htr-eyebrow', { opacity:0, y:10 });
   gsap.set('#hero-telemetry .htr-h1',      { opacity:0, y:30 });
-  gsap.set('#hero-telemetry .htr-sub',     { opacity:0, y:20 });
   gsap.set('#hero-telemetry .htr-cta',     { opacity:0, y:20 });
 
   const playEntrance = () => {
     gsap.timeline({ defaults: { ease:'power3.out' } })
       .to('#hero-telemetry .htr-eyebrow', { opacity:1, y:0, duration:0.6 })
       .to('#hero-telemetry .htr-h1',      { opacity:1, y:0, duration:0.7 }, '-=0.3')
-      .to('#hero-telemetry .htr-sub',     { opacity:1, y:0, duration:0.6 }, '-=0.4')
       .to('#hero-telemetry .htr-cta',     { opacity:1, y:0, duration:0.5 }, '-=0.3');
   };
 
