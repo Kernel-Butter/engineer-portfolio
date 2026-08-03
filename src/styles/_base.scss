@@ -1,3 +1,11 @@
+:root {
+  // Site typeface, as CSS custom properties so FontSwitcher.astro can override
+  // them at runtime (and persist the choice) without touching Tailwind config.
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 
 
@@ -7,6 +15,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: var(--font-body); // safety net - any element missing a font-* class lands here, not the browser serif default
 }
 
 .material-symbols-outlined {

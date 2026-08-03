@@ -154,14 +154,14 @@ export const prerender = true;
                 ),
                 data.bookCallTitle && h('div', { class: 'bento-card rounded-xl p-6 mt-6' },
                   h('h2', { class: 'font-headline-md text-headline-md text-primary mb-2' }, text(data.bookCallTitle)),
-                  h('p', { class: 'text-on-surface-variant' }, text(data.bookCallSubtitle))
+                  h('p', { class: 'font-body-md text-body-md text-on-surface-variant' }, text(data.bookCallSubtitle))
                 ),
-                data.hint && h('p', { class: 'text-secondary mt-6' }, text(data.hint)),
+                data.hint && h('p', { class: 'font-code-snippet text-code-snippet text-secondary mt-6' }, text(data.hint)),
                 (data.githubHref || data.linkedinHref || data.cvHref || data.bookCallHref || data.contactEmail) && h('div', { class: 'flex flex-col gap-2 mt-5 font-code-snippet text-code-snippet' },
                   ...[data.githubHref, data.linkedinHref, data.cvHref, data.bookCallHref, data.contactEmail].filter(Boolean).map((url, index) => h('span', { key: index, class: 'text-on-surface-variant' }, text(url)))
                 ),
                 data.formTitle && h('h2', { class: 'font-headline-md text-headline-md text-primary mt-8' }, text(data.formTitle)),
-                data.emptyMessage && h('div', { class: 'bento-card rounded-xl p-12 text-center text-on-surface-variant mt-6' }, text(data.emptyMessage))
+                data.emptyMessage && h('div', { class: 'bento-card rounded-xl p-12 text-center font-body-md text-body-md text-on-surface-variant mt-6' }, text(data.emptyMessage))
               )
             );
           }

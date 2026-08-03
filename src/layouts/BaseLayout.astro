@@ -3,6 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 import Nav from '../components/Nav.astro';
 import Preloader from '../components/Preloader.astro';
 import SmoothScroll from '../components/SmoothScroll.astro';
+import FontSwitcher from '../components/FontSwitcher.astro';
 import global from '../content/global/index.js';
 import '../styles/tailwind.css';
 import '../styles/global.scss';
@@ -49,7 +50,28 @@ const socialImageURL = seo.socialImage && seo.siteUrl ? new URL(seo.socialImage,
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Restore a saved font-pairing choice (FontSwitcher) before first paint - must
+       run inline/blocking, before the fallback link below, so a returning visitor
+       never flashes the site default before their saved pick loads. -->
+  <script is:inline>
+    (function () {
+      try {
+        var saved = JSON.parse(localStorage.getItem('portfolio:font-pairing') || 'null');
+        if (!saved) return;
+        var root = document.documentElement.style;
+        if (saved.displayStack) root.setProperty('--font-display', saved.displayStack);
+        if (saved.bodyStack)    root.setProperty('--font-body', saved.bodyStack);
+        if (saved.monoStack)    root.setProperty('--font-mono', saved.monoStack);
+        if (saved.googleFontsHref) {
+          var link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = saved.googleFontsHref;
+          document.head.appendChild(link);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 </head>
 <body class="antialiased">
@@ -58,6 +80,7 @@ const socialImageURL = seo.socialImage && seo.siteUrl ? new URL(seo.socialImage,
 
   <Preloader />
   <SmoothScroll />
+  <FontSwitcher />
 
   <!-- Page transition overlay - fade to black + terminal blink -->
   <div id="pt-overlay" transition:persist aria-hidden="true"

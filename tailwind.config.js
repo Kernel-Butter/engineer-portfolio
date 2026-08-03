@@ -70,13 +70,16 @@ export default {
         'bento-gap':       '16px',
       },
       fontFamily: {
-        'headline-lg':        ['JetBrains Mono', 'monospace'],
-        'headline-lg-mobile': ['JetBrains Mono', 'monospace'],
-        'headline-md':        ['JetBrains Mono', 'monospace'],
-        'code-snippet':       ['JetBrains Mono', 'monospace'],
-        'label-sm':           ['JetBrains Mono', 'monospace'],
-        'body-lg':            ['Inter', 'sans-serif'],
-        'body-md':            ['Inter', 'sans-serif'],
+        // Resolved via CSS custom properties (defaults set in src/styles/_base.scss,
+        // overridable at runtime by the font switcher in src/components/FontSwitcher.astro)
+        // so the site's typeface can change without touching this config.
+        'headline-lg':        ['var(--font-display)'],
+        'headline-lg-mobile': ['var(--font-display)'],
+        'headline-md':        ['var(--font-display)'],
+        'code-snippet':       ['var(--font-mono)'],
+        'label-sm':           ['var(--font-mono)'],
+        'body-lg':            ['var(--font-body)'],
+        'body-md':            ['var(--font-body)'],
       },
       fontSize: {
         'headline-lg':        ['48px', { lineHeight: '1.1',  letterSpacing: '-0.02em', fontWeight: '700' }],

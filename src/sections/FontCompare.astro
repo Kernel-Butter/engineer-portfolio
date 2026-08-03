@@ -1,50 +1,18 @@
 ---
-const pairings = [
-  {
-    id: 'current', name: 'Current', display: 'JetBrains Mono', body: 'Inter',
-    displayStack: "'JetBrains Mono', monospace", bodyStack: "'Inter', sans-serif",
-    accent: '#c0c1ff',
-    note: 'What the site uses today.',
-  },
-  {
-    id: 'geist', name: 'Geist', display: 'Geist', body: 'Geist',
-    displayStack: "'Geist', sans-serif", bodyStack: "'Geist', sans-serif",
-    mono: 'Geist Mono', monoStack: "'Geist Mono', monospace",
-    accent: '#44e2cd',
-    note: "Vercel's typeface — closest structural swap, same roles (sans body, mono code/labels).",
-  },
-  {
-    id: 'plex', name: 'IBM Plex', display: 'IBM Plex Sans', body: 'IBM Plex Sans',
-    displayStack: "'IBM Plex Sans', sans-serif", bodyStack: "'IBM Plex Sans', sans-serif",
-    mono: 'IBM Plex Mono', monoStack: "'IBM Plex Mono', monospace",
-    accent: '#4edea3',
-    note: 'A matched family designed to work together end to end.',
-  },
-  {
-    id: 'grotesk', name: 'Space Grotesk + Inter', display: 'Space Grotesk', body: 'Inter',
-    displayStack: "'Space Grotesk', sans-serif", bodyStack: "'Inter', sans-serif",
-    mono: 'JetBrains Mono', monoStack: "'JetBrains Mono', monospace",
-    accent: '#ffc542',
-    note: 'Geometric display headline, keeps Inter for body copy.',
-  },
-  {
-    id: 'firacode', name: 'Fira Code + Inter', display: 'Fira Code', body: 'Inter',
-    displayStack: "'Fira Code', monospace", bodyStack: "'Inter', sans-serif",
-    mono: 'Fira Code', monoStack: "'Fira Code', monospace",
-    accent: '#ff7eb3',
-    note: 'Keep Inter for everything, swap only the mono for more character.',
-  },
-];
+import { fontPairings as pairings, defaultFontPairing, buildGoogleFontsHref } from '../data/fonts.js';
 
 const headlineSample = 'Frontend Engineer, Systems Thinking';
 const bodySample = 'I build fast, accessible interfaces and the systems behind them — from motion-heavy marketing sites to data-dense dashboards.';
 const codeSample = "const engineer = { role: 'Frontend', focus: 'Systems' };";
+
+// Union of every pairing's Google Fonts params, deduped, so this comparison
+// page can render all candidates simultaneously without per-card fetches.
+const allFontsHref = buildGoogleFontsHref(
+  [...new Set(pairings.flatMap(p => p.googleFonts.split('&')))].join('&')
+);
 ---
 
-<link
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500;600;700&display=swap"
-  rel="stylesheet"
-/>
+<link href={allFontsHref} rel="stylesheet" />
 
 <section class="fc-section py-section-padding px-margin-mobile md:px-margin-desktop">
   <div class="w-full max-w-container-max mx-auto">
@@ -54,21 +22,32 @@ const codeSample = "const engineer = { role: 'Frontend', focus: 'Systems' };";
         <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
         <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">// FONT_COMPARE</span>
       </div>
-      <h2 class="font-headline-lg text-headline-lg text-on-surface mb-3">Font Comparison</h2>
-      <p class="font-body-md text-body-md text-on-surface-variant max-w-xl">
-        Same headline, body copy, and code snippet, rendered in {pairings.length} candidate font pairings. Compare side by side before picking one.
+      <h2 id="fc-live-heading" class="font-headline-lg text-headline-lg text-on-surface mb-3">Font Comparison</h2>
+      <p id="fc-live-body" class="font-body-md text-body-md text-on-surface-variant max-w-xl">
+        Same headline, body copy, and code snippet, rendered in {pairings.length} candidate font pairings. Compare side by side, then apply one to preview it against this page's own heading and body copy.
       </p>
+      <p id="fc-active-label" class="font-code-snippet text-[10px] text-on-surface-variant/40 uppercase tracking-widest mt-4">Previewing: {defaultFontPairing.name} (site default)</p>
     </header>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {pairings.map(p => (
-        <div class="fc-card" style={`--accent:${p.accent}`}>
+        <div class:list={['fc-card', { 'fc-active': p.default }]} data-id={p.id} style={`--accent:${p.accent}`}>
 
           <div class="fc-card-head">
             <span class="fc-pill" style={`color:${p.accent};border-color:${p.accent}40;background:${p.accent}12`}>
-              {p.id === 'current' ? 'Current' : 'Candidate'}
+              {p.default ? 'Site default' : 'Candidate'}
             </span>
             <span class="fc-name">{p.name}</span>
+            <button
+              class="fc-apply"
+              type="button"
+              data-id={p.id}
+              data-display={p.displayStack}
+              data-body={p.bodyStack}
+              data-mono={p.monoStack ?? p.displayStack}
+              data-name={p.name}
+              style={`--accent:${p.accent}`}
+            >Apply</button>
           </div>
 
           <div class="fc-sample" style={`font-family:${p.displayStack}`}>
@@ -90,6 +69,24 @@ const codeSample = "const engineer = { role: 'Frontend', focus: 'Systems' };";
   </div>
 </section>
 
+<script>
+  const heading = document.getElementById('fc-live-heading');
+  const body    = document.getElementById('fc-live-body');
+  const label   = document.getElementById('fc-active-label');
+  const cards   = document.querySelectorAll<HTMLElement>('.fc-card');
+
+  document.querySelectorAll<HTMLButtonElement>('.fc-apply').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const { display, body: bodyFont, name, id } = btn.dataset;
+      if (heading) heading.style.fontFamily = display ?? '';
+      if (body)    body.style.fontFamily    = bodyFont ?? '';
+      if (label)   label.textContent        = `Previewing: ${name}`;
+
+      cards.forEach(card => card.classList.toggle('fc-active', card.dataset.id === id));
+    });
+  });
+</script>
+
 <style>
   .fc-card {
     display: flex; flex-direction: column; gap: 12px;
@@ -97,6 +94,11 @@ const codeSample = "const engineer = { role: 'Frontend', focus: 'Systems' };";
     border-radius: 12px;
     border: 1px solid rgba(255,255,255,.08);
     background: #0d0d0d;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .fc-card.fc-active {
+    border-color: color-mix(in srgb, var(--accent, #c0c1ff) 55%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, #c0c1ff) 25%, transparent);
   }
   .fc-card-head { display: flex; align-items: center; gap: 10px; }
   .fc-pill {
@@ -109,6 +111,20 @@ const codeSample = "const engineer = { role: 'Frontend', focus: 'Systems' };";
     font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
     color: rgba(255,255,255,.6);
   }
+  .fc-apply {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px; text-transform: uppercase; letter-spacing: .12em;
+    padding: 4px 10px; border-radius: 6px;
+    border: 1px solid color-mix(in srgb, var(--accent, #c0c1ff) 40%, transparent);
+    background: color-mix(in srgb, var(--accent, #c0c1ff) 10%, transparent);
+    color: var(--accent, #c0c1ff);
+    cursor: pointer;
+    transition: background .15s, transform .15s;
+  }
+  .fc-apply:hover  { background: color-mix(in srgb, var(--accent, #c0c1ff) 20%, transparent); }
+  .fc-apply:active { transform: scale(.96); }
+  .fc-card.fc-active .fc-apply { background: var(--accent, #c0c1ff); color: #0d0d0d; }
   .fc-headline {
     font-size: clamp(1.4rem, 2.6vw, 1.9rem);
     line-height: 1.15; letter-spacing: -0.01em; font-weight: 700;

@@ -55,14 +55,14 @@
       <circle cx="18" cy="18" r="1.5" fill="#44e2cd" opacity=".9"/>
     </svg>
 
-    <div class="htr-row"><span class="htr-key">SYS.LOC</span></div>
-    <div class="htr-row"><span class="htr-val">37.7749°N / 122.4194°W</span></div>
-    <div class="htr-row"><span class="htr-val">ALT <span class="htr-accent">0052m</span> · HDG <span class="htr-accent">247°</span></span></div>
+    <div class="htr-row"><span class="htr-key">DEPLOY_TARGET</span></div>
+    <div class="htr-row"><span class="htr-val">EDGE // SFO1 · IAD1</span></div>
+    <div class="htr-row"><span class="htr-val">BUILD <span class="htr-accent">#0052</span> · REV <span class="htr-accent">247</span></span></div>
     <div class="htr-sep"></div>
-    <div class="htr-row"><span class="htr-key">TIMESTAMP</span></div>
+    <div class="htr-row"><span class="htr-key">UPTIME</span></div>
     <div class="htr-row"><span class="htr-val htr-blink" id="htr-clock">T+00:00:00.000</span></div>
     <div class="htr-sep"></div>
-    <div class="htr-row htr-live"><span class="htr-dot-g htr-blink"></span><span class="htr-key">LOCK_CONFIRMED</span></div>
+    <div class="htr-row htr-live"><span class="htr-dot-g htr-blink"></span><span class="htr-key">BUILD_PASSING</span></div>
   </div>
 
   <!-- ═══════════════════════════
@@ -78,15 +78,15 @@
       <div class="htr-bar" style="height:17px;opacity:1"></div>
     </div>
 
-    <div class="htr-row"><span class="htr-key">SYS.BITRATE</span></div>
-    <div class="htr-row"><span class="htr-accent" style="font-size:10px;letter-spacing:.18em">64-BIT // QUANTUM.OPS</span></div>
+    <div class="htr-row"><span class="htr-key">STACK</span></div>
+    <div class="htr-row"><span class="htr-accent" style="font-size:10px;letter-spacing:.18em">REACT // TYPESCRIPT</span></div>
     <div class="htr-sep"></div>
-    <div class="htr-row"><span class="htr-key">UPLINK</span></div>
-    <div class="htr-row"><span class="htr-val" id="htr-rate">847.3 MB/s</span></div>
-    <div class="htr-row"><span class="htr-key">ENCRYPTION</span></div>
-    <div class="htr-row"><span class="htr-val">AES-256 // TLS 1.3</span></div>
+    <div class="htr-row"><span class="htr-key">THROUGHPUT</span></div>
+    <div class="htr-row"><span class="htr-val" id="htr-rate">847.3 req/s</span></div>
+    <div class="htr-row"><span class="htr-key">SECURITY</span></div>
+    <div class="htr-row"><span class="htr-val">HTTPS // TLS 1.3</span></div>
     <div class="htr-sep"></div>
-    <div class="htr-row htr-live"><span class="htr-dot-g htr-blink" style="animation-delay:.5s"></span><span class="htr-key">LINK_SECURE</span></div>
+    <div class="htr-row htr-live"><span class="htr-dot-g htr-blink" style="animation-delay:.5s"></span><span class="htr-key">CI_GREEN</span></div>
   </div>
 
   <!-- ═══════════════════════════
@@ -98,24 +98,24 @@
       <span class="htr-key">SYS.STATUS</span>
     </div>
     <div class="htr-sep"></div>
-    <div class="htr-row"><span class="htr-key-sm">CORE_TEMP</span><span class="htr-val">41°C</span></div>
-    <div class="htr-row"><span class="htr-key-sm">MEM_USAGE</span><span class="htr-val">3.84 / 64 GB</span></div>
-    <div class="htr-row"><span class="htr-key-sm">PROCS</span><span class="htr-val"><span class="htr-accent">12</span> / 24 ACTIVE</span></div>
+    <div class="htr-row"><span class="htr-key-sm">LIGHTHOUSE</span><span class="htr-val">98 / 100</span></div>
+    <div class="htr-row"><span class="htr-key-sm">BUNDLE</span><span class="htr-val">3.84 / 64 KB</span></div>
+    <div class="htr-row"><span class="htr-key-sm">COMPONENTS</span><span class="htr-val"><span class="htr-accent">12</span> / 24 MOUNTED</span></div>
     <div class="htr-row"><span class="htr-key-sm">LATENCY</span><span class="htr-val htr-accent" id="htr-lat">14ms</span></div>
     <div class="htr-sep"></div>
     <!-- Scan bar -->
-    <div class="htr-row"><span class="htr-key">PASSIVE_SCAN</span></div>
+    <div class="htr-row"><span class="htr-key">TYPE_CHECK</span></div>
     <div class="htr-scanbar">
       <div class="htr-scanbar-fill"></div>
     </div>
-    <div class="htr-row"><span class="htr-val htr-blink" style="animation-delay:.4s">SCANNING...</span></div>
+    <div class="htr-row"><span class="htr-val htr-blink" style="animation-delay:.4s">COMPILING...</span></div>
   </div>
 
   <!-- ═══════════════════════════
        BOTTOM-RIGHT - RADAR
   ═══════════════════════════ -->
   <div class="htr-panel htr-br" aria-hidden="true">
-    <div class="htr-row"><span class="htr-key">PROXIMITY_SCAN</span></div>
+    <div class="htr-row"><span class="htr-key">DEPENDENCY_SCAN</span></div>
 
     <div class="htr-radar-wrap">
       <!-- rotating conic fan (CSS, no SVG issue) -->
@@ -139,11 +139,11 @@
     </div>
 
     <div class="htr-sep"></div>
-    <div class="htr-row"><span class="htr-key-sm">RANGE</span><span class="htr-val">32.4 km</span></div>
-    <div class="htr-row"><span class="htr-key-sm">AZIMUTH</span><span class="htr-val">127°</span></div>
+    <div class="htr-row"><span class="htr-key-sm">PACKAGES</span><span class="htr-val">32 deps</span></div>
+    <div class="htr-row"><span class="htr-key-sm">VULNS</span><span class="htr-val">0 found</span></div>
     <div class="htr-row htr-live" style="margin-top:4px">
       <span class="htr-dot-g htr-blink" style="animation-delay:.8s"></span>
-      <span class="htr-key">CONTACT: 02</span>
+      <span class="htr-key">UPDATES: 02</span>
     </div>
   </div>
 
@@ -152,7 +152,7 @@
   ═══════════════════════════ -->
   <div class="htr-edge htr-edge-l" aria-hidden="true">
     <div class="htr-edge-line"></div>
-    <span class="htr-vtext">SECTOR // ALPHA-7 // CLEARANCE: TS/SCI // OP: PHANTOM_SIGNAL</span>
+    <span class="htr-vtext">PORTFOLIO_V4 // ENV: PRODUCTION // BUILD: STABLE</span>
     <div class="htr-edge-dots">
       <span class="htr-dot-sm htr-blink"></span>
       <span class="htr-dot-sm"></span>
@@ -166,7 +166,7 @@
   ═══════════════════════════ -->
   <div class="htr-edge htr-edge-r" aria-hidden="true">
     <div class="htr-edge-line"></div>
-    <span class="htr-vtext">FREQ: 4.096 GHz // PWR: 98.7% // MODE: ACTIVE // NET: CLASSIFIED</span>
+    <span class="htr-vtext">NODE v22 // UPTIME: 98.7% // MODE: ACTIVE // OPEN_TO_WORK</span>
     <div class="htr-edge-dots">
       <span class="htr-dot-sm"></span>
       <span class="htr-dot-sm htr-blink" style="animation-delay:.35s"></span>

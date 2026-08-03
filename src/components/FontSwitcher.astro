@@ -1,0 +1,134 @@
+---
+import { fontPairings, defaultFontPairing } from '../data/fonts.js';
+
+// Only ever matters for whichever page happens to be the visitor's actual
+// entry point (this element is transition:persist, so it's SSR'd once) -
+// client-side route changes are re-checked by the script below via
+// astro:page-load. Computing it here too just avoids a flash on first load.
+const startsOnExperiments = Astro.url.pathname.startsWith('/experiments');
+---
+<div
+  id="font-switcher-root"
+  transition:persist
+  x-data="{ open: false }"
+  class:list={['fs-root fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3', { 'fs-hidden': !startsOnExperiments }]}
+>
+  <div
+    x-show="open"
+    x-transition
+    x-cloak
+    class="fs-panel w-64 rounded-xl border border-outline-variant/25 bg-surface-container/95 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,.5)] p-3"
+  >
+    <div class="font-code-snippet text-[10px] uppercase tracking-widest text-on-surface-variant/40 px-2 pb-2">Typeface</div>
+    <div id="fs-options" class="flex flex-col gap-1">
+      {fontPairings.map(p => (
+        <button
+          type="button"
+          class="fs-option flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-left transition-colors duration-150 hover:bg-surface-container-high"
+          data-id={p.id}
+          data-display={p.displayStack}
+          data-body={p.bodyStack}
+          data-mono={p.monoStack}
+          data-name={p.name}
+          data-google-fonts={p.googleFonts}
+          data-default={p.default ? '1' : '0'}
+          style={`--accent:${p.accent}`}
+        >
+          <span class="fs-dot w-1.5 h-1.5 rounded-full flex-shrink-0" style={`background:${p.accent}`}></span>
+          <span class="flex-1 font-code-snippet text-[11px] text-on-surface-variant">{p.name}</span>
+          <span class="fs-check material-symbols-outlined text-[15px] text-primary opacity-0">check</span>
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <button
+    type="button"
+    @click="open = !open"
+    aria-label="Change site typeface"
+    :aria-expanded="open.toString()"
+    class="fs-toggle w-11 h-11 rounded-full border border-outline-variant/30 bg-surface-container/90 backdrop-blur-xl text-on-surface-variant hover:text-primary hover:border-primary/40 transition-colors duration-200 flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,.4)]"
+  >
+    <span class="material-symbols-outlined text-[20px]" x-text="open ? 'close' : 'text_fields'">text_fields</span>
+  </button>
+</div>
+
+<style>
+  [x-cloak] { display: none !important; }
+  .fs-root.fs-hidden { display: none; }
+  .fs-option[data-active="1"] { background: color-mix(in srgb, var(--accent, #c0c1ff) 12%, transparent); }
+  .fs-option[data-active="1"] .fs-check { opacity: 1; color: var(--accent, #c0c1ff); }
+  .fs-option[data-active="1"] .fs-dot   { box-shadow: 0 0 6px var(--accent, #c0c1ff); }
+</style>
+
+<script define:vars={{ defaultId: defaultFontPairing.id }}>
+  const STORAGE_KEY = 'portfolio:font-pairing';
+  const loadedFonts = new Set();
+
+  function applyPairing(el) {
+    const { display, body, mono, googleFonts } = el.dataset;
+    const root = document.documentElement.style;
+    root.setProperty('--font-display', display);
+    root.setProperty('--font-body', body);
+    root.setProperty('--font-mono', mono);
+
+    if (googleFonts && !loadedFonts.has(googleFonts)) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = `https://fonts.googleapis.com/css2?${googleFonts}&display=swap`;
+      document.head.appendChild(link);
+      loadedFonts.add(googleFonts);
+    }
+  }
+
+  function markActive(id) {
+    document.querySelectorAll('.fs-option').forEach(opt => {
+      opt.dataset.active = opt.dataset.id === id ? '1' : '0';
+    });
+  }
+
+  function persist(el) {
+    const { id, display, body, mono, googleFonts } = el.dataset;
+    if (id === defaultId) {
+      localStorage.removeItem(STORAGE_KEY);
+      return;
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      id,
+      displayStack: display,
+      bodyStack: body,
+      monoStack: mono,
+      googleFontsHref: `https://fonts.googleapis.com/css2?${googleFonts}&display=swap`,
+    }));
+  }
+
+  document.querySelectorAll('.fs-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      applyPairing(btn);
+      markActive(btn.dataset.id);
+      persist(btn);
+    });
+  });
+
+  // Reflect whatever the early restore script in BaseLayout.astro already
+  // applied (or the default) so the panel opens showing the correct check mark.
+  let savedId = defaultId;
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if (saved?.id) savedId = saved.id;
+  } catch {}
+  markActive(savedId);
+
+  // The toggle button/panel are a dev tool for auditioning fonts, so they only
+  // show up on the /experiments lab - the chosen font itself still applies
+  // everywhere (via the CSS vars above + BaseLayout's early restore script),
+  // this just hides the UI to pick it outside the lab. This element has
+  // transition:persist, so its script only ever runs once - route changes
+  // are caught via astro:page-load rather than re-running this block.
+  const root = document.getElementById('font-switcher-root');
+  function syncVisibility() {
+    root?.classList.toggle('fs-hidden', !location.pathname.startsWith('/experiments'));
+  }
+  document.addEventListener('astro:page-load', syncVisibility);
+  syncVisibility();
+</script>
