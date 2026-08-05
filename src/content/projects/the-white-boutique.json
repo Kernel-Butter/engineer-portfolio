@@ -3,7 +3,7 @@
   "label": "The White Boutique",
   "section": {
     "type": "project",
-    "visible": true,
+    "visible": false,
     "name": "The White Boutique",
     "client": "The White Boutique",
     "category": "E-Commerce",

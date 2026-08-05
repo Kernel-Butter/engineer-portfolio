@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://raw.githubusercontent.com/DavidHDev/react-bits/main/src/content/Components/SpotlightCard/SpotlightCard.jsx\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/DavidHDev/react-bits/main/src/content/Components/SpotlightCard/SpotlightCard.css\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/DavidHDev/react-bits/main/src/content/Components/ChromaGrid/ChromaGrid.jsx\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/DavidHDev/react-bits/main/src/content/Components/ChromaGrid/ChromaGrid.css\")"
+    ]
+  }
+}

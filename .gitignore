@@ -32,3 +32,6 @@ Thumbs.db
 
 # Astro generated
 .astro/
+
+# Claude Code local overrides (per-machine tool permissions, not shared)
+.claude/settings.local.json
